@@ -18,7 +18,7 @@
 
         <activity android:name="org.hisp.dhis.client.sdk.ui.bindings.views.DefaultLoginActivity" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".views.HomeActivity"
             android:theme="@style/AppTheme.Main" />
 
         <meta-data
