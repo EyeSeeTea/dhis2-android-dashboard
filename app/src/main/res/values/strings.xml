@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">dhis2-android-dashboard</string>
 
-    <string name="drawer_item_placeholder">Items</string>
+    <string name="drawer_item_dashboards">Dashboards</string>
+    <string name="drawer_item_interpretations">Interpretations</string>
+
     <string name="placeholder">Something important goes here</string>
 </resources>
