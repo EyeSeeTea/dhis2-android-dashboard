@@ -26,14 +26,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android;
+package org.hisp.dhis.android.dashboard;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import dagger.Subcomponent;
 
-import javax.inject.Scope;
+@PerUser
+@Subcomponent(
+        modules = {
+                UserModule.class
+        }
+)
+public interface UserComponent {
 
-@Scope
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PerUser {
+    //------------------------------------------------------------------------
+    // Sub-modules
+    //------------------------------------------------------------------------
+    // TODO add sub-modules here
+
+    //------------------------------------------------------------------------
+    // Injection targets
+    //------------------------------------------------------------------------
+    // TODO specify injection targets
 }
+

@@ -1,4 +1,4 @@
-package org.hisp.dhis.android;
+package org.hisp.dhis.android.dashboard;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

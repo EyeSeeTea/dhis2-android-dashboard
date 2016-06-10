@@ -26,7 +26,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android;
+package org.hisp.dhis.android.dashboard;
 
 import android.app.Application;
 import android.content.Context;

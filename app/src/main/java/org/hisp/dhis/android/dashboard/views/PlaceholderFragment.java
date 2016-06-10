@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.views;
+package org.hisp.dhis.android.dashboard.views;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.hisp.dhis.android.R;
+import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 
 public class PlaceholderFragment extends BaseFragment {

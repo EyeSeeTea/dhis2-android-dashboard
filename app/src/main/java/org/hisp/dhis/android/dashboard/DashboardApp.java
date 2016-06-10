@@ -26,7 +26,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android;
+package org.hisp.dhis.android.dashboard;
 
 import android.app.Application;
 import android.content.Context;
@@ -35,7 +35,7 @@ import android.support.multidex.MultiDex;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 
-import org.hisp.dhis.android.views.HomeActivity;
+import org.hisp.dhis.android.dashboard.views.HomeActivity;
 import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.api.utils.LoggerImpl;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppModule;
@@ -56,11 +56,6 @@ public final class DashboardApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-//        Inject.init(this, App.class.getCanonicalName(), App.class.getCanonicalName());
-//
-//        NavigationHandler.loginActivity(DefaultLoginActivity.class);
-//        NavigationHandler.homeActivity(HomeActivity.class);
 
         init(this);
 

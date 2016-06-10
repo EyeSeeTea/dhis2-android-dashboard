@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.hisp.dhis.android">
+    package="org.hisp.dhis.android.dashboard">
 
     <application
         android:name=".DashboardApp"
