@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.dashboard.views;
+package org.hisp.dhis.android.dashboard.views.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
