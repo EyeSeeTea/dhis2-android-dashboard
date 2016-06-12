@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.dashboard.views;
+package org.hisp.dhis.android.dashboard.views.activities;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.views.fragments.DashboardContainerFragment;
 import org.hisp.dhis.client.sdk.ui.bindings.views.DefaultHomeActivity;
 import org.hisp.dhis.client.sdk.ui.fragments.WrapperFragment;
 
