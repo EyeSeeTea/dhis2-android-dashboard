@@ -6,7 +6,8 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.views.fragments.DashboardContainerFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationContainerFragment;
 import org.hisp.dhis.client.sdk.ui.bindings.views.DefaultHomeActivity;
 import org.hisp.dhis.client.sdk.ui.fragments.WrapperFragment;
 
@@ -42,7 +43,7 @@ public class HomeActivity extends DefaultHomeActivity {
                 break;
             }
             case DRAWER_INTERPRETATIONS_ID: {
-                attachFragment(WrapperFragment.newInstance(DashboardContainerFragment.class,
+                attachFragment(WrapperFragment.newInstance(InterpretationContainerFragment.class,
                         getString(R.string.drawer_item_interpretations)));
                 break;
             }
