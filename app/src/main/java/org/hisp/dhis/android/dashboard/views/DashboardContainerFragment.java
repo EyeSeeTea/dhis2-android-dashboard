@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 
-public class PlaceholderFragment extends BaseFragment {
+public class DashboardContainerFragment extends BaseFragment {
 
     @Nullable
     @Override

@@ -36,12 +36,12 @@ public class HomeActivity extends DefaultHomeActivity {
     protected boolean onItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case DRAWER_DASHBOARDS_ID: {
-                attachFragment(WrapperFragment.newInstance(PlaceholderFragment.class,
+                attachFragment(WrapperFragment.newInstance(DashboardContainerFragment.class,
                         getString(R.string.drawer_item_dashboards)));
                 break;
             }
             case DRAWER_INTERPRETATIONS_ID: {
-                attachFragment(WrapperFragment.newInstance(PlaceholderFragment.class,
+                attachFragment(WrapperFragment.newInstance(DashboardContainerFragment.class,
                         getString(R.string.drawer_item_interpretations)));
                 break;
             }
