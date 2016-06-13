@@ -38,7 +38,6 @@ import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -73,18 +72,6 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
-
-
-//        mToolbar.setNavigationOnClickListener(this);
-//        mToolbar.inflateMenu(R.menu.menu_dashboard_empty_fragment);
-//        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                return onMenuItemClicked(item);
-//            }
-//        });
-
 
         if (isDhisServiceBound() &&
                 !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
@@ -121,7 +108,7 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
                 .getColor(getContext(), android.R.color.white));
 
         if (getParentToolbar() != null) {
-            getParentToolbar().inflateMenu(R.menu.menu_refresh);
+            getParentToolbar().inflateMenu(R.menu.menu_dashboard_empty_fragment);
             getParentToolbar().setNavigationIcon(buttonDrawable);
             getParentToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
