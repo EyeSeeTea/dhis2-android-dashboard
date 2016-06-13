@@ -36,17 +36,17 @@ import dagger.Subcomponent;
 @PerUser
 @Subcomponent(
         modules = {
-                UserModule.class
+                DashboardModule.class
         }
 )
-public interface UserComponent {
+public interface DashboardComponent {
 
     //------------------------------------------------------------------------
     // Sub-modules
     //------------------------------------------------------------------------
     // TODO add sub-modules here
 
-        DashboardComponent plus(DashboardModule dashboardModule);
+
 
     //------------------------------------------------------------------------
     // Injection targets

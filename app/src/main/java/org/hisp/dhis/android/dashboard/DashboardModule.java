@@ -62,85 +62,53 @@ import dagger.Provides;
 
 import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
+// TODO add DefaultDashboardModule to SDK ui bindings commons
 @Module
-public class UserModule implements DefaultUserModule {
+public class DashboardModule implements DefaultDashboardModule {
 
-    public UserModule() {
-        this(null);
+    public DashboardModule() {
+        // explicit empty constructor
     }
 
-    public UserModule(String serverUrl) {
-        if (!isEmpty(serverUrl)) {
-            // it can throw exception in case if configuration has failed
-            Configuration configuration = new Configuration(serverUrl);
-            D2.configure(configuration).toBlocking().first();
-        }
-    }
-
+    // TODO Add dashboard interactor to SDK's D2.java
     @Provides
     @Nullable
     @PerUser
-    @Override
-    public CurrentUserInteractor providesCurrentUserInteractor() {
+    public DashboardInteractor providesDashboardInteractor() {
         if (D2.isConfigured()) {
-            return D2.me();
-        }
-
-        return null;
-    }
-
-    @Provides
-    @Nullable
-    @PerUser
-    public UserOrganisationUnitInteractor providesUserOrganisationUnitInteractor() {
-        if (D2.isConfigured()) {
-            return D2.me().organisationUnits();
+            return D2.dashboards();
         }
         return null;
     }
 
+    // TODO
     @Provides
     @PerUser
-    public LauncherPresenter providesLauncherPresenter(
-            @Nullable CurrentUserInteractor accountInteractor) {
-        return new LauncherPresenterImpl(accountInteractor);
+    public SyncWrapper provideSyncWrapper(
+    ) {
+        return new SyncWrapper(
+        );
     }
 
+    //  TODO
     @Provides
     @PerUser
-    public LoginPresenter providesLoginPresenter(
-            @Nullable CurrentUserInteractor accountInteractor,
-            ApiExceptionHandler apiExceptionHandler, Logger logger) {
-        return new LoginPresenterImpl(accountInteractor, apiExceptionHandler, logger);
+    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor
+    ) {
+        return new DashboardContainerFragmentPresenterImpl(dashboardInteractor);
     }
 
+    //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
     @Provides
     @PerUser
-    @Override
-    public ProfilePresenter providesProfilePresenter(
-            CurrentUserInteractor userInteractor, SyncDateWrapper dateWrapper, Logger logger) {
-        return new ProfilePresenterImpl(userInteractor, dateWrapper, logger);
+    public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor,
+            SessionPreferences sessionPreferences,
+            SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper,
+            ApiExceptionHandler apiExceptionHandler, Logger logger
+    ) {
+        return new DashboardEmptyFragmentPresenterImpl(dashboardInteractor,
+                sessionPreferences, syncDateWrapper, apiExceptionHandler, logger);
     }
-
-    @Override
-    public SettingsPresenter providesSettingsPresenter(AppPreferences appPreferences,
-                                                       AppAccountManager appAccountManager) {
-        return new SettingsPresenterImpl(appPreferences, appAccountManager);
-    }
-
-    @Provides
-    @PerUser
-    @Override
-    public HomePresenter providesHomePresenter(
-            CurrentUserInteractor currentUserInteractor, SyncDateWrapper syncDateWrapper, Logger logger) {
-        return new HomePresenterImpl(currentUserInteractor, syncDateWrapper, logger);
-    }
-
-    @Provides
-    @PerUser
-    public SettingsPresenter provideSettingsPresenter(
-            AppPreferences appPreferences, AppAccountManager appAccountManager) {
-        return new SettingsPresenterImpl(appPreferences, appAccountManager);
-    }
-
 }

@@ -49,9 +49,12 @@ import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
+
 public final class DashboardApp extends Application {
     private AppComponent appComponent;
     private UserComponent userComponent;
+    private DashboardComponent dashboardComponent;
 
     @Override
     public void onCreate() {
@@ -135,7 +138,23 @@ public final class DashboardApp extends Application {
                 .build();
     }
 
+    public DashboardComponent createDashboardComponent() {
+        isNull(userComponent, "UserComponent must not be null");
+
+        dashboardComponent = userComponent.plus(new DashboardModule());
+        return dashboardComponent;
+    }
+
     public UserComponent getUserComponent() {
         return userComponent;
     }
+
+    public DashboardComponent getDashboardComponent() {
+        return dashboardComponent;
+    }
+
+    public void releaseDashboardComponent() {
+        dashboardComponent = null;
+    }
+
 }
