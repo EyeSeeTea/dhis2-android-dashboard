@@ -28,7 +28,12 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
 import org.hisp.dhis.client.sdk.android.user.CurrentUserInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
@@ -37,6 +42,7 @@ import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.AppAccountManager;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultUserModule;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenter;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenterImpl;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.LauncherPresenter;
@@ -93,6 +99,17 @@ public class UserModule implements DefaultUserModule {
         return null;
     }
 
+    // TODO Add dashboard interactor to SDK's D2.java
+    @Provides
+    @Nullable
+    @PerUser
+    public DashboardInteractor providesDashboardInteractor() {
+        if (D2.isConfigured()) {
+            return D2.dashboards();
+        }
+        return null;
+    }
+
     @Provides
     @PerUser
     public LauncherPresenter providesLauncherPresenter(
@@ -135,5 +152,37 @@ public class UserModule implements DefaultUserModule {
     public SettingsPresenter provideSettingsPresenter(
             AppPreferences appPreferences, AppAccountManager appAccountManager) {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
+    }
+
+    // TODO
+    @Provides
+    @PerUser
+    public SyncWrapper provideSyncWrapper(
+    ) {
+
+        return new SyncWrapper(
+        );
+    }
+
+    //  TODO
+    @Provides
+    @PerUser
+    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
+
+    ) {
+        return new DashboardContainerFragmentPresenterImpl();
+    }
+
+    //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
+    @Provides
+    @PerUser
+    public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor,
+            SessionPreferences sessionPreferences,
+            SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper,
+            ApiExceptionHandler apiExceptionHandler, Logger logger
+    ) {
+        return new DashboardEmptyFragmentPresenterImpl(dashboardInteractor,
+                sessionPreferences, syncDateWrapper, apiExceptionHandler, logger);
     }
 }
