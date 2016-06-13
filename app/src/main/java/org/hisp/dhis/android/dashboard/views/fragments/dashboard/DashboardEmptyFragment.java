@@ -90,6 +90,22 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        logger.d(TAG, "onResume()");
+        dashboardEmptyFragmentPresenter.attachView(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        logger.d(TAG, "onPause()");
+        dashboardEmptyFragmentPresenter.detachView();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(IS_LOADING, mProgressBar
                 .getVisibility() == View.VISIBLE);
