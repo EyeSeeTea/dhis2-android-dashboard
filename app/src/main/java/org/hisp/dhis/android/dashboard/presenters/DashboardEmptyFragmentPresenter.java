@@ -32,7 +32,10 @@ import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
 //TODO  Write Code for DashboardContainerFragmentPresenter
 
-public interface DashboardContainerFragmentPresenter extends Presenter {
+public interface DashboardEmptyFragmentPresenter extends Presenter {
 
+    void sync();
+
+    void handleError(final Throwable throwable);
 
 }

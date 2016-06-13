@@ -1,26 +1,37 @@
 package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.client.sdk.models.event.Event;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
+
+import javax.inject.Inject;
 
 /**
  *         This fragment is used to make decision, whether to show fragment with
  *         dashboards or fragment with message.
  */
 
-    //TODO  Code for fetching data
+    //TODO  Code for checking fetched data to make decision between ViewPager and EmptyFragment
 
 public class DashboardContainerFragment extends BaseFragment implements DashboardContainerFragmentView{
 
     private static final String TAG = DashboardContainerFragment.class.getSimpleName();
+
+    @Inject
+    DashboardContainerFragmentPresenter dashboardContainerFragmentPresenter;
+    @Inject
+    Logger logger;
 
     @Nullable
     @Override
@@ -30,9 +41,13 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((DashboardApp) getActivity().getApplication())
+                .getUserComponent().inject(this);
+
         //TODO  Some initiation for loading data
+
     }
 
     private void attachFragment(Fragment fragment, String tag) {
@@ -46,23 +61,19 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     }
 
     @Override
-    public void showProgressBar() {
+    public void onResume() {
+        super.onResume();
 
+        logger.d(TAG, "onResume()");
+        dashboardContainerFragmentPresenter.attachView(this);
     }
 
     @Override
-    public void hideProgressBar() {
+    public void onPause() {
+        super.onPause();
 
-    }
-
-    @Override
-    public void showError(String message) {
-
-    }
-
-    @Override
-    public void showUnexpectedError(String message) {
-
+        logger.d(TAG, "onPause()");
+        dashboardContainerFragmentPresenter.detachView();
     }
 
     @Override
@@ -98,4 +109,5 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         }
     }
      **/
+
 }

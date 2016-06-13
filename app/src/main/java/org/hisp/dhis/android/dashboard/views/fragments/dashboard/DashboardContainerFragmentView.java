@@ -8,14 +8,6 @@ import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 
 public interface DashboardContainerFragmentView extends View{
 
-    void showProgressBar();
-
-    void hideProgressBar();
-
-    void showError(String message);
-
-    void showUnexpectedError(String message);
-
     void navigationAfterLoadingData(Event event, Boolean hasData);
 
 }
