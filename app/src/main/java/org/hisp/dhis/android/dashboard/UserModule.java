@@ -168,9 +168,9 @@ public class UserModule implements DefaultUserModule {
     @Provides
     @PerUser
     public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
-
+            @Nullable DashboardInteractor dashboardInteractor
     ) {
-        return new DashboardContainerFragmentPresenterImpl();
+        return new DashboardContainerFragmentPresenterImpl(dashboardInteractor);
     }
 
     //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
