@@ -28,6 +28,9 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragment;
+
 import dagger.Subcomponent;
 
 @PerUser
@@ -47,5 +50,12 @@ public interface UserComponent {
     // Injection targets
     //------------------------------------------------------------------------
     // TODO specify injection targets
+
+        //fragments
+
+        void inject(DashboardContainerFragment dashboardContainerFragment);
+        void inject(DashboardEmptyFragment dashboardEmptyFragment);
+
+
 }
 
