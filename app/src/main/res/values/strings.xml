@@ -1,8 +1,64 @@
 <resources>
     <string name="app_name">DHIS2 Dashboard</string>
-
     <string name="drawer_item_dashboards">Dashboards</string>
     <string name="drawer_item_interpretations">Interpretations</string>
-
     <string name="placeholder">Something important goes here</string>
+
+
+    <string name="toolbar_title">DHIS2</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_dashboard_item_detail">DashboardItemDetailActivity</string>
+    <string name="title_activity_interpretation_comments">InterpretationCommentsActivity</string>
+    <string name="description">ImageView description</string>
+
+    <!-- START Actions -->
+    <string name="add">Add</string>
+    <string name="update">Update</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="manage">Manage</string>
+    <string name="search">Search</string>
+    <string name="refresh">Refresh</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="create">Create</string>
+    <!-- END -->
+
+    <!-- START DashboardFragment -->
+    <string name="add_dashboard">Add dashboard</string>
+    <string name="add_dashboard_item">Add dashboard item</string>
+    <string name="dashboard_name">Dashboard name</string>
+    <string name="manage_dashboard">Manage dashboard</string>
+    <string name="share_interpretation">Share interpretation</string>
+    <string name="edit_name">Edit name</string>
+    <string name="no_dashboards">No dashboards</string>
+    <string name="enter_valid_name">Please, enter valid name</string>
+
+    <string name="click_the_search_button">
+        Click the search button to add a new dashboard item.
+    </string>
+
+    <string name="charts">Charts</string>
+    <string name="event_charts">Event charts</string>
+    <string name="maps">Maps</string>
+    <string name="report_tables">Report tables</string>
+    <string name="event_reports">Event reports</string>
+    <string name="users">Users</string>
+    <string name="reports">Reports</string>
+    <string name="resources">Resources</string>
+    <string name="unsupported_dashboard_item_type">Unsupported dashboard item type.</string>
+    <!-- END DashboardFragment -->
+
+    <!-- START Interpretations -->
+    <string name="add_comment">Add comment</string>
+    <string name="edit_comment">Edit comment</string>
+    <string name="edit_text">Edit text</string>
+    <string name="interpretation_comment">Interpretation comment</string>
+    <string name="interpretation_text">Interpretation text</string>
+    <string name="create_interpretation">Create interpretation</string>
+    <string name="no_interpretations">No interpretations</string>
+    <string name="successfully_created_interpretation">Successfully created interpretation</string>
+    <string name="unsupported_interpretation_type">Unsupported interpretation type.</string>
+    <!-- END Interpretations -->
+
 </resources>
