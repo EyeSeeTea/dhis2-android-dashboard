@@ -15,6 +15,8 @@
     <string name="authority">org.hisp.dhis.android.dashboard.model.provider</string>
     <string name="account_type">org.hisp.dhis.android.dashboard</string>
 
+    <string name="option_confirm">Ok</string>
+
     <!-- START Actions -->
     <string name="add">Add</string>
     <string name="update">Update</string>

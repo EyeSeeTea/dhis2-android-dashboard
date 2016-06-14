@@ -29,8 +29,10 @@ package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +41,7 @@ import android.support.v7.widget.Toolbar;
 
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
+import org.hisp.dhis.client.sdk.ui.adapters.ReportEntityAdapter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -53,9 +56,14 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class DashboardEmptyFragment extends BaseFragment implements DashboardEmptyFragmentView{
     public static final String TAG = DashboardEmptyFragment.class.getSimpleName();
-    private static final String IS_LOADING = "state:isLoading";
+    private static final String STATE_IS_LOADING = "state:isLoading";
 
+    // Progress bar
     SmoothProgressBar mProgressBar;
+
+    // events
+    AlertDialog alertDialog;
+
 
     @Inject
     DashboardEmptyFragmentPresenter dashboardEmptyFragmentPresenter;
@@ -82,11 +90,18 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         boolean isLoading = isDhisServiceBound() &&
                 getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
         if ((savedInstanceState != null &&
-                savedInstanceState.getBoolean(IS_LOADING)) || isLoading) {
+                savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_IS_LOADING, mProgressBar
+                .getVisibility() == View.VISIBLE);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -102,19 +117,37 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         super.onPause();
 
         logger.d(TAG, "onPause()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
         dashboardEmptyFragmentPresenter.detachView();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(IS_LOADING, mProgressBar
-                .getVisibility() == View.VISIBLE);
-        super.onSaveInstanceState(outState);
+    public void showProgressBar() {
+        logger.d(TAG, "showProgressBar()");
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onClick(View v) {
-        toggleNavigationDrawer();
+    public void hideProgressBar() {
+        logger.d(TAG, "hideProgressBar()");
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return true;
     }
 
     private void setupToolbar() {
@@ -167,27 +200,15 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         }
     }
 
-    @Override
-    public void showProgressBar() {
-
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
-
-    @Override
-    public void hideProgressBar() {
-
-    }
-
-    @Override
-    public void showError(String message) {
-
-    }
-
-    @Override
-    public void showUnexpectedError(String message) {
-
-    }
-
-
-
 
 }
