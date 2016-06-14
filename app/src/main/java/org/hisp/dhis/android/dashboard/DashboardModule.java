@@ -29,20 +29,14 @@
 package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
-import org.hisp.dhis.client.sdk.android.api.D2;
-import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 
 import org.hisp.dhis.client.sdk.utils.Logger;
-
-import javax.annotation.Nullable;
 
 import dagger.Module;
 import dagger.Provides;
@@ -52,31 +46,6 @@ public class DashboardModule {
 
     public DashboardModule() {
         // explicit empty constructor
-    }
-
-    /**
-    // TODO Add dashboard interactor to SDK's D2.java
-    @Provides
-    @Nullable
-    @PerUser
-    public DashboardInteractor providesDashboardInteractor() {
-        if (D2.isConfigured()) {
-            return D2.dashboards();
-        }
-        return null;
-    }
-    **/
-
-
-    //  TODO
-    @Provides
-    @PerUser
-    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
-//            @Nullable DashboardInteractor dashboardInteractor
-    ) {
-        return new DashboardContainerFragmentPresenterImpl(
-//                dashboardInteractor
-        );
     }
 
     //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper

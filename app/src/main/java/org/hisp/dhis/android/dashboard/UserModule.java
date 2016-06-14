@@ -29,9 +29,10 @@
 package org.hisp.dhis.android.dashboard;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
@@ -43,6 +44,7 @@ import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManager;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManagerImpl;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultNotificationHandler;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultNotificationHandlerImpl;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultUserModule;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenter;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenterImpl;
@@ -104,6 +106,20 @@ public class UserModule implements DefaultUserModule {
         return null;
     }
 
+
+    /**
+     // TODO Add dashboard interactor to SDK's D2.java
+     @Provides
+     @Nullable
+     @PerUser
+     public DashboardInteractor providesDashboardInteractor() {
+     if (D2.isConfigured()) {
+     return D2.dashboards();
+     }
+     return null;
+     }
+     **/
+
     @Provides
     @PerUser
     public LauncherPresenter providesLauncherPresenter(
@@ -119,20 +135,27 @@ public class UserModule implements DefaultUserModule {
         return new LoginPresenterImpl(accountInteractor, apiExceptionHandler, logger);
     }
 
-    @Provides
-    @PerUser
-    @Override
-    public ProfilePresenter providesProfilePresenter(CurrentUserInteractor currentUserInteractor,
-                                                     SyncDateWrapper syncDateWrapper,
-                                                     DefaultAppAccountManager appAccountManager,
-                                                     Logger logger) {
-        return new ProfilePresenterImpl(currentUserInteractor, syncDateWrapper, appAccountManager, logger);
-    }
 
     @Override
     public SettingsPresenter providesSettingsPresenter(AppPreferences appPreferences,
                                                        DefaultAppAccountManager appAccountManager) {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
+    }
+
+    @Override
+    public DefaultAppAccountManager providesAppAccountManager(Context context,
+                                                              AppPreferences appPreferences,
+                                                              CurrentUserInteractor currentUserInteractor,
+                                                              Logger logger) {
+        return new DefaultAppAccountManagerImpl(
+                context, appPreferences, currentUserInteractor, authority, accountType, logger);
+    }
+
+    @Provides
+    @PerUser
+    @Override
+    public DefaultNotificationHandler providesNotificationHandler(Context context) {
+        return new DefaultNotificationHandlerImpl(context);
     }
 
     @Provides
@@ -144,17 +167,14 @@ public class UserModule implements DefaultUserModule {
     }
 
     @Provides
-    @PerUser
     @Override
-    public DefaultAppAccountManager providesAppAccountManager(Context context, AppPreferences appPreferences, CurrentUserInteractor currentUserInteractor, Logger logger) {
-        return new DefaultAppAccountManagerImpl(context,appPreferences,currentUserInteractor, authority, accountType, logger);
-    }
-
-    @Provides
     @PerUser
-    @Override
-    public DefaultNotificationHandler providesNotificationHandler(Context context) {
-        return null;
+    public ProfilePresenter providesProfilePresenter(CurrentUserInteractor currentUserInteractor,
+                                                     SyncDateWrapper syncDateWrapper,
+                                                     DefaultAppAccountManager appAccountManager,
+                                                     Logger logger) {
+        return new ProfilePresenterImpl(currentUserInteractor, syncDateWrapper, appAccountManager,
+                logger);
     }
 
     @Provides
@@ -164,12 +184,25 @@ public class UserModule implements DefaultUserModule {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
 
+
     // TODO Add more arguements to SyncWrapper
-     @Provides
-     @PerUser
-     public SyncWrapper providesSyncWrapper(
-             @Nullable DashboardInteractor dashboardInteractor) {
-     return new SyncWrapper(dashboardInteractor);
-     }
+    @Provides
+    @PerUser
+    public SyncWrapper providesSyncWrapper(
+            @Nullable DashboardInteractor dashboardInteractor) {
+        return new SyncWrapper(dashboardInteractor);
+    }
+
+    //  TODO
+    @Provides
+    @PerUser
+    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
+//            @Nullable DashboardInteractor dashboardInteractor
+    ) {
+        return new DashboardContainerFragmentPresenterImpl(
+//                dashboardInteractor
+        );
+    }
+
 
 }

@@ -3,6 +3,7 @@ package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.UserComponent;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -45,20 +47,20 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         super.onCreate(savedInstanceState);
 
 
-        DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-        // first time fragment is created
-        if (savedInstanceState == null) {
-            // it means we found old component and we have to release it
-            if (dashboardComponent != null) {
-                // create new instance of component
-                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
-            }
-            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
-        } else {
-            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-        }
-        // inject dependencies
-        dashboardComponent.inject(this);
+        UserComponent userComponent = ((DashboardApp) getActivity().getApplication()).getUserComponent();
+//        // first time fragment is created
+//        if (savedInstanceState == null) {
+//            // it means we found old component and we have to release it
+//            if (dashboardComponent != null) {
+//                // create new instance of component
+//                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
+//            }
+//            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
+//        } else {
+//            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+//        }
+//        // inject dependencies
+        userComponent.inject(this);
 
         //TODO  Write onLoadData() code in DashboardContainerFragmentPresenterImpl
         checkForData();
@@ -89,6 +91,18 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        logger.d(TAG, "onDestroy()");
+        dashboardContainerFragmentPresenter.detachView();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return true;
+    }
+
+    @Override
     public void navigationAfterLoadingData(Boolean hasData) {
         if (hasData) {
             // we don't want to attach the same fragment
@@ -105,6 +119,7 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     }
 
     private void checkForData(){
+        logger.d(TAG, "checkForData()");
         dashboardContainerFragmentPresenter.onLoadData();
     }
 
