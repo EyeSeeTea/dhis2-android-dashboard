@@ -27,11 +27,11 @@ import javax.inject.Inject;
     //TODO  Code for checking fetched data to make decision between ViewPager and EmptyFragment
 
 public class DashboardContainerFragment extends BaseFragment implements DashboardContainerFragmentView{
-
     private static final String TAG = DashboardContainerFragment.class.getSimpleName();
 
     @Inject
     DashboardContainerFragmentPresenter dashboardContainerFragmentPresenter;
+
     @Inject
     Logger logger;
 
@@ -83,16 +83,6 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         checkForData();
     }
 
-    private void attachFragment(Fragment fragment, String tag) {
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.fragment_content_frame, fragment, tag)
-                .commitAllowingStateLoss();
-    }
-
-    private boolean isFragmentAttached(String tag) {
-        return getChildFragmentManager().findFragmentByTag(tag) != null;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -132,6 +122,16 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
                         PlaceholderFragment.TAG);
             }
         }
+    }
+
+    private void attachFragment(Fragment fragment, String tag) {
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.fragment_content_frame, fragment, tag)
+                .commitAllowingStateLoss();
+    }
+
+    private boolean isFragmentAttached(String tag) {
+        return getChildFragmentManager().findFragmentByTag(tag) != null;
     }
 
     private void checkForData(){
