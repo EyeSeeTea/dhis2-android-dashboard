@@ -58,17 +58,17 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     public static final String TAG = DashboardEmptyFragment.class.getSimpleName();
     private static final String STATE_IS_LOADING = "state:isLoading";
 
+    @Inject
+    DashboardEmptyFragmentPresenter dashboardEmptyFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     // Progress bar
     SmoothProgressBar mProgressBar;
 
     // events
     AlertDialog alertDialog;
-
-
-    @Inject
-    DashboardEmptyFragmentPresenter dashboardEmptyFragmentPresenter;
-    @Inject
-    Logger logger;
 
     @Nullable
     @Override
@@ -78,7 +78,9 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        // TODO to include super or not
+//        super.onViewCreated(view, savedInstanceState);
+
         setupToolbar();
 
         if (isDhisServiceBound() &&

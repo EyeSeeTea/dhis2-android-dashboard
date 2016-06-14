@@ -49,8 +49,10 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         UserComponent userComponent = ((DashboardApp) getActivity().getApplication()).getUserComponent();
         userComponent.inject(this);
 
+        // TODO consult Araz about decision between User and Dashboard Component,
+        // chosen one will contain the Presenter in the corresponding Module
+
         /**
-         *
                 // first time fragment is created
         if (savedInstanceState == null) {
             // it means we found old component and we have to release it
