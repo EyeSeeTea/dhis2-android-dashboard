@@ -34,25 +34,11 @@ import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresente
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
-import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
-import org.hisp.dhis.client.sdk.android.user.CurrentUserInteractor;
-import org.hisp.dhis.client.sdk.core.common.network.Configuration;
-import org.hisp.dhis.client.sdk.ui.AppPreferences;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.AppAccountManager;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultUserModule;
+
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenter;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenterImpl;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.LauncherPresenter;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.LauncherPresenterImpl;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.LoginPresenter;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.LoginPresenterImpl;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.ProfilePresenter;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.ProfilePresenterImpl;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.SettingsPresenter;
-import org.hisp.dhis.client.sdk.ui.bindings.presenters.SettingsPresenterImpl;
+
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import javax.annotation.Nullable;
@@ -60,11 +46,8 @@ import javax.annotation.Nullable;
 import dagger.Module;
 import dagger.Provides;
 
-import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
-
-// TODO add DefaultDashboardModule to SDK ui bindings commons
 @Module
-public class DashboardModule implements DefaultDashboardModule {
+public class DashboardModule {
 
     public DashboardModule() {
         // explicit empty constructor
