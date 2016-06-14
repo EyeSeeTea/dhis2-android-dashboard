@@ -70,8 +70,10 @@ public final class DashboardApp extends Application {
                 .build();
         Fabric.with(this, crashlytics);
 
-        final String authority = getString(R.string.authority);
-        final String accountType = getString(R.string.account_type);
+//        final String authority = getString(R.string.authority);
+//        final String accountType = getString(R.string.account_type);
+        final String authority = "";
+        final String accountType = "";
 
         final AppModule appModule = new AppModule(this);
         final UserModule userModule = new UserModule(authority, accountType);
