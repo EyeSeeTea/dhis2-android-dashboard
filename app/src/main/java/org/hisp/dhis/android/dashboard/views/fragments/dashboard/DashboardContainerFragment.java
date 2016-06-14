@@ -109,7 +109,6 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void onDestroy() {
         super.onDestroy();
         logger.d(TAG, "onDestroy()");
-        dashboardContainerFragmentPresenter.detachView();
     }
 
     @Override
