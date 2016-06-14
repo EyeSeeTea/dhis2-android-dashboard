@@ -8,6 +8,6 @@ import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 
 public interface DashboardContainerFragmentView extends View{
 
-    void navigationAfterLoadingData(Event event, Boolean hasData);
+    void navigationAfterLoadingData(Boolean hasData);
 
 }

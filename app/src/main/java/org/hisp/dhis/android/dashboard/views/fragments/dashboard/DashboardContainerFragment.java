@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
-import org.hisp.dhis.client.sdk.models.event.Event;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -44,10 +43,10 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((DashboardApp) getActivity().getApplication())
-                .getUserComponent().inject(this);
+                .getDashboardComponent().inject(this);
 
-        //TODO  Some initiation for loading data
-
+        //TODO  Write onLoadData() code in DashboardContainerFragmentPresenterImpl
+        checkForData();
     }
 
     private void attachFragment(Fragment fragment, String tag) {
@@ -63,7 +62,6 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     @Override
     public void onResume() {
         super.onResume();
-
         logger.d(TAG, "onResume()");
         dashboardContainerFragmentPresenter.attachView(this);
     }
@@ -71,13 +69,12 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     @Override
     public void onPause() {
         super.onPause();
-
         logger.d(TAG, "onPause()");
         dashboardContainerFragmentPresenter.detachView();
     }
 
     @Override
-    public void navigationAfterLoadingData(Event event, Boolean hasData) {
+    public void navigationAfterLoadingData(Boolean hasData) {
         if (hasData) {
             // we don't want to attach the same fragment
             if (!isFragmentAttached(DashboardViewPagerFragment.TAG)) {
@@ -92,22 +89,8 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         }
     }
 
-    // TODO Implement Query of Dashboards
-
-    /**
-    private static class DashboardsQuery implements Query<Boolean> {
-
-        @Override
-        public Boolean query(Context context) {
-            List<Dashboard> dashboards = new Select()
-                    .from(Dashboard.class)
-                    .where(Condition.column(Dashboard$Table
-                            .STATE).isNot(State.TO_DELETE.toString()))
-                    .queryList();
-
-            return dashboards != null && dashboards.size() > 0;
-        }
+    private void checkForData(){
+        dashboardContainerFragmentPresenter.onLoadData();
     }
-     **/
 
 }

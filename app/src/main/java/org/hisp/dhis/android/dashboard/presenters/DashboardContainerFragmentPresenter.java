@@ -34,5 +34,7 @@ import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
 public interface DashboardContainerFragmentPresenter extends Presenter {
 
-
+    void onLoadData(
+            //Some arguements to search dashboard data
+    );
 }

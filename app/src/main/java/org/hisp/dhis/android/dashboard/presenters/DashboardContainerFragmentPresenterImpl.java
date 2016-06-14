@@ -44,6 +44,9 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     private DashboardContainerFragmentView dashboardContainerFragmentView;
     private boolean isSyncing;
 
+    private static final Boolean TEST_BOOL_EMPTY_DASHBOARD = false;
+    private static final Boolean TEST_BOOL_VIEWPAGER = true;
+
     // TODO
     public DashboardContainerFragmentPresenterImpl(DashboardInteractor dashboardInteractor) {
         this.dashboardInteractor = dashboardInteractor;
@@ -61,4 +64,17 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
         dashboardContainerFragmentView = null;
     }
 
+    @Override
+    public void onLoadData() {
+        //TODO code to check if data exists
+        if(TEST_BOOL_VIEWPAGER){
+            if (dashboardContainerFragmentView != null) {
+                dashboardContainerFragmentView.navigationAfterLoadingData(TEST_BOOL_VIEWPAGER);
+            }
+        } else{
+            if (dashboardContainerFragmentView != null) {
+                dashboardContainerFragmentView.navigationAfterLoadingData(TEST_BOOL_EMPTY_DASHBOARD);
+            }
+        }
+    }
 }
