@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
@@ -42,8 +43,22 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((DashboardApp) getActivity().getApplication())
-                .getDashboardComponent().inject(this);
+
+
+        DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (dashboardComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
+            }
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
+        } else {
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        }
+        // inject dependencies
+        dashboardComponent.inject(this);
 
         //TODO  Write onLoadData() code in DashboardContainerFragmentPresenterImpl
         checkForData();
@@ -77,14 +92,14 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void navigationAfterLoadingData(Boolean hasData) {
         if (hasData) {
             // we don't want to attach the same fragment
-            if (!isFragmentAttached(DashboardViewPagerFragment.TAG)) {
-                attachFragment(new DashboardViewPagerFragment(),
-                        DashboardViewPagerFragment.TAG);
+            if (!isFragmentAttached(PlaceholderFragment.TAG)) {
+                attachFragment(new PlaceholderFragment(),
+                        PlaceholderFragment.TAG);
             }
         } else {
-            if (!isFragmentAttached(DashboardEmptyFragment.TAG)) {
-                attachFragment(new DashboardEmptyFragment(),
-                        DashboardEmptyFragment.TAG);
+            if (!isFragmentAttached(PlaceholderFragment.TAG)) {
+                attachFragment(new PlaceholderFragment(),
+                        PlaceholderFragment.TAG);
             }
         }
     }
