@@ -28,21 +28,20 @@
 
 package org.hisp.dhis.android.dashboard;
 
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
-import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
-import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
+import android.content.Context;
+import android.support.annotation.NonNull;
+
 import org.hisp.dhis.client.sdk.android.api.D2;
-import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
 import org.hisp.dhis.client.sdk.android.user.CurrentUserInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
 import org.hisp.dhis.client.sdk.ui.AppPreferences;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.AppAccountManager;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManager;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManagerImpl;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultNotificationHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultUserModule;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenter;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.HomePresenterImpl;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.LauncherPresenter;
@@ -64,12 +63,16 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
 @Module
 public class UserModule implements DefaultUserModule {
+    private final String authority;
+    private final String accountType;
 
-    public UserModule() {
-        this(null);
+    public UserModule(@NonNull String authority, @NonNull String accountType) {
+        this(authority, accountType, null);
     }
 
-    public UserModule(String serverUrl) {
+    public UserModule(@NonNull String authority, @NonNull String accountType, String serverUrl) {
+        this.authority = authority;
+        this.accountType = accountType;
         if (!isEmpty(serverUrl)) {
             // it can throw exception in case if configuration has failed
             Configuration configuration = new Configuration(serverUrl);
@@ -117,14 +120,16 @@ public class UserModule implements DefaultUserModule {
     @Provides
     @PerUser
     @Override
-    public ProfilePresenter providesProfilePresenter(
-            CurrentUserInteractor userInteractor, SyncDateWrapper dateWrapper, Logger logger) {
-        return new ProfilePresenterImpl(userInteractor, dateWrapper, logger);
+    public ProfilePresenter providesProfilePresenter(CurrentUserInteractor currentUserInteractor,
+                                                     SyncDateWrapper syncDateWrapper,
+                                                     DefaultAppAccountManager appAccountManager,
+                                                     Logger logger) {
+        return new ProfilePresenterImpl(currentUserInteractor, syncDateWrapper, appAccountManager, logger);
     }
 
     @Override
     public SettingsPresenter providesSettingsPresenter(AppPreferences appPreferences,
-                                                       AppAccountManager appAccountManager) {
+                                                       DefaultAppAccountManager appAccountManager) {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
 
@@ -138,8 +143,22 @@ public class UserModule implements DefaultUserModule {
 
     @Provides
     @PerUser
+    @Override
+    public DefaultAppAccountManager providesAppAccountManager(Context context, AppPreferences appPreferences, CurrentUserInteractor currentUserInteractor, Logger logger) {
+        return new DefaultAppAccountManagerImpl(context,appPreferences,currentUserInteractor, authority, accountType, logger);
+    }
+
+    @Provides
+    @PerUser
+    @Override
+    public DefaultNotificationHandler providesNotificationHandler(Context context) {
+        return null;
+    }
+
+    @Provides
+    @PerUser
     public SettingsPresenter provideSettingsPresenter(
-            AppPreferences appPreferences, AppAccountManager appAccountManager) {
+            AppPreferences appPreferences, DefaultAppAccountManager appAccountManager) {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
 

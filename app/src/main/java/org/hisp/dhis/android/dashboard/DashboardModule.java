@@ -84,7 +84,7 @@ public class DashboardModule implements DefaultDashboardModule {
     // TODO
     @Provides
     @PerUser
-    public SyncWrapper provideSyncWrapper(
+    public SyncWrapper providesSyncWrapper(
     ) {
         return new SyncWrapper(
         );
