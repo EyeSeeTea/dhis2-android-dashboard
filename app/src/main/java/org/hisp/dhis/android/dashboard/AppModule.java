@@ -53,7 +53,7 @@ import dagger.Provides;
 public class AppModule implements DefaultAppModule {
     private final Application application;
 
-    public AppModule(Application application, String authority, String accountType) {
+    public AppModule(Application application) {
         this.application = application;
     }
 
