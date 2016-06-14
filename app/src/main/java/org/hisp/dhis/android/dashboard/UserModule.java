@@ -31,7 +31,9 @@ package org.hisp.dhis.android.dashboard;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
 import org.hisp.dhis.client.sdk.android.user.CurrentUserInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
@@ -161,5 +163,14 @@ public class UserModule implements DefaultUserModule {
             AppPreferences appPreferences, DefaultAppAccountManager appAccountManager) {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
+
+    // TODO
+
+     @Provides
+     @PerUser
+     public SyncWrapper providesSyncWrapper(
+             @Nullable DashboardInteractor dashboardInteractor) {
+     return new SyncWrapper(dashboardInteractor);
+     }
 
 }

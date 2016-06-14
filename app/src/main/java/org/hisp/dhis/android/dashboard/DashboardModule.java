@@ -28,6 +28,7 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
@@ -53,6 +54,7 @@ public class DashboardModule {
         // explicit empty constructor
     }
 
+    /**
     // TODO Add dashboard interactor to SDK's D2.java
     @Provides
     @Nullable
@@ -63,15 +65,8 @@ public class DashboardModule {
         }
         return null;
     }
+    **/
 
-    // TODO
-    @Provides
-    @PerUser
-    public SyncWrapper providesSyncWrapper(
-    ) {
-        return new SyncWrapper(
-        );
-    }
 
     //  TODO
     @Provides
@@ -88,10 +83,13 @@ public class DashboardModule {
     public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
             @Nullable DashboardInteractor dashboardInteractor,
             SessionPreferences sessionPreferences,
-            SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper,
+            SyncDateWrapper syncDateWrapper,
+            SyncWrapper syncWrapper,
             ApiExceptionHandler apiExceptionHandler, Logger logger
     ) {
         return new DashboardEmptyFragmentPresenterImpl(dashboardInteractor,
-                sessionPreferences, syncDateWrapper, apiExceptionHandler, logger);
+                sessionPreferences, syncDateWrapper,
+                syncWrapper,
+                apiExceptionHandler, logger);
     }
 }

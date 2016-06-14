@@ -28,6 +28,7 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
+import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
@@ -48,6 +49,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
 
     private final SessionPreferences sessionPreferences;
     private final SyncDateWrapper syncDateWrapper;
+    private final SyncWrapper syncWrapper;
     private final ApiExceptionHandler apiExceptionHandler;
 //  TODO          private final SyncWrapper syncWrapper , add to constructor as well
     private final Logger logger;
@@ -59,12 +61,14 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     public DashboardEmptyFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
                                                SessionPreferences sessionPreferences,
                                                SyncDateWrapper syncDateWrapper,
+                                               SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
 
         this.dashboardInteractor = dashboardInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
+        this.syncWrapper = syncWrapper;
         this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
         this.hasSyncedBefore = false;
@@ -86,7 +90,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         }
 
         // TODO
-        doSomethingToLoadDashboards();
+//        doSomethingToLoadDashboards();
     }
 
     @Override
