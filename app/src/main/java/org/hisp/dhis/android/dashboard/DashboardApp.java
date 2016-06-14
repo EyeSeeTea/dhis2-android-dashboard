@@ -70,8 +70,12 @@ public final class DashboardApp extends Application {
                 .build();
         Fabric.with(this, crashlytics);
 
+        final String authority = getString(R.string.authority);
+        final String accountType = getString(R.string.account_type);
+
         final AppModule appModule = new AppModule(this);
-        final UserModule userModule = new UserModule("","");
+        final UserModule userModule = new UserModule(authority, accountType);
+
 
         // Global dependency graph
         appComponent = DaggerAppComponent.builder()
@@ -90,7 +94,7 @@ public final class DashboardApp extends Application {
 
             @Override
             public DefaultUserModule provideUserModule(String serverUrl) {
-                UserModule userModule = new UserModule("", "", serverUrl);
+                UserModule userModule = new UserModule(serverUrl,authority, accountType);
 
                 // creating new component
                 userComponent = appComponent.plus(userModule);

@@ -68,11 +68,11 @@ public class UserModule implements DefaultUserModule {
     private final String authority;
     private final String accountType;
 
-    public UserModule(@NonNull String authority, @NonNull String accountType) {
-        this(authority, accountType, null);
+    public UserModule(String authority, String accountType) {
+        this(null, authority, accountType);
     }
 
-    public UserModule(@NonNull String authority, @NonNull String accountType, String serverUrl) {
+    public UserModule(String serverUrl, String authority, String accountType) {
         this.authority = authority;
         this.accountType = accountType;
         if (!isEmpty(serverUrl)) {
@@ -164,8 +164,7 @@ public class UserModule implements DefaultUserModule {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
 
-    // TODO
-
+    // TODO Add more arguements to SyncWrapper
      @Provides
      @PerUser
      public SyncWrapper providesSyncWrapper(
