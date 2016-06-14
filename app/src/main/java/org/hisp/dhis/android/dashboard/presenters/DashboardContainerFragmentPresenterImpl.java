@@ -32,6 +32,9 @@ import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContai
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
+import org.hisp.dhis.client.sdk.utils.Logger;
+
+import javax.inject.Inject;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
@@ -43,6 +46,7 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     private boolean hasSyncedBefore;
     private DashboardContainerFragmentView dashboardContainerFragmentView;
     private boolean isSyncing;
+    private final Logger logger;
 
     private static final Boolean TEST_BOOL_EMPTY_DASHBOARD = false;
     private static final Boolean TEST_BOOL_VIEWPAGER = true;
@@ -50,15 +54,18 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     // TODO
     public DashboardContainerFragmentPresenterImpl(
 //            DashboardInteractor dashboardInteractor
+            Logger logger
     ) {
 //        this.dashboardInteractor = dashboardInteractor;
         this.hasSyncedBefore = false;
+        this.logger = logger;
     }
-
 
     public void attachView(View view) {
         isNull(view, "DashboardContainerFragmentView must not be null");
-        dashboardContainerFragmentView = (DashboardContainerFragment) view;
+        if(dashboardContainerFragmentView==null) {
+            dashboardContainerFragmentView = (DashboardContainerFragment) view;
+        }
     }
 
     @Override
@@ -68,8 +75,12 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
 
     @Override
     public void onLoadData() {
-        //TODO code to check if data exists
+        //TODO background code to check if data exists with callback to Fragment
+        logger.d(TAG, "checkForData()");
         if(TEST_BOOL_VIEWPAGER){
+            // 2 Conditions :
+            // if Empty fragment of container has to be loaded first, check for !=null
+            // if onLoad() has to be done before loading empty fragment, do not check for !=null
             if (dashboardContainerFragmentView != null) {
                 dashboardContainerFragmentView.navigationAfterLoadingData(TEST_BOOL_VIEWPAGER);
             }

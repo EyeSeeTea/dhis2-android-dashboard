@@ -198,9 +198,11 @@ public class UserModule implements DefaultUserModule {
     @PerUser
     public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
 //            @Nullable DashboardInteractor dashboardInteractor
+            Logger logger
     ) {
         return new DashboardContainerFragmentPresenterImpl(
 //                dashboardInteractor
+                logger
         );
     }
 

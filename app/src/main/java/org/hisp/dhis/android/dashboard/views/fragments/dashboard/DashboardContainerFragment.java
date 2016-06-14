@@ -46,21 +46,36 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         UserComponent userComponent = ((DashboardApp) getActivity().getApplication()).getUserComponent();
-//        // first time fragment is created
-//        if (savedInstanceState == null) {
-//            // it means we found old component and we have to release it
-//            if (dashboardComponent != null) {
-//                // create new instance of component
-//                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
-//            }
-//            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
-//        } else {
-//            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-//        }
-//        // inject dependencies
         userComponent.inject(this);
+
+        /**
+         *
+                // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (dashboardComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
+            }
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
+        } else {
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        }
+        // inject dependencies
+         dashboardComponent.inject(this);
+
+         **/
+
+        // 2 Conditions :
+        // if Empty fragment of container has to be loaded first, attachView here
+        // if Empty fragment of container does not have loaded first, attachView directly in OnResume()
+        dashboardContainerFragmentPresenter.attachView(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         //TODO  Write onLoadData() code in DashboardContainerFragmentPresenterImpl
         checkForData();

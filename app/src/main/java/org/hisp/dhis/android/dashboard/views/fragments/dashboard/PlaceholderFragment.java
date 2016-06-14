@@ -18,4 +18,9 @@ public class PlaceholderFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_placeholder, container, false);
     }
+
+    @Override
+    public boolean onBackPressed() {
+        return true;
+    }
 }
