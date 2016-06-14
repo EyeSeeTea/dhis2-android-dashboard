@@ -72,22 +72,25 @@ public class DashboardModule {
     @Provides
     @PerUser
     public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
-            @Nullable DashboardInteractor dashboardInteractor
+//            @Nullable DashboardInteractor dashboardInteractor
     ) {
-        return new DashboardContainerFragmentPresenterImpl(dashboardInteractor);
+        return new DashboardContainerFragmentPresenterImpl(
+//                dashboardInteractor
+        );
     }
 
     //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
     @Provides
     @PerUser
     public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
-            @Nullable DashboardInteractor dashboardInteractor,
+//            @Nullable DashboardInteractor dashboardInteractor,
             SessionPreferences sessionPreferences,
             SyncDateWrapper syncDateWrapper,
             SyncWrapper syncWrapper,
             ApiExceptionHandler apiExceptionHandler, Logger logger
     ) {
-        return new DashboardEmptyFragmentPresenterImpl(dashboardInteractor,
+        return new DashboardEmptyFragmentPresenterImpl(
+//                dashboardInteractor,
                 sessionPreferences, syncDateWrapper,
                 syncWrapper,
                 apiExceptionHandler, logger);

@@ -45,7 +45,7 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragmentPresenter {
     private static final String TAG = DashboardEmptyFragmentPresenterImpl.class.getSimpleName();
-    private final DashboardInteractor dashboardInteractor;
+//    private final DashboardInteractor dashboardInteractor;
 
     private final SessionPreferences sessionPreferences;
     private final SyncDateWrapper syncDateWrapper;
@@ -58,14 +58,15 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     private DashboardEmptyFragmentView dashboardEmptyFragmentView;
     private boolean isSyncing;
 
-    public DashboardEmptyFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
+    public DashboardEmptyFragmentPresenterImpl(
+//                                             DashboardInteractor dashboardInteractor,
                                                SessionPreferences sessionPreferences,
                                                SyncDateWrapper syncDateWrapper,
                                                SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
 
-        this.dashboardInteractor = dashboardInteractor;
+//        this.dashboardInteractor = dashboardInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
         this.syncWrapper = syncWrapper;
