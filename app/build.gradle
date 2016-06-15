@@ -89,6 +89,8 @@ android {
                 exclude '**/DashboardItemAddFragment.java'
                 exclude '**/DashboardManageFragment.java'
                 exclude '**/BaseDialogFragment.java'
+                exclude '**/DashboardElementDetailActivity.java'
+                exclude '**/INavigationCallback.java'
             }
         }
     }
