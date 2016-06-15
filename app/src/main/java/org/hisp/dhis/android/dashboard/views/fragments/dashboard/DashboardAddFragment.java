@@ -40,16 +40,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard;
-import org.hisp.dhis.android.dashboard.api.utils.EventBusProvider;
-import org.hisp.dhis.android.dashboard.ui.events.UiEvent;
-import org.hisp.dhis.android.dashboard.ui.fragments.BaseDialogFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
-import static org.hisp.dhis.android.dashboard.utils.TextUtils.isEmpty;
 
 /**
  * Fragment responsible for creation of new dashboards.
@@ -57,13 +52,8 @@ import static org.hisp.dhis.android.dashboard.utils.TextUtils.isEmpty;
 public final class DashboardAddFragment extends BaseDialogFragment {
     private static final String TAG = DashboardAddFragment.class.getSimpleName();
 
-    @Bind(R.id.dialog_label)
     TextView mDialogLabel;
-
-    @Bind(R.id.dashboard_name)
     EditText mDashboardName;
-
-    @Bind(R.id.text_input_dashboard_name)
     TextInputLayout mTextInputLayout;
 
     @Override
@@ -82,10 +72,14 @@ public final class DashboardAddFragment extends BaseDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+        mDialogLabel = (TextView) getActivity().findViewById(R.id.dialog_label);
+        mDashboardName = (EditText) getActivity().findViewById(R.id.dashboard_name);
+        mTextInputLayout = (TextInputLayout) getActivity().findViewById(R.id.text_input_dashboard_name);
         mDialogLabel.setText(getString(R.string.add_dashboard));
     }
 
+    // TODO code for action performed
+    /**
     @OnClick({R.id.close_dialog_button, R.id.cancel_dashboard_add, R.id.save_dashboard})
     @SuppressWarnings("unused")
     public void onButtonClicked(View view) {
@@ -108,6 +102,7 @@ public final class DashboardAddFragment extends BaseDialogFragment {
             dismiss();
         }
     }
+   **/
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
