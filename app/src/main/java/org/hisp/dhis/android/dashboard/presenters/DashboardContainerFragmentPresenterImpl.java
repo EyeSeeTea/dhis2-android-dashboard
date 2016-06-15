@@ -30,11 +30,18 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragmentView;
+import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.util.List;
+
 import javax.inject.Inject;
+
+import rx.Observable;
+import rx.functions.Action1;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
@@ -75,7 +82,25 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
 
     @Override
     public void onLoadData() {
+
         //TODO background code to check if data exists with callback to Fragment
+
+        /**
+        Observable<List<Dashboard>> dashboardObservable = D2.dashboards().list();
+        dashboardObservable.subscribe(new Action1<List<Dashboard>>() {
+            @Override
+            public void call(List<Dashboard> dashboards) {
+                //do something
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                //handle error
+            }
+        });
+
+         **/
+
         logger.d(TAG, "checkForData()");
         if(TEST_BOOL_VIEWPAGER){
             // 2 Conditions :
