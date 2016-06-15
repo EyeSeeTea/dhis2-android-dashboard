@@ -34,7 +34,7 @@
     android:layout_gravity="top"
     android:indeterminate="true"
     android:minHeight="4dp"
-    app:spb_color="@color/color_accent_default"
+    app:spb_color="@color/orange"
     app:spb_mirror_mode="false"
     app:spb_progressiveStart_activated="true"
     app:spb_progressiveStart_speed="1.5"
