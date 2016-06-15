@@ -30,11 +30,12 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
-//TODO  Write Code for DashboardContainerFragmentPresenter
-
 public interface DashboardEmptyFragmentPresenter extends Presenter {
 
     void sync();
+
+    // TODO to include listDashboards() here or sync is enough ?
+    // void listDashboards();
 
     void handleError(final Throwable throwable);
 

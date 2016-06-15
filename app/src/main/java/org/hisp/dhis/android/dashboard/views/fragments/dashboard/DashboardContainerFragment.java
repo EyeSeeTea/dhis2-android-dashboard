@@ -52,8 +52,11 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         // TODO consult Araz about decision between User and Dashboard Component,
         // chosen one will contain the Presenter in the corresponding Module
 
+
         /**
-                // first time fragment is created
+         DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+
+         // first time fragment is created
         if (savedInstanceState == null) {
             // it means we found old component and we have to release it
             if (dashboardComponent != null) {
@@ -112,9 +115,9 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void navigationAfterLoadingData(Boolean hasData) {
         if (hasData) {
             // we don't want to attach the same fragment
-            if (!isFragmentAttached(PlaceholderFragment.TAG)) {
-                attachFragment(new PlaceholderFragment(),
-                        PlaceholderFragment.TAG);
+            if (!isFragmentAttached(DashboardEmptyFragment.TAG)) {
+                attachFragment(new DashboardEmptyFragment(),
+                        DashboardEmptyFragment.TAG);
             }
         } else {
             if (!isFragmentAttached(PlaceholderFragment.TAG)) {

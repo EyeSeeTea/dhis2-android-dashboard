@@ -30,8 +30,9 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
-import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
@@ -40,12 +41,24 @@ import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import java.net.HttpURLConnection;
+import java.util.List;
+
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
+import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
 public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragmentPresenter {
     private static final String TAG = DashboardEmptyFragmentPresenterImpl.class.getSimpleName();
 //    private final DashboardInteractor dashboardInteractor;
+    private DashboardEmptyFragmentView dashboardEmptyFragmentView;
 
     private final SessionPreferences sessionPreferences;
     private final SyncDateWrapper syncDateWrapper;
@@ -54,8 +67,8 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
 //  TODO          private final SyncWrapper syncWrapper , add to constructor as well
     private final Logger logger;
 
+    private CompositeSubscription subscription;
     private boolean hasSyncedBefore;
-    private DashboardEmptyFragmentView dashboardEmptyFragmentView;
     private boolean isSyncing;
 
     public DashboardEmptyFragmentPresenterImpl(
@@ -72,6 +85,8 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         this.syncWrapper = syncWrapper;
         this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
+
+        this.subscription = new CompositeSubscription();
         this.hasSyncedBefore = false;
     }
 
@@ -90,8 +105,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
             sync();
         }
 
-        // TODO
-//        doSomethingToLoadDashboards();
+        // TODO  Some loading method might be called here; listDashboards()
     }
 
     @Override
@@ -105,7 +119,37 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         dashboardEmptyFragmentView.showProgressBar();
         isSyncing = true;
        // TODO Syncing code
+        subscription.add(syncWrapper.syncMetaData()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Dashboard>>() {
+                    @Override
+                    public void call(List<Dashboard> dashboards) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+                        syncDateWrapper.setLastSyncedNow();
+
+                        if (dashboardEmptyFragmentView != null) {
+                            dashboardEmptyFragmentView.hideProgressBar();
+                        }
+                        logger.d(TAG, "Synced dashboards successfully");
+
+                        // TODO  Some loading method might be called here; listDashboards()
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+                        if (dashboardEmptyFragmentView != null) {
+                            dashboardEmptyFragmentView.hideProgressBar();
+                        }
+                        logger.e(TAG, "Failed to sync dashboards", throwable);
+                        handleError(throwable);
+                    }
+                }));
     }
+
 
     @Override
     public void handleError(final Throwable throwable) {
@@ -135,4 +179,31 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         }
     }
 
+
+    // TODO to include listDashboards() here or sync is enough ?
+
+    /**
+    @Override
+    public void listDashboards() {
+        logger.d(TAG, "listDashboards()");
+        // TODO uncomment when interactor is addded to SDK
+        subscription.add(dashboardInteractor.list()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Dashboard>() {
+                    @Override
+                    public void call(Dashboard dashboard) {
+                        if (dashboardEmptyFragmentView != null) {
+                            dashboardEmptyFragmentView.showDashboards(dashboard);
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.e(TAG, "Failed listing dashboards.", throwable);
+                    }
+                }));
+    }
+
+    **/
 }

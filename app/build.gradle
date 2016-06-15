@@ -83,12 +83,12 @@ android {
     sourceSets {
         main {
             java {
-                exclude '**/DashboardEmptyFragment.java'
                 exclude '**/DashboardFragment.java'
                 exclude '**/DashboardViewPagerFragment.java'
                 exclude '**/DashboardAddFragment.java'
                 exclude '**/DashboardItemAddFragment.java'
                 exclude '**/DashboardManageFragment.java'
+                exclude '**/BaseDialogFragment.java'
             }
         }
     }

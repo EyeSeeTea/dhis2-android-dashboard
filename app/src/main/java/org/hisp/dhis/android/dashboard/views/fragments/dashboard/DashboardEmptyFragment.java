@@ -29,7 +29,6 @@ package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
@@ -39,9 +38,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
 
+import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
-import org.hisp.dhis.client.sdk.ui.adapters.ReportEntityAdapter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -70,6 +70,27 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     // events
     AlertDialog alertDialog;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (dashboardComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
+            }
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
+        } else {
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        }
+        // inject dependencies
+        dashboardComponent.inject(this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,15 +103,27 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
 //        super.onViewCreated(view, savedInstanceState);
 
         setupToolbar();
+        mProgressBar = (SmoothProgressBar) getActivity().findViewById(R.id.progress_bar);
 
+        // TODO conditions to check if Syncing has to be done
+        /**
         if (isDhisServiceBound() &&
                 !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
                 !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
             syncDashboards();
         }
+         **/
 
+        dashboardEmptyFragmentPresenter.sync();
+        // TODO conditions to check isLoading
+        /**
         boolean isLoading = isDhisServiceBound() &&
                 getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
+         **/
+
+        // Temporarily false
+        boolean isLoading = false;
+
         if ((savedInstanceState != null &&
                 savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
             mProgressBar.setVisibility(View.VISIBLE);
@@ -185,21 +218,6 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
             }
         }
         return false;
-    }
-
-    private void syncDashboards() {
-        if (isDhisServiceBound()) {
-            getDhisService().syncDashboardsAndContent();
-            mProgressBar.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Subscribe
-    @SuppressWarnings("unused")
-    public void onResponseReceived(NetworkJob.NetworkJobResult<?> result) {
-        if (result.getResourceType() == ResourceType.DASHBOARDS) {
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void showErrorDialog(String title, String message) {
