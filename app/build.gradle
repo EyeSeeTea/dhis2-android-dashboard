@@ -84,13 +84,11 @@ android {
         main {
             java {
                 exclude '**/DashboardFragment.java'
-                exclude '**/DashboardViewPagerFragment.java'
-                exclude '**/DashboardAddFragment.java'
                 exclude '**/DashboardItemAddFragment.java'
                 exclude '**/DashboardManageFragment.java'
-                exclude '**/BaseDialogFragment.java'
                 exclude '**/DashboardElementDetailActivity.java'
-                exclude '**/INavigationCallback.java'
+                exclude '**/DashboardItemAdapter.java'
+                exclude '**/DashboardItemSearchDialogAdapter.java'
             }
         }
     }

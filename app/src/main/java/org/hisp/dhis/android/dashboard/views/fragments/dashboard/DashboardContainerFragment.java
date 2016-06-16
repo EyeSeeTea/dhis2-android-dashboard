@@ -117,14 +117,14 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void navigationAfterLoadingData(Boolean hasData) {
         if (hasData) {
             // we don't want to attach the same fragment
+            if (!isFragmentAttached(DashboardViewPagerFragment.TAG)) {
+                attachFragment(new DashboardViewPagerFragment(),
+                        DashboardViewPagerFragment.TAG);
+            }
+        } else {
             if (!isFragmentAttached(DashboardEmptyFragment.TAG)) {
                 attachFragment(new DashboardEmptyFragment(),
                         DashboardEmptyFragment.TAG);
-            }
-        } else {
-            if (!isFragmentAttached(PlaceholderFragment.TAG)) {
-                attachFragment(new PlaceholderFragment(),
-                        PlaceholderFragment.TAG);
             }
         }
     }
