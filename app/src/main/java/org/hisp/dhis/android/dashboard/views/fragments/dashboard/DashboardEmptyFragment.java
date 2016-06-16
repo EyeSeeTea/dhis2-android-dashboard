@@ -210,13 +210,13 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
             getToolbarOfContainer().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    return DashboardEmptyFragment.this.onMenuItemClick(item);
+                    return DashboardEmptyFragment.this.onMenuItemClicked(item);
                 }
             });
         }
     }
 
-    private boolean onMenuItemClick(MenuItem item) {
+    private boolean onMenuItemClicked(MenuItem item) {
         logger.d(TAG, "onMenuItemClick()");
         switch (item.getItemId()) {
             case R.id.action_refresh: {
