@@ -28,6 +28,8 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
+import android.util.Log;
+
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 ;
@@ -94,6 +96,8 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         isNull(view, "DashboardEmptyFragmentView must not be null");
         dashboardEmptyFragmentView = (DashboardEmptyFragmentView) view;
 
+//        // TODO handle isSyncing properly
+        isSyncing = false;
         if (isSyncing) {
             dashboardEmptyFragmentView.showProgressBar();
         } else {
@@ -101,9 +105,13 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         }
         // check if metadata was synced,
         // if not, syncMetaData it
+
+        // TODO don't do (check) sync right now
+        /**
         if (!isSyncing && !hasSyncedBefore) {
             sync();
         }
+         **/
 
         // TODO  Some loading method might be called here; listDashboards()
     }

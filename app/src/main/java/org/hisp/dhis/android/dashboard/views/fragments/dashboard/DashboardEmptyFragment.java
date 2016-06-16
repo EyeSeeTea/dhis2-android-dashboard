@@ -29,9 +29,11 @@ package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +45,7 @@ import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
+import org.hisp.dhis.client.sdk.ui.fragments.WrapperFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import javax.inject.Inject;
@@ -54,7 +57,8 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
  *         is no any dashboards in local database.
  */
 
-public class DashboardEmptyFragment extends BaseFragment implements DashboardEmptyFragmentView{
+// TODO Decide where to attachView for the first time
+public class DashboardEmptyFragment extends BaseFragment implements DashboardEmptyFragmentView {
     public static final String TAG = DashboardEmptyFragment.class.getSimpleName();
     private static final String STATE_IS_LOADING = "state:isLoading";
 
@@ -66,16 +70,21 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
 
     // Progress bar
     SmoothProgressBar mProgressBar;
-
     // events
     AlertDialog alertDialog;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_dashboards_empty, container, false);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-
         // first time fragment is created
         if (savedInstanceState == null) {
             // it means we found old component and we have to release it
@@ -89,21 +98,19 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         }
         // inject dependencies
         dashboardComponent.inject(this);
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dashboards_empty, container, false);
+//        dashboardEmptyFragmentPresenter.attachView(this);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // TODO to include super or not
-//        super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState);
 
         setupToolbar();
-        mProgressBar = (SmoothProgressBar) getActivity().findViewById(R.id.progress_bar);
+        mProgressBar = (SmoothProgressBar) view.findViewById(R.id.progress_bar);
+
+//        dashboardEmptyFragmentPresenter.attachView(this);
 
         // TODO conditions to check if Syncing has to be done
         /**
@@ -114,7 +121,7 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         }
          **/
 
-        dashboardEmptyFragmentPresenter.sync();
+//        dashboardEmptyFragmentPresenter.sync();
         // TODO conditions to check isLoading
         /**
         boolean isLoading = isDhisServiceBound() &&
@@ -167,7 +174,7 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     @Override
     public void hideProgressBar() {
         logger.d(TAG, "hideProgressBar()");
-        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -185,16 +192,22 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         return true;
     }
 
-    private void setupToolbar() {
-        Drawable buttonDrawable = DrawableCompat.wrap(ContextCompat
-                .getDrawable(getActivity(), R.drawable.ic_menu));
-        DrawableCompat.setTint(buttonDrawable, ContextCompat
-                .getColor(getContext(), android.R.color.white));
+    /**
+     * This method will return Toolbar instance of DashboardContainerFragment
+     */
+    @Nullable
+    protected Toolbar getToolbarOfContainer() {
+        if (getParentFragment() != null && getParentFragment() instanceof DashboardContainerFragment) {
+            return ((DashboardContainerFragment) getParentFragment()).getToolbar();
+        }
+        return null;
+    }
 
-        if (getParentToolbar() != null) {
-            getParentToolbar().inflateMenu(R.menu.menu_dashboard_empty_fragment);
-            getParentToolbar().setNavigationIcon(buttonDrawable);
-            getParentToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+    private void setupToolbar() {
+        if (getToolbarOfContainer() != null) {
+            logger.d(TAG, "nonNullToolbar");
+            getToolbarOfContainer().inflateMenu(R.menu.menu_dashboard_empty_fragment);
+            getToolbarOfContainer().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     return DashboardEmptyFragment.this.onMenuItemClick(item);
@@ -204,8 +217,7 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     }
 
     private boolean onMenuItemClick(MenuItem item) {
-        logger.d(DashboardEmptyFragment.class.getSimpleName(), "onMenuItemClick()");
-
+        logger.d(TAG, "onMenuItemClick()");
         switch (item.getItemId()) {
             case R.id.action_refresh: {
                 dashboardEmptyFragmentPresenter.sync();

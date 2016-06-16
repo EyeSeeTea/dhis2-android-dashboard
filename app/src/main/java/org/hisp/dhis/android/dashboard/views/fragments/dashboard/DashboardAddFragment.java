@@ -72,9 +72,9 @@ public final class DashboardAddFragment extends BaseDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mDialogLabel = (TextView) getActivity().findViewById(R.id.dialog_label);
-        mDashboardName = (EditText) getActivity().findViewById(R.id.dashboard_name);
-        mTextInputLayout = (TextInputLayout) getActivity().findViewById(R.id.text_input_dashboard_name);
+        mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
+        mDashboardName = (EditText) view.findViewById(R.id.dashboard_name);
+        mTextInputLayout = (TextInputLayout) view.findViewById(R.id.text_input_dashboard_name);
         mDialogLabel.setText(getString(R.string.add_dashboard));
     }
 
@@ -102,7 +102,7 @@ public final class DashboardAddFragment extends BaseDialogFragment {
             dismiss();
         }
     }
-   **/
+//   **/
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
