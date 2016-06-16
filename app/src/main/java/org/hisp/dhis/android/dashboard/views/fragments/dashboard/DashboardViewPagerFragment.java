@@ -28,67 +28,50 @@
 
 package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
+
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.raizlabs.android.dbflow.sql.builder.Condition;
-import com.raizlabs.android.dbflow.sql.language.Select;
-import com.squareup.otto.Subscribe;
-
-import org.hisp.dhis.android.dashboard.DhisService;
+import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.job.NetworkJob;
-import org.hisp.dhis.android.dashboard.api.models.Access;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard$Table;
-import org.hisp.dhis.android.dashboard.api.models.meta.State;
-import org.hisp.dhis.android.dashboard.api.network.SessionManager;
-import org.hisp.dhis.android.dashboard.api.persistence.loaders.DbLoader;
-import org.hisp.dhis.android.dashboard.api.persistence.loaders.Query;
-import org.hisp.dhis.android.dashboard.api.persistence.preferences.ResourceType;
-import org.hisp.dhis.android.dashboard.ui.adapters.DashboardAdapter;
-import org.hisp.dhis.android.dashboard.ui.events.UiEvent;
+import org.hisp.dhis.android.dashboard.adapters.DashboardAdapter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
+import org.hisp.dhis.client.sdk.models.common.Access;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import javax.inject.Inject;
+
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class DashboardViewPagerFragment extends BaseFragment
-        implements LoaderCallbacks<List<Dashboard>>, View.OnClickListener,
-        ViewPager.OnPageChangeListener {
-
+        implements DashboardViewPagerFragmentView, ViewPager.OnPageChangeListener{
     static final String TAG = DashboardViewPagerFragment.class.getSimpleName();
-    static final String IS_LOADING = "state:isLoading";
-    static final int LOADER_ID = 1233432;
+    static final String STATE_IS_LOADING = "state:isLoading";
 
-    @Bind(R.id.dashboard_tabs)
+    @Inject
+    DashboardViewPagerFragmentPresenter dashboardViewPagerFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     TabLayout mTabs;
-
-    @Bind(R.id.dashboard_view_pager)
     ViewPager mViewPager;
-
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
-
-    @Bind(R.id.progress_bar)
     SmoothProgressBar mProgressBar;
-
     DashboardAdapter mDashboardAdapter;
+    AlertDialog alertDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -96,82 +79,145 @@ public class DashboardViewPagerFragment extends BaseFragment
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (dashboardComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
+            }
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
+        } else {
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        }
+        // inject dependencies
+        dashboardComponent.inject(this);
+
+//        dashboardViewPagerFragmentPresenter.attachView(this);
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+        setupToolbar();
+        mTabs = (TabLayout) view.findViewById(R.id.dashboard_tabs);
+        mViewPager = (ViewPager) view.findViewById(R.id.dashboard_view_pager);
 
         mDashboardAdapter = new DashboardAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mDashboardAdapter);
         mViewPager.addOnPageChangeListener(this);
 
-        mToolbar.setNavigationIcon(R.mipmap.ic_menu);
-        mToolbar.setNavigationOnClickListener(this);
-        mToolbar.setTitle(R.string.dashboard);
-        mToolbar.inflateMenu(R.menu.menu_dashboard_fragment);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onMenuItemClicked(item);
-            }
-        });
+        //        dashboardEmptyFragmentPresenter.attachView(this);
 
-        if (isDhisServiceBound() &&
-                !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
-                !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
-            syncDashboards();
-        }
+        // TODO conditions to check if Syncing has to be done
+        /**
+         if (isDhisServiceBound() &&
+         !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
+         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
+         syncDashboards();
+         }
+         **/
 
-        boolean isLoading = isDhisServiceBound() &&
-                getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
+//        dashboardEmptyFragmentPresenter.sync();
+        // TODO conditions to check isLoading
+        /**
+         boolean isLoading = isDhisServiceBound() &&
+         getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
+         **/
+
+        // Temporarily false
+        boolean isLoading = false;
+
         if ((savedInstanceState != null &&
-                savedInstanceState.getBoolean(IS_LOADING)) || isLoading) {
+                savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, savedInstanceState, this);
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(IS_LOADING, mProgressBar
+        outState.putBoolean(STATE_IS_LOADING, mProgressBar
                 .getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
     }
 
+//    @Override
+//    public Loader<List<Dashboard>> onCreateLoader(int id, Bundle state) {
+//        if (id == LOADER_ID && isAdded()) {
+//            List<DbLoader.TrackedTable> trackedTables = Arrays.asList(
+//                    new DbLoader.TrackedTable(Dashboard.class));
+//            return new DbLoader<>(getActivity().getApplicationContext(),
+//                    trackedTables, new DashboardQuery());
+//        }
+//        return null;
+//    }
+
     @Override
-    public Loader<List<Dashboard>> onCreateLoader(int id, Bundle state) {
-        if (id == LOADER_ID && isAdded()) {
-            List<DbLoader.TrackedTable> trackedTables = Arrays.asList(
-                    new DbLoader.TrackedTable(Dashboard.class));
-            return new DbLoader<>(getActivity().getApplicationContext(),
-                    trackedTables, new DashboardQuery());
-        }
-        return null;
+    public void onResume() {
+        super.onResume();
+
+        logger.d(TAG, "onResume()");
+        dashboardViewPagerFragmentPresenter.attachView(this);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Dashboard>> loader, List<Dashboard> data) {
-        if (loader.getId() == LOADER_ID && data != null) {
-            setDashboards(data);
+    public void onPause() {
+        super.onPause();
+
+        logger.d(TAG, "onPause()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
         }
+        dashboardViewPagerFragmentPresenter.detachView();
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Dashboard>> loader) {
-        if (loader.getId() == LOADER_ID) {
-            setDashboards(null);
-        }
+    public void showProgressBar() {
+        logger.d(TAG, "showProgressBar()");
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onClick(View view) {
-        toggleNavigationDrawer();
+    public void hideProgressBar() {
+        logger.d(TAG, "hideProgressBar()");
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return true;
+    }
+
+
+//    @Override
+//    public void onLoadFinished(Loader<List<Dashboard>> loader, List<Dashboard> data) {
+//        if (loader.getId() == LOADER_ID && data != null) {
+//            setDashboards(data);
+//        }
+//    }
+//
+//    @Override
+//    public void onLoaderReset(Loader<List<Dashboard>> loader) {
+//        if (loader.getId() == LOADER_ID) {
+//            setDashboards(null);
+//        }
+//    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset,
@@ -184,7 +230,7 @@ public class DashboardViewPagerFragment extends BaseFragment
         Dashboard dashboard = mDashboardAdapter.getDashboard(position);
         Access dashboardAccess = dashboard.getAccess();
 
-        Menu menu = mToolbar.getMenu();
+        Menu menu = getToolbarOfContainer().getMenu();
         menu.findItem(R.id.add_dashboard_item)
                 .setVisible(dashboardAccess.isUpdate());
         menu.findItem(R.id.manage_dashboard)
@@ -196,21 +242,29 @@ public class DashboardViewPagerFragment extends BaseFragment
         // stub implementation
     }
 
-    @Subscribe
-    @SuppressWarnings("unused")
-    public void onUiEventReceived(UiEvent uiEvent) {
-        if (uiEvent.getEventType() == UiEvent.UiEventType.SYNC_DASHBOARDS) {
-            boolean isLoading = isDhisServiceBound() &&
-                    getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
-            if (isLoading) {
-                mProgressBar.setVisibility(View.VISIBLE);
-            } else {
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
+    @Nullable
+    protected Toolbar getToolbarOfContainer() {
+        if (getParentFragment() != null && getParentFragment() instanceof DashboardContainerFragment) {
+            return ((DashboardContainerFragment) getParentFragment()).getToolbar();
+        }
+        return null;
+    }
+
+    private void setupToolbar() {
+        if (getToolbarOfContainer() != null) {
+            logger.d(TAG, "nonNullToolbar");
+            getToolbarOfContainer().inflateMenu(R.menu.menu_dashboard_fragment);
+            getToolbarOfContainer().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return DashboardViewPagerFragment.this.onMenuItemClicked(item);
+                }
+            });
         }
     }
 
-    private void setDashboards(List<Dashboard> dashboards) {
+    @Override
+    public void setDashboards(List<Dashboard> dashboards) {
         mDashboardAdapter.swapData(dashboards);
         mTabs.removeAllTabs();
 
@@ -219,7 +273,8 @@ public class DashboardViewPagerFragment extends BaseFragment
         }
     }
 
-    public boolean onMenuItemClicked(MenuItem item) {
+    private boolean onMenuItemClicked(MenuItem item) {
+        logger.d(TAG, "onMenuItemClick()");
         switch (item.getItemId()) {
             case R.id.add_dashboard_item: {
                 long dashboardId = mDashboardAdapter
@@ -230,7 +285,7 @@ public class DashboardViewPagerFragment extends BaseFragment
                 return true;
             }
             case R.id.refresh: {
-                syncDashboards();
+                dashboardViewPagerFragmentPresenter.sync();
                 return true;
             }
             case R.id.add_dashboard: {
@@ -250,32 +305,14 @@ public class DashboardViewPagerFragment extends BaseFragment
         return false;
     }
 
-    private void syncDashboards() {
-        if (isDhisServiceBound()) {
-            getDhisService().syncDashboardsAndContent();
-            mProgressBar.setVisibility(View.VISIBLE);
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
         }
-    }
-
-    @Subscribe
-    @SuppressWarnings("unused")
-    public void onResponseReceived(NetworkJob.NetworkJobResult<?> result) {
-        if (result.getResourceType() == ResourceType.DASHBOARDS) {
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private static class DashboardQuery implements Query<List<Dashboard>> {
-
-        @Override
-        public List<Dashboard> query(Context context) {
-            List<Dashboard> dashboards = new Select()
-                    .from(Dashboard.class)
-                    .where(Condition.column(Dashboard$Table
-                            .STATE).isNot(State.TO_DELETE.toString()))
-                    .queryList();
-            Collections.sort(dashboards, Dashboard.DISPLAY_NAME_COMPARATOR);
-            return dashboards;
-        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
