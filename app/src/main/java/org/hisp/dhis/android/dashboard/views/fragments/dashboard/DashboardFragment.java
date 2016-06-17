@@ -42,24 +42,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.raizlabs.android.dbflow.sql.builder.Condition;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.models.DashboardElement;
-import org.hisp.dhis.android.dashboard.api.models.DashboardItem$Table;
-import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
-import org.hisp.dhis.android.dashboard.api.models.meta.State;
-import org.hisp.dhis.android.dashboard.api.persistence.loaders.DbLoader;
-import org.hisp.dhis.android.dashboard.api.persistence.loaders.Query;
-import org.hisp.dhis.android.dashboard.api.utils.EventBusProvider;
-import org.hisp.dhis.android.dashboard.ui.activities.DashboardElementDetailActivity;
-import org.hisp.dhis.android.dashboard.ui.adapters.DashboardItemAdapter;
-import org.hisp.dhis.android.dashboard.ui.events.UiEvent;
-import org.hisp.dhis.android.dashboard.ui.fragments.interpretation.InterpretationCreateFragment;
-import org.hisp.dhis.android.dashboard.ui.views.GridDividerDecoration;
+import org.hisp.dhis.android.dashboard.adapters.DashboardItemAdapter;
+import org.hisp.dhis.android.dashboard.views.GridDividerDecoration;
 import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 
@@ -196,10 +187,10 @@ public class DashboardFragment extends BaseFragment
     @Override
     public void onContentClick(DashboardElement element) {
         switch (element.getDashboardItem().getType()) {
-            case DashboardItemContent.TYPE_CHART:
-            case DashboardItemContent.TYPE_EVENT_CHART:
-            case DashboardItemContent.TYPE_MAP:
-            case DashboardItemContent.TYPE_REPORT_TABLE: {
+            case DashboardContent.TYPE_CHART:
+            case DashboardContent.TYPE_EVENT_CHART:
+            case DashboardContent.TYPE_MAP:
+            case DashboardContent.TYPE_REPORT_TABLE: {
                 Intent intent = DashboardElementDetailActivity
                         .newIntentForDashboardElement(getActivity(), element.getId());
                 startActivity(intent);

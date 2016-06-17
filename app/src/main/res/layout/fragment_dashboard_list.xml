@@ -35,7 +35,7 @@
 
     <include layout="@layout/recycler_view" />
 
-    <org.hisp.dhis.android.dashboard.ui.views.FontTextView
+    <org.hisp.dhis.client.sdk.ui.views.FontTextView
         android:id="@+id/text_view_empty_dashboard_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
