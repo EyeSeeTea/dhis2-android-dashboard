@@ -34,8 +34,7 @@ public interface DashboardViewPagerFragmentPresenter extends Presenter {
 
     void sync();
 
-    // TODO to include listDashboards() here or sync is enough ?
-    // void listDashboards();
+    void loadDashboards();
 
     void handleError(final Throwable throwable);
 

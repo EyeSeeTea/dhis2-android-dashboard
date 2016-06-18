@@ -152,6 +152,29 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                 }));
     }
 
+    //TODO loadDashboardItems() Code using RxAndroid
+    @Override
+    public void loadDashboards() {
+        /**
+        logger.d(TAG, "loadDashboards()");
+        subscription.add(dashboardInteractor.list()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Dashboard>() {
+                    @Override
+                    public void call(Dashboard dashboard) {
+                        if (dashboardViewPagerFragmentView != null) {
+                            dashboardViewPagerFragmentView.showDashboards(dashboard);
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.e(TAG, "Failed listing dashboards.", throwable);
+                    }
+                }));
+         **/
+    }
 
     @Override
     public void handleError(final Throwable throwable) {
@@ -181,30 +204,4 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         }
     }
 
-    // TODO to include listDashboards() here or sync is enough ?
-
-    /**
-    @Override
-    public void listDashboards() {
-        logger.d(TAG, "listDashboards()");
-        // TODO uncomment when interactor is addded to SDK
-        subscription.add(dashboardInteractor.list()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Dashboard>() {
-                    @Override
-                    public void call(Dashboard dashboard) {
-                        if (dashboardEmptyFragmentView != null) {
-                            dashboardEmptyFragmentView.showDashboards(dashboard);
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.e(TAG, "Failed listing dashboards.", throwable);
-                    }
-                }));
-    }
-
-    **/
 }

@@ -75,12 +75,13 @@ public class DashboardViewPagerFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dashboards, parent, false);
+        return inflater.inflate(R.layout.fragment_dashboards_view_pager, parent, false);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
         // first time fragment is created
         if (savedInstanceState == null) {
@@ -100,10 +101,17 @@ public class DashboardViewPagerFragment extends BaseFragment
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        dashboardViewPagerFragmentPresenter.loadDashboards();
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         setupToolbar();
         mTabs = (TabLayout) view.findViewById(R.id.dashboard_tabs);
         mViewPager = (ViewPager) view.findViewById(R.id.dashboard_view_pager);
+        mProgressBar = (SmoothProgressBar) view.findViewById(R.id.progress_bar);
 
         mDashboardAdapter = new DashboardAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mDashboardAdapter);
@@ -253,7 +261,7 @@ public class DashboardViewPagerFragment extends BaseFragment
     private void setupToolbar() {
         if (getToolbarOfContainer() != null) {
             logger.d(TAG, "nonNullToolbar");
-            getToolbarOfContainer().inflateMenu(R.menu.menu_dashboard_fragment);
+            getToolbarOfContainer().inflateMenu(R.menu.menu_dashboard_view_pager_fragment);
             getToolbarOfContainer().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -279,9 +287,12 @@ public class DashboardViewPagerFragment extends BaseFragment
             case R.id.add_dashboard_item: {
                 long dashboardId = mDashboardAdapter
                         .getDashboard(mViewPager.getCurrentItem()).getId();
-                DashboardItemAddFragment
-                        .newInstance(dashboardId)
-                        .show(getChildFragmentManager());
+                // TODO Write code for DashboardItemAddFragment and add it
+                /**
+                 DashboardItemAddFragment
+                 .newInstance(dashboard.getId())
+                 .show(getChildFragmentManager());
+                 **/
                 return true;
             }
             case R.id.refresh: {
@@ -296,9 +307,12 @@ public class DashboardViewPagerFragment extends BaseFragment
             case R.id.manage_dashboard: {
                 Dashboard dashboard = mDashboardAdapter
                         .getDashboard(mViewPager.getCurrentItem());
+                // TODO Write code for DashboardManageFragment and add it
+                /**
                 DashboardManageFragment
                         .newInstance(dashboard.getId())
                         .show(getChildFragmentManager());
+                 **/
                 return true;
             }
         }
