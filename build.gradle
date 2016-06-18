@@ -37,6 +37,11 @@ ext {
             jUnitVersion            : "4.12",
             mockitoVersion          : "1.10.19",
             powerMockVersion        : "1.6.3",
+
+            // Image loading
+            photoView               : "1.2.6",
+            picasso                 : "2.5.2",
+            okhttp3Downloader        : "1.0.2",
     ]
 }
 
