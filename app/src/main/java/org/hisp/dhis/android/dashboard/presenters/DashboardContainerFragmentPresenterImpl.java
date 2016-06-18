@@ -49,7 +49,7 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 public class DashboardContainerFragmentPresenterImpl implements DashboardContainerFragmentPresenter {
     private static final String TAG = DashboardContainerFragmentPresenterImpl.class.getSimpleName();
-//    private final DashboardInteractor dashboardInteractor;
+    private final DashboardInteractor dashboardInteractor;
     private boolean hasSyncedBefore;
     private DashboardContainerFragmentView dashboardContainerFragmentView;
     private boolean isSyncing;
@@ -60,10 +60,8 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
 
     // TODO
     public DashboardContainerFragmentPresenterImpl(
-//            DashboardInteractor dashboardInteractor
-            Logger logger
-    ) {
-//        this.dashboardInteractor = dashboardInteractor;
+            DashboardInteractor dashboardInteractor,Logger logger) {
+        this.dashboardInteractor = dashboardInteractor;
         this.hasSyncedBefore = false;
         this.logger = logger;
     }

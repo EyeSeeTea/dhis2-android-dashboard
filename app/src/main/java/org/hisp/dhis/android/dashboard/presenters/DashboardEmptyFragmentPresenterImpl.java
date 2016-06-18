@@ -33,6 +33,7 @@ import android.util.Log;
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 ;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
@@ -59,7 +60,7 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
 public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragmentPresenter {
     private static final String TAG = DashboardEmptyFragmentPresenterImpl.class.getSimpleName();
-//    private final DashboardInteractor dashboardInteractor;
+    private final DashboardInteractor dashboardInteractor;
     private DashboardEmptyFragmentView dashboardEmptyFragmentView;
 
     private final SessionPreferences sessionPreferences;
@@ -73,15 +74,14 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     private boolean hasSyncedBefore;
     private boolean isSyncing;
 
-    public DashboardEmptyFragmentPresenterImpl(
-//                                             DashboardInteractor dashboardInteractor,
+    public DashboardEmptyFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
                                                SessionPreferences sessionPreferences,
                                                SyncDateWrapper syncDateWrapper,
                                                SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
 
-//        this.dashboardInteractor = dashboardInteractor;
+        this.dashboardInteractor = dashboardInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
         this.syncWrapper = syncWrapper;

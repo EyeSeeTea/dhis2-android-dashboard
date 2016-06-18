@@ -30,6 +30,7 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragmentView;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
@@ -53,7 +54,7 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPagerFragmentPresenter {
     private static final String TAG = DashboardViewPagerFragmentPresenterImpl.class.getSimpleName();
-//    private final DashboardInteractor dashboardInteractor;
+    private final DashboardInteractor dashboardInteractor;
     private DashboardViewPagerFragmentView dashboardViewPagerFragmentView;
 
     private final SessionPreferences sessionPreferences;
@@ -67,15 +68,14 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     private boolean hasSyncedBefore;
     private boolean isSyncing;
 
-    public DashboardViewPagerFragmentPresenterImpl(
-//                                             DashboardInteractor dashboardInteractor,
+    public DashboardViewPagerFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
                                                SessionPreferences sessionPreferences,
                                                SyncDateWrapper syncDateWrapper,
                                                SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
 
-//        this.dashboardInteractor = dashboardInteractor;
+        this.dashboardInteractor = dashboardInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
         this.syncWrapper = syncWrapper;
@@ -90,6 +90,8 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         isNull(view, "DashboardViewPagerFragmentView must not be null");
         dashboardViewPagerFragmentView = (DashboardViewPagerFragmentView) view;
 
+        // TODO handle isSyncing properly
+        isSyncing = false;
         if (isSyncing) {
             dashboardViewPagerFragmentView.showProgressBar();
         } else {
@@ -97,9 +99,13 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         }
         // check if metadata was synced,
         // if not, syncMetaData it
-        if (!isSyncing && !hasSyncedBefore) {
-            sync();
-        }
+
+        // TODO don't do (check) sync right now
+        /**
+         if (!isSyncing && !hasSyncedBefore) {
+         sync();
+         }
+         **/
 
         // TODO  Some loading method might be called here; listDashboards()
     }
@@ -174,7 +180,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
             logger.e(TAG, "handleError", throwable);
         }
     }
-
 
     // TODO to include listDashboards() here or sync is enough ?
 
