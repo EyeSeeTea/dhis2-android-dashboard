@@ -123,7 +123,7 @@ public final class DashboardApp extends Application {
         D2.init(context, flavor);
     }
 
-    private OkHttpClient providesOkHttpClient() {
+    public OkHttpClient providesOkHttpClient() {
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
