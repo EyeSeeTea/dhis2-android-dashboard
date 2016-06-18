@@ -35,30 +35,19 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.raizlabs.android.dbflow.sql.builder.Condition;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.controllers.DhisController;
-import org.hisp.dhis.android.dashboard.api.models.DashboardElement;
-import org.hisp.dhis.android.dashboard.api.models.DashboardElement$Table;
-import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
-import org.hisp.dhis.android.dashboard.api.models.Interpretation;
-import org.hisp.dhis.android.dashboard.api.models.InterpretationElement;
-import org.hisp.dhis.android.dashboard.api.models.InterpretationElement$Table;
-import org.hisp.dhis.android.dashboard.ui.fragments.ImageViewFragment;
-import org.hisp.dhis.android.dashboard.ui.fragments.WebViewFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.ImageViewFragment;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
+import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
 import org.hisp.dhis.client.sdk.ui.activities.BaseActivity;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 public class DashboardElementDetailActivity extends BaseActivity {
     private static final String DASHBOARD_ELEMENT_ID = "arg:dashboardElementId";
     private static final String INTERPRETATION_ELEMENT_ID = "arg:interpretationElementId";
 
-
-    @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
     public static Intent newIntentForDashboardElement(Activity activity, long dashboardElementId) {
@@ -73,11 +62,14 @@ public class DashboardElementDetailActivity extends BaseActivity {
         return intent;
     }
 
+    // TODO Build Image URL with SDK Controller / Interactor
+    // Returns sample url right now
     private static String buildImageUrl(String resource, String id) {
-        return DhisController.getInstance().getServerUrl().newBuilder()
-                .addPathSegment("api").addPathSegment(resource).addPathSegment(id).addPathSegment("data.png")
-                .addQueryParameter("width", "480").addQueryParameter("height", "320")
-                .toString();
+//        return DhisController.getInstance().getServerUrl().newBuilder()
+//                .addPathSegment("api").addPathSegment(resource).addPathSegment(id).addPathSegment("data.png")
+//                .addQueryParameter("width", "480").addQueryParameter("height", "320")
+//                .toString();
+        return "https://upload.wikimedia.org/wikipedia/commons/4/4b/Peanut_butter_chocolate_chip_cookies,_stacked,_November_2009.jpg";
     }
 
     private long getDashboardElementId() {
@@ -92,8 +84,8 @@ public class DashboardElementDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard_element_detail);
-        ButterKnife.bind(this);
 
+        mToolbar= (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         if (getSupportActionBar() != null) {
@@ -136,22 +128,22 @@ public class DashboardElementDetailActivity extends BaseActivity {
 
         mToolbar.setTitle(element.getDisplayName());
         switch (element.getDashboardItem().getType()) {
-            case DashboardItemContent.TYPE_CHART: {
+            case DashboardContent.TYPE_CHART: {
                 String request = buildImageUrl("charts", element.getUId());
                 attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
-            case DashboardItemContent.TYPE_EVENT_CHART: {
+            case DashboardContent.TYPE_EVENT_CHART: {
                 String request = buildImageUrl("eventCharts", element.getUId());
                 attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
-            case DashboardItemContent.TYPE_MAP: {
+            case DashboardContent.TYPE_MAP: {
                 String request = buildImageUrl("maps", element.getUId());
                 attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
-            case DashboardItemContent.TYPE_REPORT_TABLE: {
+            case DashboardContent.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
                 attachFragment(WebViewFragment.newInstance(elementId));
                 break;
@@ -166,22 +158,22 @@ public class DashboardElementDetailActivity extends BaseActivity {
 
         mToolbar.setTitle(element.getDisplayName());
         switch (element.getInterpretation().getType()) {
-            case Interpretation.TYPE_CHART: {
+            case InterpretationElement.TYPE_CHART: {
                 String request = buildImageUrl("charts", element.getUId());
                 attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
-            case Interpretation.TYPE_MAP: {
+            case InterpretationElement.TYPE_MAP: {
                 String request = buildImageUrl("maps", element.getUId());
                 attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
-            case Interpretation.TYPE_REPORT_TABLE: {
+            case InterpretationElement.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
                 attachFragment(WebViewFragment.newInstance(elementId));
                 break;
             }
-            case Interpretation.TYPE_DATA_SET_REPORT: {
+            case InterpretationElement.TYPE_DATA_SET_REPORT: {
                 break;
             }
         }
