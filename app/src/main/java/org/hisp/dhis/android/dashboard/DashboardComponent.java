@@ -30,6 +30,7 @@ package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragment;
 
 import dagger.Subcomponent;
@@ -58,6 +59,7 @@ public interface DashboardComponent {
         void inject(DashboardContainerFragment dashboardContainerFragment);
         void inject(DashboardEmptyFragment dashboardEmptyFragment);
         void inject(DashboardViewPagerFragment dashboardViewPagerFragment);
+        void inject(DashboardFragment dashboardFragment);
 
 }
 

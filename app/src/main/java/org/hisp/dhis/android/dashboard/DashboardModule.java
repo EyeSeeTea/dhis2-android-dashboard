@@ -33,6 +33,8 @@ import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPres
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
@@ -75,7 +77,7 @@ public class DashboardModule {
         return new SyncWrapper(dashboardInteractor);
     }
 
-    //  TODO
+    //  TODO Edit(if required)
     @Provides
     @PerUser
     public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
@@ -111,6 +113,16 @@ public class DashboardModule {
         return new DashboardViewPagerFragmentPresenterImpl(dashboardInteractor,
                 sessionPreferences, syncDateWrapper, syncWrapper,
                 apiExceptionHandler, logger);
+    }
+
+    @Provides
+    @PerUser
+    public DashboardFragmentPresenter providesDashboardFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor,
+            SessionPreferences sessionPreferences, Logger logger
+    ) {
+        return new DashboardFragmentPresenterImpl(dashboardInteractor,
+                sessionPreferences, logger);
     }
 
 }
