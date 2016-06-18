@@ -29,14 +29,22 @@
 package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenterImpl;
+import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 
 import org.hisp.dhis.client.sdk.utils.Logger;
+
+import javax.annotation.Nullable;
 
 import dagger.Module;
 import dagger.Provides;
@@ -48,20 +56,61 @@ public class DashboardModule {
         // explicit empty constructor
     }
 
+    // TODO Add dashboard interactor to SDK's D2.java
+    @Provides
+    @Nullable
+    @PerUser
+    public DashboardInteractor providesDashboardInteractor() {
+        if (D2.isConfigured()) {
+            return D2.dashboards();
+        }
+        return null;
+    }
+
+    // TODO Add more arguements to SyncWrapper
+    @Provides
+    @PerUser
+    public SyncWrapper providesSyncWrapper(
+            @Nullable DashboardInteractor dashboardInteractor) {
+        return new SyncWrapper(dashboardInteractor);
+    }
+
+    //  TODO
+    @Provides
+    @PerUser
+    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor, Logger logger) {
+        return new DashboardContainerFragmentPresenterImpl(dashboardInteractor, logger);
+    }
+
     //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
     @Provides
     @PerUser
     public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
-//            @Nullable DashboardInteractor dashboardInteractor,
+            @Nullable DashboardInteractor dashboardInteractor,
             SessionPreferences sessionPreferences,
             SyncDateWrapper syncDateWrapper,
             SyncWrapper syncWrapper,
             ApiExceptionHandler apiExceptionHandler, Logger logger
     ) {
-        return new DashboardEmptyFragmentPresenterImpl(
-//                dashboardInteractor,
-                sessionPreferences, syncDateWrapper,
-                syncWrapper,
+        return new DashboardEmptyFragmentPresenterImpl(dashboardInteractor,
+                sessionPreferences, syncDateWrapper, syncWrapper,
                 apiExceptionHandler, logger);
     }
+
+    //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
+    @Provides
+    @PerUser
+    public DashboardViewPagerFragmentPresenter providesDashboardViewPagerFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor,
+            SessionPreferences sessionPreferences,
+            SyncDateWrapper syncDateWrapper,
+            SyncWrapper syncWrapper,
+            ApiExceptionHandler apiExceptionHandler, Logger logger
+    ) {
+        return new DashboardViewPagerFragmentPresenterImpl(dashboardInteractor,
+                sessionPreferences, syncDateWrapper, syncWrapper,
+                apiExceptionHandler, logger);
+    }
+
 }
