@@ -26,42 +26,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.dashboard;
+package org.hisp.dhis.android.dashboard.presenters;
 
-import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
-import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragment;
-import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragment;
-import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardItemAddFragment;
-import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragment;
+import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
+import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
 
-import dagger.Subcomponent;
-
-@PerUser
-@Subcomponent(
-        modules = {
-                DashboardModule.class
-        }
-)
-public interface DashboardComponent {
-
-    //------------------------------------------------------------------------
-    // Sub-modules
-    //------------------------------------------------------------------------
-    // TODO add sub-modules here
+import java.util.List;
 
 
+public interface DashboardItemAddFragmentPresenter extends Presenter {
 
-    //------------------------------------------------------------------------
-    // Injection targets
-    //------------------------------------------------------------------------
-    // TODO specify injection targets
+    void loadOptionAdapterValues(List<String> typesToInclude);
 
-        //fragments
-        void inject(DashboardContainerFragment dashboardContainerFragment);
-        void inject(DashboardEmptyFragment dashboardEmptyFragment);
-        void inject(DashboardViewPagerFragment dashboardViewPagerFragment);
-        void inject(DashboardFragment dashboardFragment);
-        void inject(DashboardItemAddFragment dashboardItemAddFragment);
+    void getDashboardFromId(Long dashboardId);
 
+    void getDashboardContentFromId(OptionAdapterValue optionAdapterValue);
+
+    void UiEventSync();
 }
-

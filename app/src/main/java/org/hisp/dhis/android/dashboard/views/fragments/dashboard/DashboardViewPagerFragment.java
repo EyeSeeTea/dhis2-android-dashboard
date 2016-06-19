@@ -287,12 +287,9 @@ public class DashboardViewPagerFragment extends BaseFragment
             case R.id.add_dashboard_item: {
                 long dashboardId = mDashboardAdapter
                         .getDashboard(mViewPager.getCurrentItem()).getId();
-                // TODO Write code for DashboardItemAddFragment and add it
-                /**
                  DashboardItemAddFragment
-                 .newInstance(dashboard.getId())
+                 .newInstance(dashboardId)
                  .show(getChildFragmentManager());
-                 **/
                 return true;
             }
             case R.id.refresh: {

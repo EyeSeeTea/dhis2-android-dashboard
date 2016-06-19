@@ -35,6 +35,8 @@ import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresente
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardItemAddFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardItemAddFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
@@ -123,6 +125,14 @@ public class DashboardModule {
     ) {
         return new DashboardFragmentPresenterImpl(dashboardInteractor,
                 sessionPreferences, logger);
+    }
+
+    @Provides
+    @PerUser
+    public DashboardItemAddFragmentPresenter providesDashboardItemAddFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor, Logger logger
+    ) {
+        return new DashboardItemAddFragmentPresenterImpl(dashboardInteractor, logger);
     }
 
 }

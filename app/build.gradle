@@ -83,13 +83,9 @@ android {
     sourceSets {
         main {
             java {
-                exclude '**/DashboardFragment.java'
-                exclude '**/DashboardItemAddFragment.java'
                 exclude '**/DashboardManageFragment.java'
-                exclude '**/DashboardElementDetailActivity.java'
-                exclude '**/DashboardItemAdapter.java'
-                exclude '**/DashboardItemSearchDialogAdapter.java'
                 exclude '**/WebViewFragment.java'
+                exclude '**/InterpretationCreateFragment.java'
             }
         }
     }
@@ -132,5 +128,8 @@ dependencies {
     compile "com.github.chrisbanes:PhotoView:${libs.photoView}"
     compile "com.squareup.picasso:picasso:${libs.picasso}"
     compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:${libs.okhttp3Downloader}"
+
+    // Binding
+    compile "com.jakewharton:butterknife:${libs.butterKnife}"
 
 }
