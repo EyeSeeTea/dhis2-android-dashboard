@@ -45,11 +45,10 @@ public class DashboardAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
-    // TODO replace TempDashboardFragment with DashboardFragment
     @Override
     public Fragment getItem(int position) {
         if (mDashboards != null && mDashboards.size() > 0) {
-            return TempDashboardFragment
+            return DashboardFragment
                     .newInstance(getDashboard(position));
         } else {
             return null;

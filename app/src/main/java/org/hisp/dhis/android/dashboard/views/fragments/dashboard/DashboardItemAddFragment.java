@@ -47,38 +47,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.builder.Condition;
-import com.raizlabs.android.dbflow.sql.builder.Condition.CombinedCondition;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard$Table;
-import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
-import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent$Table;
-import org.hisp.dhis.android.dashboard.api.persistence.loaders.DbLoader;
-import org.hisp.dhis.android.dashboard.api.persistence.loaders.Query;
-import org.hisp.dhis.android.dashboard.api.utils.EventBusProvider;
-import org.hisp.dhis.android.dashboard.ui.adapters.DashboardItemSearchDialogAdapter;
-import org.hisp.dhis.android.dashboard.ui.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
-import org.hisp.dhis.android.dashboard.ui.events.UiEvent;
-import org.hisp.dhis.android.dashboard.ui.fragments.BaseDialogFragment;
+import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter;
+import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnItemClick;
-import butterknife.OnTextChanged;
-
-import static com.raizlabs.android.dbflow.sql.builder.Condition.column;
-
 public class DashboardItemAddFragment extends BaseDialogFragment
-        implements PopupMenu.OnMenuItemClickListener, LoaderCallbacks<List<OptionAdapterValue>> {
+        implements PopupMenu.OnMenuItemClickListener, LoaderCallbacks<List<DashboardItemSearchDialogAdapter.OptionAdapterValue>> {
     private static final String TAG = DashboardItemAddFragment.class.getSimpleName();
     private static final int LOADER_ID = 3451234;
 
@@ -229,28 +212,28 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     private List<String> getTypesToInclude() {
         List<String> typesToInclude = new ArrayList<>();
         if (isItemChecked(R.id.type_charts)) {
-            typesToInclude.add(DashboardItemContent.TYPE_CHART);
+            typesToInclude.add(DashboardContent.TYPE_CHART);
         }
         if (isItemChecked(R.id.type_event_charts)) {
-            typesToInclude.add(DashboardItemContent.TYPE_EVENT_CHART);
+            typesToInclude.add(DashboardContent.TYPE_EVENT_CHART);
         }
         if (isItemChecked(R.id.type_maps)) {
-            typesToInclude.add(DashboardItemContent.TYPE_MAP);
+            typesToInclude.add(DashboardContent.TYPE_MAP);
         }
         if (isItemChecked(R.id.type_report_tables)) {
-            typesToInclude.add(DashboardItemContent.TYPE_REPORT_TABLE);
+            typesToInclude.add(DashboardContent.TYPE_REPORT_TABLE);
         }
         if (isItemChecked(R.id.type_event_reports)) {
-            typesToInclude.add(DashboardItemContent.TYPE_EVENT_REPORT);
+            typesToInclude.add(DashboardContent.TYPE_EVENT_REPORT);
         }
         if (isItemChecked(R.id.type_users)) {
-            typesToInclude.add(DashboardItemContent.TYPE_USERS);
+            typesToInclude.add(DashboardContent.TYPE_USERS);
         }
         if (isItemChecked(R.id.type_reports)) {
-            typesToInclude.add(DashboardItemContent.TYPE_REPORTS);
+            typesToInclude.add(DashboardContent.TYPE_REPORTS);
         }
         if (isItemChecked(R.id.type_resources)) {
-            typesToInclude.add(DashboardItemContent.TYPE_RESOURCES);
+            typesToInclude.add(DashboardContent.TYPE_RESOURCES);
         }
 
         return typesToInclude;
@@ -260,7 +243,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         return mResourcesMenu.getMenu().findItem(id).isChecked();
     }
 
-    static class DbQuery implements Query<List<OptionAdapterValue>> {
+    static class DbQuery implements Query<List<DashboardItemSearchDialogAdapter.OptionAdapterValue>> {
         private List<String> mTypes;
 
         public DbQuery(List<String> types) {

@@ -102,7 +102,7 @@ public final class DashboardAddFragment extends BaseDialogFragment {
             dismiss();
         }
     }
-//   **/
+     **/
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);

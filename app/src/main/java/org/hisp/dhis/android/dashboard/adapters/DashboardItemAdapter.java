@@ -48,13 +48,14 @@ import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
+import org.hisp.dhis.client.sdk.ui.adapters.AbsAdapter;
 
 import java.util.List;
 
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 
-// TODO Replacing ButterKnife and buildImage URL
+// TODO Replacing ButterKnife(if need be) and buildImage URL
 public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardItemAdapter.ItemViewHolder> {
     private static final String DATE_FORMAT = "MMMM dd, YYYY";
     private static final String EMPTY_FIELD = "";
@@ -404,7 +405,6 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         void onItemShareClick(DashboardItem item);
     }
 
-
     /////////////////////////////////////////////////////////////////////////
     // ITEM_WITH_LIST_TYPE view handling logic.
     /////////////////////////////////////////////////////////////////////////
@@ -602,7 +602,6 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
             }
         }
 
-        // TODO Replace this
         static final class ElementItemButtonsSetter implements ButterKnife.Setter<View, List<DashboardElement>> {
             private final Access mDashboardAccess;
 

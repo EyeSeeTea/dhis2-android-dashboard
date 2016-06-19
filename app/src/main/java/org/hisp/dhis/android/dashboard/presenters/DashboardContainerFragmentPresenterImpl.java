@@ -99,7 +99,7 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
 
          **/
 
-        logger.d(TAG, "checkForData()");
+        logger.d(TAG, "onLoadData()");
         if(TEST_BOOL_VIEWPAGER){
             // 2 Conditions :
             // if Empty fragment of container has to be loaded first, check for !=null
