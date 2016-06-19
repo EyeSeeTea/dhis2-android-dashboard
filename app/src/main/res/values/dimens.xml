@@ -1,5 +1,3 @@
 <resources>
-    <dimen name="card_insets">3dp</dimen>
-
     <integer name="column_nums">1</integer>
 </resources>
