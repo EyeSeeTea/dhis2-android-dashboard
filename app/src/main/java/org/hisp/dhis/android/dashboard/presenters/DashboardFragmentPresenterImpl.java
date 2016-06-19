@@ -31,7 +31,8 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -80,6 +81,21 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
     //TODO loadDashboardItems() Code using RxAndroid
     @Override
     public void loadDashboardItems() {
+        logger.d(TAG, "LoadDashboardItems()");
+//        dashboardFragmentView.showDashboardItems(null);
+    }
 
+    // TODO Add deleteDashboardItem() method to DashboardInteractor in SDK
+    @Override
+    public void deleteDashboardItem(DashboardItem dashboardItem) {
+//        dashboardInteractor.deleteDashboardItem();
+        // TODO syncDashboards() in parentViewPager
+    }
+
+    // TODO Add deleteDashboardElement() method to DashboardInteractor in SDK
+    @Override
+    public void deleteDashboardElement(DashboardElement dashboardElement) {
+//        dashboardInteractor.deleteDashboardElement();
+        // TODO syncDashboards() in parentViewPager
     }
 }

@@ -28,11 +28,9 @@
 
 package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,24 +40,26 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
-
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemAdapter;
-import org.hisp.dhis.android.dashboard.views.GridDividerDecoration;
+import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
+import org.hisp.dhis.client.sdk.ui.views.GridDividerDecoration;
+import org.hisp.dhis.android.dashboard.views.activities.DashboardElementDetailActivity;
 import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
-import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class DashboardFragment extends BaseFragment
-        implements LoaderManager.LoaderCallbacks<List<DashboardItem>>, DashboardItemAdapter.OnItemClickListener {
-    private static final int LOADER_ID = 74734523;
+        implements DashboardFragmentView, DashboardItemAdapter.OnItemClickListener {
+    static final String TAG = DashboardFragment.class.getSimpleName();
     private static final String DASHBOARD_ID = "arg:dashboardId";
     private static final String DELETE = "arg:delete";
     private static final String UPDATE = "arg:update";
@@ -68,11 +68,17 @@ public class DashboardFragment extends BaseFragment
     private static final String MANAGE = "arg:manage";
     private static final String EXTERNALIZE = "arg:externalize";
 
+    @Inject
+    DashboardFragmentPresenter dashboardFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     ViewSwitcher mViewSwitcher;
 
     RecyclerView mRecyclerView;
 
-    DashboardItemAdapter mAdapter;
+    DashboardItemAdapter mDashboardItemsAdapter;
 
     public static DashboardFragment newInstance(Dashboard dashboard) {
         DashboardFragment fragment = new DashboardFragment();
@@ -111,78 +117,45 @@ public class DashboardFragment extends BaseFragment
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mViewSwitcher = (ViewSwitcher) view;
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
-        final int spanCount = getResources().getInteger(R.integer.column_nums);
-
-        mAdapter = new DashboardItemAdapter(getActivity(),
-                getAccessFromBundle(getArguments()), spanCount, this);
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-
-            @Override
-            public int getSpanSize(int position) {
-                return mAdapter.getSpanSize(position);
-            }
-        });
-
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new GridDividerDecoration(getActivity()
-                .getApplicationContext()));
-        mRecyclerView.setAdapter(mAdapter);
+        setupRecyclerView(view);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, getArguments(), this);
+        logger.d(TAG, "onActivityCreated()");
+        dashboardFragmentPresenter.loadDashboardItems();
     }
 
     @Override
-    public Loader<List<DashboardItem>> onCreateLoader(int id, Bundle args) {
-        if (id == LOADER_ID && isAdded()) {
-            /* When two tables are joined sometimes we can get empty rows.
-            For example dashboard does not contain any dashboard items.
-            In order to avoid strange bugs during table JOINs,
-            we explicitly state that we want only not null values  */
-
-            List<DbLoader.TrackedTable> trackedTables = Arrays.asList(
-                    new DbLoader.TrackedTable(DashboardItem.class),
-                    new DbLoader.TrackedTable(DashboardElement.class));
-            return new DbLoader<>(getActivity().getApplicationContext(),
-                    trackedTables, new ItemsQuery(args.getLong(DASHBOARD_ID)));
-        }
-        return null;
+    public void onDestroy() {
+        super.onDestroy();
+        logger.d(TAG, "onDestroy()");
+        dashboardFragmentPresenter.detachView();
     }
 
     @Override
-    public void onLoadFinished(Loader<List<DashboardItem>> loader,
-                               List<DashboardItem> dashboardItems) {
-        if (loader.getId() == LOADER_ID) {
-            boolean isDashboardItemListEmpty = dashboardItems == null || dashboardItems.isEmpty();
-            boolean isEmptyListMessageShown = mViewSwitcher.getCurrentView().getId() ==
-                    R.id.text_view_empty_dashboard_message;
+    public void showDashboardItems(List<DashboardItem> dashboardItems) {
+        boolean isDashboardItemListEmpty = dashboardItems == null || dashboardItems.isEmpty();
+        boolean isEmptyListMessageShown = mViewSwitcher.getCurrentView().getId() ==
+                R.id.text_view_empty_dashboard_message;
 
-            if (isDashboardItemListEmpty && !isEmptyListMessageShown) {
-                mViewSwitcher.showNext();
-            } else if (!isDashboardItemListEmpty && isEmptyListMessageShown) {
-                mViewSwitcher.showNext();
-            }
-
-            mAdapter.swapData(dashboardItems);
+        if (isDashboardItemListEmpty && !isEmptyListMessageShown) {
+            mViewSwitcher.showNext();
+        } else if (!isDashboardItemListEmpty && isEmptyListMessageShown) {
+            mViewSwitcher.showNext();
         }
+        mDashboardItemsAdapter.swapData(dashboardItems);
     }
 
+    /** TODO when to set null
     @Override
     public void onLoaderReset(Loader<List<DashboardItem>> loader) {
         if (loader.getId() == LOADER_ID) {
-            mAdapter.swapData(null);
+            mDashboardItemsAdapter.swapData(null);
         }
     }
+     **/
 
     @Override
     public void onContentClick(DashboardElement element) {
@@ -200,66 +173,54 @@ public class DashboardFragment extends BaseFragment
                 String message = getString(R.string.unsupported_dashboard_item_type);
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
-
         }
-
     }
 
     @Override
     public void onContentDeleteClick(DashboardElement element) {
         if (element != null) {
-            element.deleteDashboardElement();
-
-            if (isDhisServiceBound()) {
-                getDhisService().syncDashboards();
-                EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-            }
+            dashboardFragmentPresenter.deleteDashboardElement(element);
         }
     }
 
     @Override
     public void onItemDeleteClick(DashboardItem item) {
         if (item != null) {
-            item.deleteDashboardItem();
-
-            if (isDhisServiceBound()) {
-                getDhisService().syncDashboards();
-                EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-            }
+            dashboardFragmentPresenter.deleteDashboardItem(item);
         }
     }
 
+    // TODO
     @Override
     public void onItemShareClick(DashboardItem item) {
-        InterpretationCreateFragment
-                .newInstance(item.getId())
-                .show(getChildFragmentManager());
+//        InterpretationCreateFragment
+//                .newInstance(item.getId())
+//                .show(getChildFragmentManager());
     }
 
-    private static class ItemsQuery implements Query<List<DashboardItem>> {
-        private final long mDashboardId;
+    private void setupRecyclerView(View view) {
+        mViewSwitcher = (ViewSwitcher) view;
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        public ItemsQuery(long dashboardId) {
-            mDashboardId = dashboardId;
-        }
+        final int spanCount = getResources().getInteger(R.integer.column_nums);
 
-        @Override
-        public List<DashboardItem> query(Context context) {
-            List<DashboardItem> dashboardItems = new Select()
-                    .from(DashboardItem.class)
-                    .where(
-                            Condition.column(DashboardItem$Table.DASHBOARD_DASHBOARD).is(mDashboardId),
-                            Condition.column(DashboardItem$Table.STATE).isNot(State.TO_DELETE.toString()),
-                            Condition.column(DashboardItem$Table.TYPE).isNot(DashboardItemContent.TYPE_MESSAGES))
-                    .queryList();
-            if (dashboardItems != null && !dashboardItems.isEmpty()) {
-                for (DashboardItem dashboardItem : dashboardItems) {
-                    List<DashboardElement> dashboardElements
-                            = dashboardItem.queryRelatedDashboardElements();
-                    dashboardItem.setDashboardElements(dashboardElements);
-                }
+        mDashboardItemsAdapter = new DashboardItemAdapter(getActivity(),
+                getAccessFromBundle(getArguments()), spanCount, this);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
+        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return mDashboardItemsAdapter.getSpanSize(position);
             }
-            return dashboardItems;
-        }
+        });
+
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new GridDividerDecoration(getActivity()
+                .getApplicationContext()));
+        mRecyclerView.setAdapter(mDashboardItemsAdapter);
     }
+
 }

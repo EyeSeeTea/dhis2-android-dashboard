@@ -28,10 +28,16 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
 public interface DashboardFragmentPresenter extends Presenter {
 
     void loadDashboardItems();
+
+    void deleteDashboardItem(DashboardItem dashboardItem);
+
+    void deleteDashboardElement(DashboardElement dashboardElement);
 
 }

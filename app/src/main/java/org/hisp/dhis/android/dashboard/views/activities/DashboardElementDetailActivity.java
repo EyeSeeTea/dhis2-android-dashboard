@@ -94,6 +94,7 @@ public class DashboardElementDetailActivity extends BaseActivity {
         }
     }
 
+    /** TODO onPostCreate() Code
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -119,6 +120,7 @@ public class DashboardElementDetailActivity extends BaseActivity {
             handleInterpretationElement(element);
         }
     }
+    **/
 
     private void handleDashboardElement(DashboardElement element) {
 
@@ -145,7 +147,9 @@ public class DashboardElementDetailActivity extends BaseActivity {
             }
             case DashboardContent.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
+                /** TODO uncomment after refacotoring WebFragment
                 attachFragment(WebViewFragment.newInstance(elementId));
+                 **/
                 break;
             }
         }
@@ -170,10 +174,12 @@ public class DashboardElementDetailActivity extends BaseActivity {
             }
             case InterpretationElement.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
-                attachFragment(WebViewFragment.newInstance(elementId));
+                /** TODO uncomment after refacotoring WebFragment
+                 attachFragment(WebViewFragment.newInstance(elementId));
+                 **/
                 break;
             }
-            case InterpretationElement.TYPE_DATA_SET_REPORT: {
+            case InterpretationElement.TYPE_DATA_SET: {
                 break;
             }
         }
