@@ -36,6 +36,7 @@
     <color name="transparent_white">#BBFFFFFF</color>
     <color name="white">#FFFFFFFF</color>
     <color name="navy_blue">#FF1F70C3</color>
+    <color name="dark_navy_blue">#FF1D5288</color>
     <color name="light_grey">#FFE5E5E5</color>
     <color name="dark_grey">#FF9E9E9E</color>
     <color name="transparent">#00000000</color>
