@@ -34,8 +34,7 @@ public interface DashboardEmptyFragmentPresenter extends Presenter {
 
     void sync();
 
-    // TODO to include listDashboards() here or sync is enough ?
-    // void listDashboards();
+    boolean isSyncing();
 
     void handleError(final Throwable throwable);
 

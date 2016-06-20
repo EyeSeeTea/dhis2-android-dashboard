@@ -96,27 +96,12 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         setupToolbar();
         mProgressBar = (SmoothProgressBar) view.findViewById(R.id.progress_bar);
 
-//        dashboardEmptyFragmentPresenter.attachView(this);
+        // Syncing is Handled here in attachView only
+        // Syncing is checked here with isSyncing and hasSyncedBefore booleans
+        dashboardEmptyFragmentPresenter.attachView(this);
 
-        // TODO conditions to check if Syncing has to be done
-        /**
-        if (isDhisServiceBound() &&
-                !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
-                !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
-            syncDashboards();
-        }
-         **/
-
-//        dashboardEmptyFragmentPresenter.sync();
-        // TODO conditions to check isLoading
-        /**
-        boolean isLoading = isDhisServiceBound() &&
-                getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
-         **/
-
-        // Temporarily false
-        boolean isLoading = false;
-
+        boolean isLoading = dashboardEmptyFragmentPresenter.isSyncing();
+        ;
         if ((savedInstanceState != null &&
                 savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
             mProgressBar.setVisibility(View.VISIBLE);

@@ -61,7 +61,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     private final SyncDateWrapper syncDateWrapper;
     private final SyncWrapper syncWrapper;
     private final ApiExceptionHandler apiExceptionHandler;
-//  TODO          private final SyncWrapper syncWrapper , add to constructor as well
     private final Logger logger;
 
     private CompositeSubscription subscription;
@@ -74,7 +73,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
                                                SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
-
         this.dashboardInteractor = dashboardInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
@@ -90,24 +88,26 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         isNull(view, "DashboardEmptyFragmentView must not be null");
         dashboardEmptyFragmentView = (DashboardEmptyFragmentView) view;
 
-//        // TODO handle isSyncing properly
-        isSyncing = false;
+        // TODO conditions to check if Syncing has to be done
+        /**
+         if (isDhisServiceBound() &&
+         !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
+         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
+         syncDashboards();
+         }
+         **/
+
         if (isSyncing) {
             dashboardEmptyFragmentView.showProgressBar();
         } else {
             dashboardEmptyFragmentView.hideProgressBar();
         }
-        // check if metadata was synced,
-        // if not, syncMetaData it
 
-        // TODO don't do (check) sync right now
-        /**
+        // check if metadata was synced,
+        // if not, syncMetaData
         if (!isSyncing && !hasSyncedBefore) {
             sync();
         }
-         **/
-
-        // TODO  Some loading method might be called here; listDashboards()
     }
 
     @Override
@@ -116,11 +116,14 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         dashboardEmptyFragmentView = null;
     }
 
+    // Set hasSyncedBefore boolean to True
     @Override
     public void sync() {
+        logger.d(TAG, "Syncing");
+        /** TODO Write code for syncing
+        /**
         dashboardEmptyFragmentView.showProgressBar();
         isSyncing = true;
-       // TODO Syncing code
         subscription.add(syncWrapper.syncMetaData()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -135,8 +138,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
                             dashboardEmptyFragmentView.hideProgressBar();
                         }
                         logger.d(TAG, "Synced dashboards successfully");
-
-                        // TODO  Some loading method might be called here; listDashboards()
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -150,8 +151,17 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
                         handleError(throwable);
                     }
                 }));
+         **/
     }
 
+    @Override
+    public boolean isSyncing() {
+        return isSyncing;
+        /**
+         boolean isLoading = isDhisServiceBound() &&
+         getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
+         **/
+    }
 
     @Override
     public void handleError(final Throwable throwable) {
@@ -180,32 +190,4 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
             logger.e(TAG, "handleError", throwable);
         }
     }
-
-
-    // TODO to include listDashboards() here or sync is enough ?
-
-    /**
-    @Override
-    public void listDashboards() {
-        logger.d(TAG, "listDashboards()");
-        // TODO uncomment when interactor is addded to SDK
-        subscription.add(dashboardInteractor.list()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Dashboard>() {
-                    @Override
-                    public void call(Dashboard dashboard) {
-                        if (dashboardEmptyFragmentView != null) {
-                            dashboardEmptyFragmentView.showDashboards(dashboard);
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.e(TAG, "Failed listing dashboards.", throwable);
-                    }
-                }));
-    }
-
-    **/
 }
