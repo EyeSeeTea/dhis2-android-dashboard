@@ -137,7 +137,9 @@ public class DashboardFragment extends BaseFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         logger.d(TAG, "onActivityCreated()");
-        dashboardFragmentPresenter.loadDashboardItems();
+        if(isAdded()) {
+            dashboardFragmentPresenter.loadDashboardItems();
+        }
     }
 
     @Override
