@@ -28,9 +28,7 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-import android.util.Log;
-
-import org.hisp.dhis.android.dashboard.models.SyncWrapper;
+import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 ;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
@@ -47,16 +45,12 @@ import java.net.HttpURLConnection;
 import java.util.List;
 
 
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
-import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
 public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragmentPresenter {
     private static final String TAG = DashboardEmptyFragmentPresenterImpl.class.getSimpleName();

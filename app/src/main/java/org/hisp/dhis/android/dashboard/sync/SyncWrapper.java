@@ -26,11 +26,27 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hisp.dhis.android.dashboard.models;
+package org.hisp.dhis.android.dashboard.sync;
 
+import org.hisp.dhis.client.sdk.android.api.utils.DefaultOnSubscribe;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.core.common.utils.ModelUtils;
+import org.hisp.dhis.client.sdk.models.common.state.Action;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.event.Event;
+import org.hisp.dhis.client.sdk.models.organisationunit.OrganisationUnit;
+import org.hisp.dhis.client.sdk.models.program.Program;
+import org.hisp.dhis.client.sdk.models.program.ProgramRule;
+import org.hisp.dhis.client.sdk.models.program.ProgramRuleAction;
+import org.hisp.dhis.client.sdk.models.program.ProgramRuleVariable;
+import org.hisp.dhis.client.sdk.models.program.ProgramStage;
+import org.hisp.dhis.client.sdk.models.program.ProgramStageDataElement;
+import org.hisp.dhis.client.sdk.models.program.ProgramStageSection;
+import org.hisp.dhis.client.sdk.models.program.ProgramType;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +71,6 @@ public class SyncWrapper {
     }
 
     // TODO code for Syncing data
-
     public Observable<List<Dashboard>> syncMetaData() {
         /**
         return Observable.zip(
@@ -147,10 +162,9 @@ public class SyncWrapper {
         return null;
     }
 
-    // TODO for Dashboards
-
-    /**
-    public Observable<List<Event>> backgroundSync() {
+    // TODO Replace for Dashboards
+    public Observable<List<Dashboard>> backgroundSync() {
+        /**
         return syncMetaData()
                 .subscribeOn(Schedulers.io())
                 .switchMap(new Func1<List<ProgramStageDataElement>, Observable<List<Event>>>() {
@@ -162,7 +176,8 @@ public class SyncWrapper {
                         return Observable.empty();
                     }
                 });
+         **/
+        return null;
     }
-     **/
 
 }

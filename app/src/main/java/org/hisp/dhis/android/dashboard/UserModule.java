@@ -154,9 +154,10 @@ public class UserModule implements DefaultUserModule {
     public ProfilePresenter providesProfilePresenter(CurrentUserInteractor currentUserInteractor,
                                                      SyncDateWrapper syncDateWrapper,
                                                      DefaultAppAccountManager appAccountManager,
+                                                     DefaultNotificationHandler defaultNotificationHandler,
                                                      Logger logger) {
         return new ProfilePresenterImpl(currentUserInteractor, syncDateWrapper, appAccountManager,
-                logger);
+                defaultNotificationHandler, logger);
     }
 
     @Provides

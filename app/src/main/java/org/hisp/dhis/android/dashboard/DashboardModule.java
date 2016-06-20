@@ -28,7 +28,7 @@
 
 package org.hisp.dhis.android.dashboard;
 
-import org.hisp.dhis.android.dashboard.models.SyncWrapper;
+import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;

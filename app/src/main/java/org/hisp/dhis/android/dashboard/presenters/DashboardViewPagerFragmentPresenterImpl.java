@@ -28,15 +28,10 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-import android.support.annotation.NonNull;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.hisp.dhis.android.dashboard.models.SyncWrapper;
+import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
-import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
@@ -44,14 +39,10 @@ import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
-import org.joda.time.DateTime;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -59,8 +50,6 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
-
-;
 
 // TODO Remove getFakeData() and loadData properly
 public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPagerFragmentPresenter {
@@ -72,7 +61,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     private final SyncDateWrapper syncDateWrapper;
     private final SyncWrapper syncWrapper;
     private final ApiExceptionHandler apiExceptionHandler;
-//  TODO          private final SyncWrapper syncWrapper , add to constructor as well
+//  TODO private final SyncWrapper syncWrapper , add to constructor as well
     private final Logger logger;
 
     private CompositeSubscription subscription;
