@@ -211,6 +211,11 @@ public class DashboardFragment extends BaseFragment
 //                .show(getChildFragmentManager());
     }
 
+    @Override
+    public boolean onBackPressed() {
+        return true;
+    }
+
     private void setupRecyclerView(View view) {
         mViewSwitcher = (ViewSwitcher) view;
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
