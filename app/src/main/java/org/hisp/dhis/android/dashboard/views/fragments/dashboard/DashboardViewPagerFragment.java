@@ -103,7 +103,7 @@ public class DashboardViewPagerFragment extends BaseFragment
         mViewPager.setAdapter(mDashboardAdapter);
         mViewPager.addOnPageChangeListener(this);
 
-        //        dashboardEmptyFragmentPresenter.attachView(this);
+        dashboardViewPagerFragmentPresenter.attachView(this);
 
         // TODO conditions to check if Syncing has to be done
         /**
@@ -244,6 +244,17 @@ public class DashboardViewPagerFragment extends BaseFragment
         return null;
     }
 
+    @Override
+    public void setDashboards(List<Dashboard> dashboards) {
+        logger.e(TAG, "onSetDashboards()");
+        mDashboardAdapter.swapData(dashboards);
+        mTabs.removeAllTabs();
+
+        if (dashboards != null && !dashboards.isEmpty()) {
+            mTabs.setupWithViewPager(mViewPager);
+        }
+    }
+
     private void setupToolbar() {
         if (getToolbarOfContainer() != null) {
             logger.d(TAG, "nonNullToolbar");
@@ -254,16 +265,6 @@ public class DashboardViewPagerFragment extends BaseFragment
                     return DashboardViewPagerFragment.this.onMenuItemClicked(item);
                 }
             });
-        }
-    }
-
-    @Override
-    public void setDashboards(List<Dashboard> dashboards) {
-        mDashboardAdapter.swapData(dashboards);
-        mTabs.removeAllTabs();
-
-        if (dashboards != null && !dashboards.isEmpty()) {
-            mTabs.setupWithViewPager(mViewPager);
         }
     }
 

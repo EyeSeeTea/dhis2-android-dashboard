@@ -28,10 +28,15 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
+import android.support.annotation.NonNull;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.hisp.dhis.android.dashboard.models.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
+import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
@@ -39,9 +44,14 @@ import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
+import org.joda.time.DateTime;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -87,6 +97,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     }
 
     public void attachView(View view) {
+        logger.d(TAG, "viewAttached");
         isNull(view, "DashboardViewPagerFragmentView must not be null");
         dashboardViewPagerFragmentView = (DashboardViewPagerFragmentView) view;
 
@@ -155,6 +166,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     //TODO loadDashboardItems() Code using RxAndroid
     @Override
     public void loadDashboards() {
+        logger.e(TAG, "onLoadDashboards()");
         /**
         logger.d(TAG, "loadDashboards()");
         subscription.add(dashboardInteractor.list()
@@ -174,6 +186,15 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                     }
                 }));
          **/
+
+
+        // BaseIdentifiableObject {id=11, uId=nghVC4wtyzi, name=Antenatal Care, displayName=Antenatal Care, created=2013-09-08T21:47:17.960Z, lastUpdated=2016-06-19T14:42:27.046Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=3, uId=iMnYyBfSxmM, name=Delivery, displayName=Delivery, created=2013-09-09T21:14:14.696Z, lastUpdated=2016-06-19T14:42:42.720Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=15, uId=vqh4MBWOTi4, name=Disease Surveillance, displayName=Disease Surveillance, created=2014-04-06T11:46:01.989Z, lastUpdated=2014-04-14T13:04:29.916Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=4, uId=TAMlzYkstb7, name=Immunization, displayName=Immunization, created=2013-09-09T21:13:49.245Z, lastUpdated=2016-06-14T04:33:33.326Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=17, uId=L1BtjXgpUpd, name=Immunization data, displayName=Immunization data, created=2014-11-03T11:13:52.812Z, lastUpdated=2016-04-21T18:20:14.942Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=16, uId=SCtS6Szuubz, name=Info Videos, displayName=Info Videos, created=2016-04-20T15:43:41.790Z, lastUpdated=2016-04-20T19:45:50.735Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}];
+        List<Dashboard> data = new ArrayList<Dashboard>() ;
+        data.add(Dashboard.createDashboard("Antenatal Care"));
+        data.add(Dashboard.createDashboard("Delivery"));
+        data.add(Dashboard.createDashboard("Disease Surveillance"));
+
+        dashboardViewPagerFragmentView.setDashboards(data);
     }
 
     @Override
