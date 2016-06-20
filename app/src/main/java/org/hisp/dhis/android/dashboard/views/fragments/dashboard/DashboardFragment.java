@@ -31,6 +31,8 @@ package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +42,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemAdapter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
@@ -108,6 +111,16 @@ public class DashboardFragment extends BaseFragment
         access.setExternalize(args.getBoolean(EXTERNALIZE));
 
         return access;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ((DashboardApp) getActivity().getApplication())
+                .getDashboardComponent().inject(this);
+
+        dashboardFragmentPresenter.attachView(this);
     }
 
     @Override

@@ -82,22 +82,8 @@ public class DashboardViewPagerFragment extends BaseFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-        // first time fragment is created
-        if (savedInstanceState == null) {
-            // it means we found old component and we have to release it
-            if (dashboardComponent != null) {
-                // create new instance of component
-                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
-            }
-            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
-        } else {
-            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-        }
-        // inject dependencies
-        dashboardComponent.inject(this);
-
-//        dashboardViewPagerFragmentPresenter.attachView(this);
+        ((DashboardApp) getActivity().getApplication())
+                .getDashboardComponent().inject(this);
     }
 
     @Override
