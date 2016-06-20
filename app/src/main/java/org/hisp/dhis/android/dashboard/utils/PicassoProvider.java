@@ -48,7 +48,7 @@ public final class PicassoProvider {
     public static Picasso getInstance(Context context) {
 
         if (mPicasso == null) {
-            final OkHttpClient client = ((DashboardApp) context).providesOkHttpClient();
+            final OkHttpClient client = ((DashboardApp) context.getApplicationContext()).providesOkHttpClient();
 
             mPicasso = new Picasso.Builder(context)
                     .downloader(new OkHttp3Downloader(client))
