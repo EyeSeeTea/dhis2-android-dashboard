@@ -42,6 +42,7 @@ ext {
             photoView               : "1.2.6",
             picasso                 : "2.5.2",
             okhttp3Downloader       : "1.0.2",
+            butterKnife             : "8.1.0",
     ]
 }
 

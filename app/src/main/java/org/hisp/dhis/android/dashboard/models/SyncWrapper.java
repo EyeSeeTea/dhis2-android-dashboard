@@ -29,35 +29,17 @@
 package org.hisp.dhis.android.dashboard.models;
 
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
-import org.hisp.dhis.client.sdk.android.event.EventInteractor;
-import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
-import org.hisp.dhis.client.sdk.android.program.ProgramRuleActionInteractor;
-import org.hisp.dhis.client.sdk.android.program.ProgramRuleInteractor;
-import org.hisp.dhis.client.sdk.android.program.ProgramRuleVariableInteractor;
-import org.hisp.dhis.client.sdk.android.program.ProgramStageDataElementInteractor;
-import org.hisp.dhis.client.sdk.android.program.ProgramStageInteractor;
-import org.hisp.dhis.client.sdk.android.program.ProgramStageSectionInteractor;
-import org.hisp.dhis.client.sdk.android.program.UserProgramInteractor;
-import org.hisp.dhis.client.sdk.core.common.utils.ModelUtils;
-import org.hisp.dhis.client.sdk.models.event.Event;
-import org.hisp.dhis.client.sdk.models.organisationunit.OrganisationUnit;
-import org.hisp.dhis.client.sdk.models.program.Program;
-import org.hisp.dhis.client.sdk.models.program.ProgramRule;
-import org.hisp.dhis.client.sdk.models.program.ProgramRuleAction;
-import org.hisp.dhis.client.sdk.models.program.ProgramRuleVariable;
-import org.hisp.dhis.client.sdk.models.program.ProgramStage;
-import org.hisp.dhis.client.sdk.models.program.ProgramStageDataElement;
-import org.hisp.dhis.client.sdk.models.program.ProgramStageSection;
-import org.hisp.dhis.client.sdk.models.program.ProgramType;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import rx.Observable;
 import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.schedulers.Schedulers;
+
+// TODO Write SyncWrapper Code
 
 public class SyncWrapper {
 
@@ -66,23 +48,67 @@ public class SyncWrapper {
 
     // data
 
-    public SyncWrapper(DashboardInteractor dashboardInteractor) {
+    public SyncWrapper(
+            DashboardInteractor dashboardInteractor
+    ) {
         this.dashboardInteractor = dashboardInteractor;
     }
 
     // TODO code for Syncing data
 
-    /**
-    public Observable<List<ProgramStageDataElement>> syncMetaData() {
+    public Observable<List<Dashboard>> syncMetaData() {
+        /**
+        return Observable.zip(
+                userOrganisationUnitInteractor.pull(),
+                userProgramInteractor.pull(),
+                new Func2<List<OrganisationUnit>, List<Program>, List<Program>>() {
+                    @Override
+                    public List<Program> call(List<OrganisationUnit> units, List<Program> programs) {
+                        return programs;
+                    }
+                })
+                .map(new Func1<List<Program>, List<ProgramStageDataElement>>() {
+                    @Override
+                    public List<ProgramStageDataElement> call(List<Program> programs) {
+                        List<Program> programsWithoutRegistration = new ArrayList<>();
 
+                        if (programs != null && !programs.isEmpty()) {
+                            for (Program program : programs) {
+                                if (ProgramType.WITHOUT_REGISTRATION
+                                        .equals(program.getProgramType())) {
+                                    programsWithoutRegistration.add(program);
+                                }
+                            }
+                        }
+
+                        List<ProgramStage> programStages =
+                                loadProgramStages(programsWithoutRegistration);
+                        List<ProgramStageSection> programStageSections =
+                                loadProgramStageSections(programStages);
+                        List<ProgramRule> programRules =
+                                loadProgramRules(programsWithoutRegistration);
+                        List<ProgramRuleAction> programRuleActions =
+                                loadProgramRuleActions(programRules);
+                        List<ProgramRuleVariable> programRuleVariables =
+                                loadProgramRuleVariables(programsWithoutRegistration);
+
+                        return loadProgramStageDataElements(programStages, programStageSections);
+                    }
+                });
+         **/
+
+        // Return null for now
+        return null;
     }
 
-    public Observable<List<Event>> syncData() {
+    public Observable<List<Dashboard>> syncData() {
+
+        /**
         return dashboardInteractor.list()
-                .switchMap(new Func1<List<Event>, Observable<List<Event>>>() {
+                .switchMap(new Func1<List<Dashboard>, Observable<List<Dashboard>>>() {
                     @Override
-                    public Observable<List<Event>> call(List<Event> events) {
-                        Set<String> uids = ModelUtils.toUidSet(events);
+                    public Observable<List<Dashboard>> call(List<Dashboard> dashboards) {
+                        Set<String> uids = ModelUtils.toUidSet(dashboards);
                         if (uids != null && !uids.isEmpty()) {
                             return dashboardInteractor.sync(uids);
                         }
@@ -90,8 +116,53 @@ public class SyncWrapper {
                         return Observable.empty();
                     }
                 });
+
+        **/
+
+        // Return null for now
+        return null;
+    }
+
+    public Observable<Boolean> checkIfSyncIsNeeded() {
+
+        /**
+         *
+        EnumSet<Action> updateActions = EnumSet.of(Action.TO_POST, Action.TO_UPDATE);
+        return dashboardInteractor.listByActions(updateActions)
+                .switchMap(new Func1<List<Dashboard>, Observable<Boolean>>() {
+                    @Override
+                    public Observable<Boolean> call(final List<Dashboard> dashboards) {
+                        return Observable.create(new DefaultOnSubscribe<Boolean>() {
+                            @Override
+                            public Boolean call() {
+                                return dashboards != null && !dashboards.isEmpty();
+                            }
+                        });
+                    }
+                });
+
+        **/
+
+        // Return null for now
+        return null;
+    }
+
+    // TODO for Dashboards
+
+    /**
+    public Observable<List<Event>> backgroundSync() {
+        return syncMetaData()
+                .subscribeOn(Schedulers.io())
+                .switchMap(new Func1<List<ProgramStageDataElement>, Observable<List<Event>>>() {
+                    @Override
+                    public Observable<List<Event>> call(List<ProgramStageDataElement> programStageDataElements) {
+                        if (programStageDataElements != null) {
+                            return syncData();
+                        }
+                        return Observable.empty();
+                    }
+                });
     }
      **/
-
 
 }
