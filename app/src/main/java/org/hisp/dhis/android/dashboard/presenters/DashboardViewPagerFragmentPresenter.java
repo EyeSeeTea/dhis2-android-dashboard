@@ -36,6 +36,8 @@ public interface DashboardViewPagerFragmentPresenter extends Presenter {
 
     void loadDashboards();
 
+    boolean isSyncing();
+
     void handleError(final Throwable throwable);
 
 }

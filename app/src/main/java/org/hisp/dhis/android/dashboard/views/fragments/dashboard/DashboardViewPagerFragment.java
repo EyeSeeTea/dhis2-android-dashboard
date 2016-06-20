@@ -87,12 +87,6 @@ public class DashboardViewPagerFragment extends BaseFragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        dashboardViewPagerFragmentPresenter.loadDashboards();
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         setupToolbar();
         mTabs = (TabLayout) view.findViewById(R.id.dashboard_tabs);
@@ -103,35 +97,26 @@ public class DashboardViewPagerFragment extends BaseFragment
         mViewPager.setAdapter(mDashboardAdapter);
         mViewPager.addOnPageChangeListener(this);
 
+        // Syncing is Handled here in attachView only
+        // Syncing is checked here with isSyncing and hasSyncedBefore booleans
         dashboardViewPagerFragmentPresenter.attachView(this);
 
-        // TODO conditions to check if Syncing has to be done
-        /**
-         if (isDhisServiceBound() &&
-         !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
-         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
-         syncDashboards();
-         }
-         **/
-
-//        dashboardEmptyFragmentPresenter.sync();
-        // TODO conditions to check isLoading
-        /**
-         boolean isLoading = isDhisServiceBound() &&
-         getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
-         **/
-
-        // Temporarily false
-        boolean isLoading = false;
-
+        boolean isLoading = dashboardViewPagerFragmentPresenter.isSyncing();
+        ;
         if ((savedInstanceState != null &&
                 savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
             mProgressBar.setVisibility(View.VISIBLE);
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
+    }
 
-
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // TODO  Decide if loadDashboards() should be called here
+        // TODO Or after Syncing is performed in presenter or both
+        dashboardViewPagerFragmentPresenter.loadDashboards();
     }
 
     @Override
@@ -141,22 +126,14 @@ public class DashboardViewPagerFragment extends BaseFragment
         super.onSaveInstanceState(outState);
     }
 
-//    @Override
-//    public Loader<List<Dashboard>> onCreateLoader(int id, Bundle state) {
-//        if (id == LOADER_ID && isAdded()) {
-//            List<DbLoader.TrackedTable> trackedTables = Arrays.asList(
-//                    new DbLoader.TrackedTable(Dashboard.class));
-//            return new DbLoader<>(getActivity().getApplicationContext(),
-//                    trackedTables, new DashboardQuery());
-//        }
-//        return null;
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
 
         logger.d(TAG, "onResume()");
+        // Have to add attachView here , because Container Fragment's onResume()
+        // and ViewPagerFragment's onResume() is called after setDashboards()
+        // Syncing is checked here with isSyncing and hasSyncedBefore booleans
         dashboardViewPagerFragmentPresenter.attachView(this);
     }
 
@@ -194,32 +171,6 @@ public class DashboardViewPagerFragment extends BaseFragment
     }
 
     @Override
-    public boolean onBackPressed() {
-        return true;
-    }
-
-
-//    @Override
-//    public void onLoadFinished(Loader<List<Dashboard>> loader, List<Dashboard> data) {
-//        if (loader.getId() == LOADER_ID && data != null) {
-//            setDashboards(data);
-//        }
-//    }
-//
-//    @Override
-//    public void onLoaderReset(Loader<List<Dashboard>> loader) {
-//        if (loader.getId() == LOADER_ID) {
-//            setDashboards(null);
-//        }
-//    }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset,
-                               int positionOffsetPixels) {
-        // stub implementation
-    }
-
-    @Override
     public void onPageSelected(int position) {
         Dashboard dashboard = mDashboardAdapter.getDashboard(position);
         Access dashboardAccess = dashboard.getAccess();
@@ -232,16 +183,19 @@ public class DashboardViewPagerFragment extends BaseFragment
     }
 
     @Override
-    public void onPageScrollStateChanged(int state) {
+    public boolean onBackPressed() {
+        return true;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset,
+                               int positionOffsetPixels) {
         // stub implementation
     }
 
-    @Nullable
-    protected Toolbar getToolbarOfContainer() {
-        if (getParentFragment() != null && getParentFragment() instanceof DashboardContainerFragment) {
-            return ((DashboardContainerFragment) getParentFragment()).getToolbar();
-        }
-        return null;
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        // stub implementation
     }
 
     @Override
@@ -266,6 +220,14 @@ public class DashboardViewPagerFragment extends BaseFragment
                 }
             });
         }
+    }
+
+    @Nullable
+    protected Toolbar getToolbarOfContainer() {
+        if (getParentFragment() != null && getParentFragment() instanceof DashboardContainerFragment) {
+            return ((DashboardContainerFragment) getParentFragment()).getToolbar();
+        }
+        return null;
     }
 
     private boolean onMenuItemClicked(MenuItem item) {

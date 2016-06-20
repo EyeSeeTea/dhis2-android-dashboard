@@ -51,7 +51,9 @@ import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
-// TODO Remove getFakeData() and loadData properly
+// TODO Remove getFakeData()
+// TODO loadData properly
+// TODO Handle syncing properly
 public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPagerFragmentPresenter {
     private static final String TAG = DashboardViewPagerFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
@@ -61,7 +63,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     private final SyncDateWrapper syncDateWrapper;
     private final SyncWrapper syncWrapper;
     private final ApiExceptionHandler apiExceptionHandler;
-//  TODO private final SyncWrapper syncWrapper , add to constructor as well
     private final Logger logger;
 
     private CompositeSubscription subscription;
@@ -74,7 +75,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                                                SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
-
         this.dashboardInteractor = dashboardInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
@@ -91,24 +91,26 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         isNull(view, "DashboardViewPagerFragmentView must not be null");
         dashboardViewPagerFragmentView = (DashboardViewPagerFragmentView) view;
 
-        // TODO handle isSyncing properly
-        isSyncing = false;
+        // TODO conditions to check if Syncing has to be done
+        /**
+         if (isDhisServiceBound() &&
+         !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
+         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
+         syncDashboards();
+         }
+         **/
+
         if (isSyncing) {
             dashboardViewPagerFragmentView.showProgressBar();
         } else {
             dashboardViewPagerFragmentView.hideProgressBar();
         }
+
         // check if metadata was synced,
-        // if not, syncMetaData it
-
-        // TODO don't do (check) sync right now
-        /**
+        // if not, syncMetaData
          if (!isSyncing && !hasSyncedBefore) {
-         sync();
+             sync();
          }
-         **/
-
-        // TODO  Some loading method might be called here; listDashboards()
     }
 
     @Override
@@ -117,11 +119,13 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         dashboardViewPagerFragmentView = null;
     }
 
+    // Set hasSyncedBefore boolean to True
     @Override
     public void sync() {
+        logger.d(TAG, "Syncing");
+        /** TODO Write code for syncing
         dashboardViewPagerFragmentView.showProgressBar();
         isSyncing = true;
-       // TODO Syncing code
         subscription.add(syncWrapper.syncMetaData()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -137,7 +141,8 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                         }
                         logger.d(TAG, "Synced dashboards successfully");
 
-                        // TODO  Some loading method might be called here; listDashboards()
+                        // TODO  Decide if loadDashboards() should be called here
+                        // TODO Or on ViewPagerFragment's onActivityCreated() or both
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -151,13 +156,13 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                         handleError(throwable);
                     }
                 }));
+         **/
     }
 
-    //TODO loadDashboardItems() Code using RxAndroid
     @Override
     public void loadDashboards() {
         logger.e(TAG, "onLoadDashboards()");
-        /**
+        /** TODO loadDashboardItems() Code using RxAndroid
         logger.d(TAG, "loadDashboards()");
         subscription.add(dashboardInteractor.list()
                 .subscribeOn(Schedulers.io())
@@ -176,7 +181,18 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                     }
                 }));
          **/
+
+        //Temporary Hack
         dashboardViewPagerFragmentView.setDashboards(getFakeData());
+    }
+
+    @Override
+    public boolean isSyncing() {
+        return isSyncing;
+        /**
+         boolean isLoading = isDhisServiceBound() &&
+         getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
+         **/
     }
 
     @Override
