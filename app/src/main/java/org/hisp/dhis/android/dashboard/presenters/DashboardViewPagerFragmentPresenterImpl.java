@@ -52,7 +52,7 @@ import rx.subscriptions.CompositeSubscription;
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 // TODO Remove getFakeData()
-// TODO loadData properly
+// TODO loadLocalData properly
 // TODO Handle syncing properly
 public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPagerFragmentPresenter {
     private static final String TAG = DashboardViewPagerFragmentPresenterImpl.class.getSimpleName();
@@ -141,9 +141,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                             dashboardViewPagerFragmentView.hideProgressBar();
                         }
                         logger.d(TAG, "Synced dashboards successfully");
-
-                        // TODO  Decide if loadDashboards() should be called here
-                        // TODO Or on ViewPagerFragment's onActivityCreated() or both
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -161,7 +158,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     }
 
     @Override
-    public void loadDashboards() {
+    public void loadLocalDashboards() {
         logger.e(TAG, "onLoadDashboards()");
         /** TODO loadDashboardItems() Code using RxAndroid
         logger.d(TAG, "loadDashboards()");

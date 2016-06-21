@@ -114,9 +114,7 @@ public class DashboardViewPagerFragment extends BaseFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // TODO  Decide if loadDashboards() should be called here
-        // TODO Or after Syncing is performed in presenter or both
-        dashboardViewPagerFragmentPresenter.loadDashboards();
+        dashboardViewPagerFragmentPresenter.loadLocalDashboards();
     }
 
     @Override
