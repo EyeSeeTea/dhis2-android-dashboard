@@ -22,6 +22,8 @@ import org.hisp.dhis.client.sdk.utils.Logger;
 
 import javax.inject.Inject;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+
 /**
  *         This fragment is used to make decision, whether to show fragment with
  *         dashboards or fragment with message.
@@ -69,19 +71,19 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
         }
         // inject dependencies
          dashboardComponent.inject(this);
+    }
 
-        // 2 Conditions :
-        // if Empty fragment of container has to be loaded first, attachView here
-        // if Empty fragment of container does not have loaded first, attachView directly in OnResume()
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         dashboardContainerFragmentPresenter.attachView(this);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        //TODO  Write onLoadData() code in DashboardContainerFragmentPresenterImpl
-        checkForData();
+        logger.d(TAG, "onLoadLocalData()");
+        dashboardContainerFragmentPresenter.onLoadLocalData();
     }
 
     @Override
@@ -111,7 +113,7 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
 
     @Override
     public void navigationAfterLoadingData(Boolean hasData) {
-        if (hasData) {
+        if (!hasData) {
             // we don't want to attach the same fragment
             if (!isFragmentAttached(DashboardViewPagerFragment.TAG)) {
                 attachFragment(new DashboardViewPagerFragment(),
@@ -133,11 +135,6 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
 
     private boolean isFragmentAttached(String tag) {
         return getChildFragmentManager().findFragmentByTag(tag) != null;
-    }
-
-    private void checkForData(){
-        logger.d(TAG, "checkForData()");
-        dashboardContainerFragmentPresenter.onLoadData();
     }
 
     @NonNull

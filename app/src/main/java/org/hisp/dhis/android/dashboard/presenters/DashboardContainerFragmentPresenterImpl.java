@@ -46,13 +46,10 @@ import rx.functions.Action1;
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 // TODO Edit PresenterImpl Code
-
 public class DashboardContainerFragmentPresenterImpl implements DashboardContainerFragmentPresenter {
     private static final String TAG = DashboardContainerFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
-    private boolean hasSyncedBefore;
     private DashboardContainerFragmentView dashboardContainerFragmentView;
-    private boolean isSyncing;
     private final Logger logger;
 
     private static final Boolean TEST_BOOL_EMPTY_DASHBOARD = false;
@@ -62,7 +59,6 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     public DashboardContainerFragmentPresenterImpl(
             DashboardInteractor dashboardInteractor,Logger logger) {
         this.dashboardInteractor = dashboardInteractor;
-        this.hasSyncedBefore = false;
         this.logger = logger;
     }
 
@@ -79,7 +75,7 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     }
 
     @Override
-    public void onLoadData() {
+    public void onLoadLocalData() {
 
         //TODO background code to check if data exists with callback to Fragment
 
@@ -99,7 +95,7 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
 
          **/
 
-        logger.d(TAG, "onLoadData()");
+        logger.d(TAG, "onLoadLocalData()");
         if(TEST_BOOL_VIEWPAGER){
             // 2 Conditions :
             // if Empty fragment of container has to be loaded first, check for !=null
