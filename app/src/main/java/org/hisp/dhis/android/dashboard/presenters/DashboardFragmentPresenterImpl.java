@@ -29,6 +29,8 @@
 package org.hisp.dhis.android.dashboard.presenters;
 
 
+import com.raizlabs.android.dbflow.sql.language.Select;
+
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
@@ -38,6 +40,7 @@ import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import rx.subscriptions.CompositeSubscription;
@@ -107,7 +110,20 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
     // Temporary hack for creating DashboardItems like legacy.
     // TODO Use DashboardInteractor to create new DashboardItem wherever required
     private List<DashboardItem> getFakeData(){
+        /**
+        List<DashboardItemContent> resources = new Select().from(DashboardItemContent.class)
+                .where(generalCondition).queryList();
+        Collections.sort(resources, DashboardItemContent.DISPLAY_NAME_COMPARATOR);
+
+        List<OptionAdapterValue> adapterValues = new ArrayList<>();
+        for (DashboardItemContent dashboardItemContent : resources) {
+            adapterValues.add(new OptionAdapterValue(dashboardItemContent.getUId(),
+                    dashboardItemContent.getDisplayName()));
+        }
         List<DashboardItem> itemsData = new ArrayList<DashboardItem>() ;
         return itemsData;
+         **/
+
+        return null;
     }
 }
