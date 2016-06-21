@@ -37,10 +37,14 @@ import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
+// TODO Remove getFakeData() and loadData properly
 public class DashboardFragmentPresenterImpl implements DashboardFragmentPresenter {
     private static final String TAG = DashboardFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
@@ -82,7 +86,8 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
     @Override
     public void loadDashboardItems() {
         logger.d(TAG, "LoadDashboardItems()");
-//        dashboardFragmentView.showDashboardItems(null);
+        // TODO replace this by actual loading from SDK
+        dashboardFragmentView.showDashboardItems(null);
     }
 
     // TODO Add deleteDashboardItem() method to DashboardInteractor in SDK
@@ -97,5 +102,12 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
     public void deleteDashboardElement(DashboardElement dashboardElement) {
 //        dashboardInteractor.deleteDashboardElement();
         // TODO syncDashboards() in parentViewPager
+    }
+
+    // Temporary hack for creating DashboardItems like legacy.
+    // TODO Use DashboardInteractor to create new DashboardItem wherever required
+    private List<DashboardItem> getFakeData(){
+        List<DashboardItem> itemsData = new ArrayList<DashboardItem>() ;
+        return itemsData;
     }
 }
