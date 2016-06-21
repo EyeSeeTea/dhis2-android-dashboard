@@ -106,6 +106,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         // check if metadata was synced,
         // if not, syncMetaData
         if (!isSyncing && !hasSyncedBefore) {
+            logger.d(TAG, "!Syncing & !SyncedBefore");
             sync();
         }
     }

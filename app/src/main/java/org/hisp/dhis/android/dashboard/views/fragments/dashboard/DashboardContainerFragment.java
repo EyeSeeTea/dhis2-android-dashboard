@@ -113,7 +113,7 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
 
     @Override
     public void navigationAfterLoadingData(Boolean hasData) {
-        if (!hasData) {
+        if (hasData) {
             // we don't want to attach the same fragment
             if (!isFragmentAttached(DashboardViewPagerFragment.TAG)) {
                 attachFragment(new DashboardViewPagerFragment(),
