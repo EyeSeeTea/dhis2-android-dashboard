@@ -33,11 +33,17 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.core.common.utils.CodeGenerator;
+import org.hisp.dhis.client.sdk.models.common.Access;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
+import org.hisp.dhis.client.sdk.utils.Preconditions;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,7 +93,7 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
 
     //TODO loadDashboardItems() Code using RxAndroid
     @Override
-    public void loadDashboardItems() {
+    public void loadLocalDashboardItems(long uId) {
         logger.d(TAG, "LoadDashboardItems()");
         // TODO replace this by actual loading from SDK
         dashboardFragmentView.showDashboardItems(null);
@@ -126,4 +132,5 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
 
         return null;
     }
+
 }

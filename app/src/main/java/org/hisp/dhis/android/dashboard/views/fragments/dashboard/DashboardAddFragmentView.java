@@ -6,5 +6,6 @@ import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 
 public interface DashboardAddFragmentView extends View{
 
+    void dismissDialogFragment();
 
 }

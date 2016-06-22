@@ -29,6 +29,7 @@
 package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.sync.SyncAdapter;
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardAddFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragment;
@@ -67,6 +68,8 @@ public interface DashboardComponent {
         void inject(DashboardFragment dashboardFragment);
 
         void inject(DashboardItemAddFragment dashboardItemAddFragment);
+
+        void inject(DashboardAddFragment dashboardAddFragment);
 
         void inject(SyncAdapter syncAdapter);
 

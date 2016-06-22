@@ -40,10 +40,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
+import javax.inject.Inject;
 
 import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
@@ -51,8 +57,14 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 /**
  * Fragment responsible for creation of new dashboards.
  */
-public final class DashboardAddFragment extends BaseDialogFragment {
+public final class DashboardAddFragment extends BaseDialogFragment implements DashboardAddFragmentView {
     private static final String TAG = DashboardAddFragment.class.getSimpleName();
+
+    @Inject
+    DashboardAddFragmentPresenter dashboardAddFragmentPresenter;
+
+    @Inject
+    Logger logger;
 
     TextView mDialogLabel;
     EditText mDashboardName;
@@ -67,6 +79,9 @@ public final class DashboardAddFragment extends BaseDialogFragment {
 
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
+
+        ((DashboardApp) getActivity().getApplication())
+                .getDashboardComponent().inject(this);
     }
 
     @Nullable
@@ -82,6 +97,20 @@ public final class DashboardAddFragment extends BaseDialogFragment {
         initViews(view);
 
         mDialogLabel.setText(getString(R.string.add_dashboard));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        logger.d(TAG, "onResume()");
+        dashboardAddFragmentPresenter.attachView(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        logger.d(TAG, "onPause()");
+        dashboardAddFragmentPresenter.detachView();
     }
 
     private void initViews(View view){
@@ -107,10 +136,11 @@ public final class DashboardAddFragment extends BaseDialogFragment {
                 mTextInputLayout.setError(message);
 
                 if (!isEmptyName) {
-
+                    dashboardAddFragmentPresenter
+                            .createDashboard(mDashboardName.getText().toString());
                 }
             } else {
-                dismiss();
+                dismissDialogFragment();
             }
         }
     };
@@ -119,4 +149,8 @@ public final class DashboardAddFragment extends BaseDialogFragment {
         super.show(manager, TAG);
     }
 
+    @Override
+    public void dismissDialogFragment() {
+        dismiss();
+    }
 }
