@@ -37,11 +37,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
-import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.ui.views.FontButton;
+
 
 import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
@@ -55,10 +57,14 @@ public final class DashboardAddFragment extends BaseDialogFragment {
     TextView mDialogLabel;
     EditText mDashboardName;
     TextInputLayout mTextInputLayout;
+    ImageView mCloseDialogButton;
+    FontButton mCancelDashboardAddButton;
+    FontButton mSaveDashboardButton;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
     }
@@ -72,39 +78,40 @@ public final class DashboardAddFragment extends BaseDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
         mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
         mDashboardName = (EditText) view.findViewById(R.id.dashboard_name);
         mTextInputLayout = (TextInputLayout) view.findViewById(R.id.text_input_dashboard_name);
+        mCloseDialogButton = (ImageView) view.findViewById(R.id.close_dialog_button);
+        mCancelDashboardAddButton = (FontButton) view.findViewById(R.id.cancel_dashboard_add);
+        mSaveDashboardButton = (FontButton) view.findViewById(R.id.save_dashboard);
+
+        mCloseDialogButton.setOnClickListener(onClickListener);
+        mCancelDashboardAddButton.setOnClickListener(onClickListener);
+        mSaveDashboardButton.setOnClickListener(onClickListener);
+
         mDialogLabel.setText(getString(R.string.add_dashboard));
     }
 
-    // TODO code for action performed
-    /**
-    @OnClick({R.id.close_dialog_button, R.id.cancel_dashboard_add, R.id.save_dashboard})
-    @SuppressWarnings("unused")
-    public void onButtonClicked(View view) {
-        if (view.getId() == R.id.save_dashboard) {
-            boolean isEmptyName = isEmpty(mDashboardName.getText().toString().trim());
-            String message = isEmptyName ? getString(R.string.enter_valid_name) : "";
-            mTextInputLayout.setError(message);
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.save_dashboard) {
+                boolean isEmptyName = isEmpty(mDashboardName.getText().toString().trim());
+                String message = isEmptyName ? getString(R.string.enter_valid_name) : "";
+                mTextInputLayout.setError(message);
 
-            if (!isEmptyName) {
-                Dashboard newDashboard = Dashboard
-                        .createDashboard(mDashboardName.getText().toString());
-                newDashboard.save();
-                if (isDhisServiceBound()) {
-                    getDhisService().syncDashboards();
-                    EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
+                if (!isEmptyName) {
+
                 }
+            } else {
                 dismiss();
             }
-        } else {
-            dismiss();
         }
-    }
-     **/
+    };
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
     }
+
 }
