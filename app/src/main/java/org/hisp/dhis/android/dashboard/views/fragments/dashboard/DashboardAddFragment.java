@@ -79,6 +79,13 @@ public final class DashboardAddFragment extends BaseDialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
+        initViews(view);
+
+        mDialogLabel.setText(getString(R.string.add_dashboard));
+    }
+
+    private void initViews(View view){
+
         mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
         mDashboardName = (EditText) view.findViewById(R.id.dashboard_name);
         mTextInputLayout = (TextInputLayout) view.findViewById(R.id.text_input_dashboard_name);
@@ -89,8 +96,6 @@ public final class DashboardAddFragment extends BaseDialogFragment {
         mCloseDialogButton.setOnClickListener(onClickListener);
         mCancelDashboardAddButton.setOnClickListener(onClickListener);
         mSaveDashboardButton.setOnClickListener(onClickListener);
-
-        mDialogLabel.setText(getString(R.string.add_dashboard));
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
