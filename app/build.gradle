@@ -129,7 +129,4 @@ dependencies {
     compile "com.squareup.picasso:picasso:${libs.picasso}"
     compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:${libs.okhttp3Downloader}"
 
-    // Binding
-    compile "com.jakewharton:butterknife:${libs.butterKnife}"
-
 }
