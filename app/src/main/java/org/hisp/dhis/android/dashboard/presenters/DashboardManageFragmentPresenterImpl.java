@@ -38,6 +38,7 @@ import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
+// TODO Consult if UiEventSync method is required
 public class DashboardManageFragmentPresenterImpl implements DashboardManageFragmentPresenter {
     private static final String TAG = DashboardManageFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
@@ -88,6 +89,25 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
         // this.dashboard = dashboard;
 
         return null;
+    }
+
+    // TODO Write code for updation
+    @Override
+    public void updateDashboard(String dashboardName) {
+        // Do something to update
+        // After updation do the following
+        dashboardManageFragmentView.dismissDialogFragment();
+        dashboardManageFragmentView.dashboardNameClearFocus();
+        UiEventSync();
+    }
+
+    @Override
+    public void deleteDashboard() {
+        // Do something to update
+        //dashboardInteractor.remove(dashboard);
+
+        // After updation do sync
+        UiEventSync();
     }
 
     // TODO handle UiEventSync

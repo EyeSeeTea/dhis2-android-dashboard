@@ -111,6 +111,7 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
         mDashboard = dashboardManageFragmentPresenter.getDashboard(getDashboardId());
 
         initViews(view);
@@ -139,7 +140,7 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     }
 
     private long getDashboardId() {
-        return getArguments().getLong(ARG_DASHBOARD_ID, null);
+        return getArguments().getLong(ARG_DASHBOARD_ID);
     }
 
     private void initViews(View view){
@@ -185,24 +186,12 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
                     mTextInputLayout.setError(message);
 
                     if (!isEmptyName) {
-                        mDashboard.updateDashboard(mDashboardName.getText().toString());
-                        mDashboardName.clearFocus();
-
-                        if (isDhisServiceBound()) {
-                            getDhisService().syncDashboards();
-                            EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-                        }
-                        dismissDialogFragment();
+                        dashboardManageFragmentPresenter.updateDashboard(mDashboardName.getText().toString());
                     }
                     break;
                 }
                 case R.id.delete_dashboard_button: {
-                    mDashboard.deleteDashboard();
-
-                    if (isDhisServiceBound()) {
-                        getDhisService().syncDashboards();
-                        EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-                    }
+                    dashboardManageFragmentPresenter.deleteDashboard();
                 }
                 case R.id.close_dialog_button: {
                     dismissDialogFragment();
@@ -226,5 +215,10 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     @Override
     public void dismissDialogFragment() {
         dismiss();
+    }
+
+    @Override
+    public void dashboardNameClearFocus() {
+        mDashboardName.clearFocus();
     }
 }
