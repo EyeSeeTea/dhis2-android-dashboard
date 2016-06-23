@@ -168,17 +168,19 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
 
     @Override
     public void loadLocalDashboards() {
+        /**
         logger.e(TAG, "onLoadDashboards()");
-        /** TODO loadDashboardItems() Code using RxAndroid
+        // TODO loadDashboardItems() Code using RxAndroid
         logger.d(TAG, "loadDashboards()");
         subscription.add(dashboardInteractor.list()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Dashboard>() {
+                .subscribe(new Action1<List<Dashboard>>() {
                     @Override
-                    public void call(Dashboard dashboard) {
+                    public void call(List<Dashboard> dashboards) {
+                        logger.d(TAG, "2");
                         if (dashboardViewPagerFragmentView != null) {
-                            dashboardViewPagerFragmentView.showDashboards(dashboard);
+                            dashboardViewPagerFragmentView.setDashboards(dashboards);
                         }
                     }
                 }, new Action1<Throwable>() {
