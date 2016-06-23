@@ -30,6 +30,8 @@ package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
@@ -143,6 +145,14 @@ public class DashboardModule {
             @Nullable DashboardInteractor dashboardInteractor, Logger logger
     ) {
         return new DashboardAddFragmentPresenterImpl(dashboardInteractor, logger);
+    }
+
+    @Provides
+    @PerUser
+    public DashboardManageFragmentPresenter providesDashboardManageFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor, Logger logger
+    ) {
+        return new DashboardManageFragmentPresenterImpl(dashboardInteractor, logger);
     }
 
 }

@@ -34,6 +34,7 @@ import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContai
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardItemAddFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardManageFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragment;
 
 import dagger.Subcomponent;
@@ -70,6 +71,8 @@ public interface DashboardComponent {
         void inject(DashboardItemAddFragment dashboardItemAddFragment);
 
         void inject(DashboardAddFragment dashboardAddFragment);
+
+        void inject(DashboardManageFragment dashboardManageFragment);
 
         void inject(SyncAdapter syncAdapter);
 
