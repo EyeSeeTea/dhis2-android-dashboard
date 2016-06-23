@@ -38,57 +38,44 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.builder.Condition;
-import com.raizlabs.android.dbflow.sql.language.Select;
-
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard;
-import org.hisp.dhis.android.dashboard.api.models.Dashboard$Table;
-import org.hisp.dhis.android.dashboard.api.utils.EventBusProvider;
-import org.hisp.dhis.android.dashboard.ui.events.UiEvent;
-import org.hisp.dhis.android.dashboard.ui.fragments.BaseDialogFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.ui.views.FontButton;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnFocusChange;
 
-import static org.hisp.dhis.android.dashboard.utils.TextUtils.isEmpty;
+import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
 /**
  * Handles editing (changing name) and removal of given dashboard.
  */
-public final class DashboardManageFragment extends BaseDialogFragment {
+
+// TODO Consult if ARG_DASHBOARD_ID implementation in newInstance is correct
+public final class DashboardManageFragment extends BaseDialogFragment{
     private static final String TAG = DashboardManageFragment.class.getSimpleName();
+    private static final String ARG_DASHBOARD_ID = "arg:dashboardId";
 
-    @Bind(R.id.fragment_bar)
     View mFragmentBar;
-
-    @Bind(R.id.fragment_bar_mode_editing)
     View mFragmentBarEditingMode;
-
-    @Bind(R.id.dialog_label)
     TextView mDialogLabel;
-
-    @Bind(R.id.action_name)
     TextView mActionName;
-
-    @Bind(R.id.dashboard_name)
     EditText mDashboardName;
-
-    @Bind(R.id.delete_dashboard_button)
     Button mDeleteButton;
-
-    @Bind(R.id.text_input_dashboard_name)
     TextInputLayout mTextInputLayout;
+
+    ImageView mCloseDialogButton;
+    ImageView mCancelActionButton;
+    ImageView mAcceptActionButton;
+    FontButton mDeleteDashboardButton;
 
     Dashboard mDashboard;
 
     public static DashboardManageFragment newInstance(long dashboardId) {
         Bundle args = new Bundle();
-        args.putLong(Dashboard$Table.ID, dashboardId);
+        args.putLong(ARG_DASHBOARD_ID, dashboardId);
 
         DashboardManageFragment fragment = new DashboardManageFragment();
         fragment.setArguments(args);
@@ -98,8 +85,10 @@ public final class DashboardManageFragment extends BaseDialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
+
     }
 
     @Nullable
@@ -110,13 +99,8 @@ public final class DashboardManageFragment extends BaseDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mDashboard = new Select()
-                .from(Dashboard.class)
-                .where(Condition.column(Dashboard$Table
-                        .ID).is(getArguments().getLong(Dashboard$Table.ID)))
-                .querySingle();
 
-        ButterKnife.bind(this, view);
+        initViews(view);
 
         mDialogLabel.setText(getString(R.string.manage_dashboard));
         mActionName.setText(getString(R.string.edit_name));
@@ -127,54 +111,75 @@ public final class DashboardManageFragment extends BaseDialogFragment {
         setFragmentBarActionMode(false);
     }
 
+    private void initViews(View view){
 
-    @OnClick({R.id.close_dialog_button, R.id.cancel_action,
-            R.id.accept_action, R.id.delete_dashboard_button,})
-    @SuppressWarnings("unused")
-    public void onButtonClick(View view) {
-        switch (view.getId()) {
-            case R.id.cancel_action: {
-                mDashboardName.setText(
-                        mDashboard.getDisplayName());
-                mDashboardName.clearFocus();
+        mFragmentBar = view.findViewById(R.id.fragment_bar);
+        mFragmentBarEditingMode = view.findViewById(R.id.fragment_bar_mode_editing);
+        mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
+        mActionName = (TextView) view.findViewById(R.id.action_name);
+        mDashboardName = (EditText) view.findViewById(R.id.dashboard_name);
+        mDeleteButton = (Button) view.findViewById(R.id.delete_dashboard_button);
+        mTextInputLayout = (TextInputLayout) view.findViewById(R.id.text_input_dashboard_name);
+
+        mCloseDialogButton = (ImageView) view.findViewById(R.id.close_dialog_button);
+        mCancelActionButton = (ImageView) view.findViewById(R.id.cancel_action);
+        mAcceptActionButton = (ImageView) view.findViewById(R.id.accept_action);
+        mDeleteDashboardButton = (FontButton) view.findViewById(R.id.delete_dashboard_button);
+
+        mCloseDialogButton.setOnClickListener(onClickListener);
+        mCancelActionButton.setOnClickListener(onClickListener);
+        mAcceptActionButton.setOnClickListener(onClickListener);
+        mDeleteDashboardButton.setOnClickListener(onClickListener);
+
+        mDashboardName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setFragmentBarActionMode(hasFocus);
             }
-            case R.id.accept_action: {
-                boolean isEmptyName = isEmpty(mDashboardName.getText().toString().trim());
-                String message = isEmptyName ? getString(R.string.enter_valid_name) : "";
-                mTextInputLayout.setError(message);
+        });
+    }
 
-                if (!isEmptyName) {
-                    mDashboard.updateDashboard(mDashboardName.getText().toString());
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.cancel_action: {
+                    mDashboardName.setText(
+                            mDashboard.getDisplayName());
                     mDashboardName.clearFocus();
+                }
+                case R.id.accept_action: {
+                    boolean isEmptyName = isEmpty(mDashboardName.getText().toString().trim());
+                    String message = isEmptyName ? getString(R.string.enter_valid_name) : "";
+                    mTextInputLayout.setError(message);
+
+                    if (!isEmptyName) {
+                        mDashboard.updateDashboard(mDashboardName.getText().toString());
+                        mDashboardName.clearFocus();
+
+                        if (isDhisServiceBound()) {
+                            getDhisService().syncDashboards();
+                            EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
+                        }
+                        dismiss();
+                    }
+                    break;
+                }
+                case R.id.delete_dashboard_button: {
+                    mDashboard.deleteDashboard();
 
                     if (isDhisServiceBound()) {
                         getDhisService().syncDashboards();
                         EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
                     }
+                }
+                case R.id.close_dialog_button: {
                     dismiss();
                 }
-                break;
-            }
-            case R.id.delete_dashboard_button: {
-                mDashboard.deleteDashboard();
 
-                if (isDhisServiceBound()) {
-                    getDhisService().syncDashboards();
-                    EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-                }
             }
-            case R.id.close_dialog_button: {
-                dismiss();
-            }
-
         }
-    }
-
-    @OnFocusChange(R.id.dashboard_name)
-    @SuppressWarnings("unused")
-    public void onFocusChanged(boolean focused) {
-        setFragmentBarActionMode(focused);
-    }
+    };
 
     /* set fragment bar in editing mode, by hiding standard
     layout and showing layout with actions*/
@@ -186,4 +191,5 @@ public final class DashboardManageFragment extends BaseDialogFragment {
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
     }
+
 }
