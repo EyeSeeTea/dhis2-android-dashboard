@@ -138,7 +138,7 @@ public class DashboardFragment extends BaseFragment
         super.onActivityCreated(savedInstanceState);
         logger.d(TAG, "onActivityCreated()");
         if(isAdded()) {
-            dashboardFragmentPresenter.loadDashboardItems();
+            dashboardFragmentPresenter.loadLocalDashboardItems(getArguments().getLong(DASHBOARD_ID));
         }
     }
 
