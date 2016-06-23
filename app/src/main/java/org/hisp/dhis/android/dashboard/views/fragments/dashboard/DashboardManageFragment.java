@@ -41,11 +41,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
+import javax.inject.Inject;
 
 import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
@@ -54,9 +58,15 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
  */
 
 // TODO Consult if ARG_DASHBOARD_ID implementation in newInstance is correct
-public final class DashboardManageFragment extends BaseDialogFragment{
+public final class DashboardManageFragment extends BaseDialogFragment implements DashboardManageFragmentView{
     private static final String TAG = DashboardManageFragment.class.getSimpleName();
     private static final String ARG_DASHBOARD_ID = "arg:dashboardId";
+
+    @Inject
+    DashboardManageFragmentPresenter dashboardManageFragmentPresenter;
+
+    @Inject
+    Logger logger;
 
     View mFragmentBar;
     View mFragmentBarEditingMode;
@@ -89,6 +99,8 @@ public final class DashboardManageFragment extends BaseDialogFragment{
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
 
+        ((DashboardApp) getActivity().getApplication())
+                .getDashboardComponent().inject(this);
     }
 
     @Nullable
@@ -99,6 +111,7 @@ public final class DashboardManageFragment extends BaseDialogFragment{
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        mDashboard = dashboardManageFragmentPresenter.getDashboard(getDashboardId());
 
         initViews(view);
 
@@ -109,6 +122,24 @@ public final class DashboardManageFragment extends BaseDialogFragment{
         mDeleteButton.setEnabled(mDashboard.getAccess().isDelete());
 
         setFragmentBarActionMode(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        logger.d(TAG, "onResume()");
+        dashboardManageFragmentPresenter.attachView(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        logger.d(TAG, "onPause()");
+        dashboardManageFragmentPresenter.detachView();
+    }
+
+    private long getDashboardId() {
+        return getArguments().getLong(ARG_DASHBOARD_ID, null);
     }
 
     private void initViews(View view){
@@ -161,7 +192,7 @@ public final class DashboardManageFragment extends BaseDialogFragment{
                             getDhisService().syncDashboards();
                             EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
                         }
-                        dismiss();
+                        dismissDialogFragment();
                     }
                     break;
                 }
@@ -174,7 +205,7 @@ public final class DashboardManageFragment extends BaseDialogFragment{
                     }
                 }
                 case R.id.close_dialog_button: {
-                    dismiss();
+                    dismissDialogFragment();
                 }
 
             }
@@ -192,4 +223,8 @@ public final class DashboardManageFragment extends BaseDialogFragment{
         super.show(manager, TAG);
     }
 
+    @Override
+    public void dismissDialogFragment() {
+        dismiss();
+    }
 }
