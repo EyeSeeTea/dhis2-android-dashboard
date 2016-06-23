@@ -58,6 +58,8 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
  */
 
 // TODO Consult if ARG_DASHBOARD_ID implementation in newInstance is correct
+// TODO Make changes according to real data
+
 public final class DashboardManageFragment extends BaseDialogFragment implements DashboardManageFragmentView{
     private static final String TAG = DashboardManageFragment.class.getSimpleName();
     private static final String ARG_DASHBOARD_ID = "arg:dashboardId";
@@ -119,8 +121,12 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
         mDialogLabel.setText(getString(R.string.manage_dashboard));
         mActionName.setText(getString(R.string.edit_name));
 
-        mDashboardName.setText(mDashboard.getDisplayName());
-        mDeleteButton.setEnabled(mDashboard.getAccess().isDelete());
+        // TODO remove setting of temporary name and access and set actual
+        mDashboardName.setText("temp");
+        mDeleteButton.setEnabled(true);
+
+        //mDashboardName.setText(mDashboard.getDisplayName());
+        //mDeleteButton.setEnabled(mDashboard.getAccess().isDelete());
 
         setFragmentBarActionMode(false);
     }

@@ -35,5 +35,9 @@ public interface DashboardManageFragmentPresenter extends Presenter {
 
     Dashboard getDashboard(long dashboardID);
 
+    void updateDashboard(String dashboardName);
+
+    void deleteDashboard();
+
     void UiEventSync();
 }
