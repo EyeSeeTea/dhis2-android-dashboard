@@ -38,7 +38,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/dark_navy_blue"/>
+        android:background="@color/color_primary_dark"/>
 
     <RelativeLayout
         android:layout_width="310dp"
@@ -83,7 +83,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/filters_container"
             android:cacheColorHint="@color/transparent"
-            android:divider="@color/light_grey"
+            android:divider="@color/color_divider"
             android:dividerHeight="1px"/>
 
     </RelativeLayout>

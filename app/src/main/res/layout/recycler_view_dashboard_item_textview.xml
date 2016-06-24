@@ -36,6 +36,6 @@
     android:background="@drawable/transparent_selector"
     android:clickable="true"
     android:gravity="center"
-    android:textColor="@color/navy_blue"
+    android:textColor="@color/color_primary_default"
     android:textSize="17sp"
     app:font="@string/light_font_name"/>
