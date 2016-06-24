@@ -6,9 +6,9 @@
         <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
 
         <!-- Colour palette -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/color_primary_default</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent_default</item>
 
         <!-- General properties -->
         <item name="android:windowBackground">@android:color/white</item>
@@ -51,7 +51,7 @@
         <item name="android:clickable">true</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/navy_blue</item>
+        <item name="android:textColor">@color/color_primary_default</item>
         <item name="android:textSize">15sp</item>
         <item name="font">@string/light_font_name</item>
     </style>
