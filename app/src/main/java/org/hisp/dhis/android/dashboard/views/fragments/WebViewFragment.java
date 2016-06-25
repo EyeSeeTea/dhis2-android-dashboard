@@ -34,15 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import org.hisp.dhis.android.dashboard.DhisApplication;
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.controllers.DhisController;
-import org.hisp.dhis.android.dashboard.api.job.Job;
-import org.hisp.dhis.android.dashboard.api.job.JobExecutor;
-import org.hisp.dhis.android.dashboard.api.models.meta.ResponseHolder;
-import org.hisp.dhis.android.dashboard.api.network.APIException;
-import org.hisp.dhis.android.dashboard.api.network.DhisApi;
-import org.hisp.dhis.android.dashboard.api.network.RepoManager;
+
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 
 import java.io.BufferedReader;
@@ -50,20 +43,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 
-import butterknife.Bind;
-import butterknife.BindViews;
-import butterknife.ButterKnife;
-import retrofit.mime.TypedInput;
-
 import static android.text.TextUtils.isEmpty;
 
 public class WebViewFragment extends BaseFragment {
     private static final String DASHBOARD_ELEMENT_ID = "arg:dashboardElementId";
 
-    @BindViews(R.id.web_view_content)
     WebView mWebView;
-
-    @BindViews(R.id.container_layout_progress_bar)
     View mProgressBarContainer;
 
     public static WebViewFragment newInstance(String id) {
@@ -82,7 +67,9 @@ public class WebViewFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+
+        mWebView = (WebView) view.findViewById(R.id.web_view_content);
+        mProgressBarContainer = view.findViewById(R.id.container_layout_progress_bar);
 
         mWebView.getSettings().setBuiltInZoomControls(true);
         if (getArguments() != null && !isEmpty(getArguments()
