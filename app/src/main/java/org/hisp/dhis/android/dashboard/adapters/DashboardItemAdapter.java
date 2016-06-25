@@ -50,10 +50,8 @@ import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.adapters.AbsAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindViews;
-import butterknife.ButterKnife;
 
 // TODO Replacing ButterKnife(if need be) and buildImage URL
 public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardItemAdapter.ItemViewHolder> {
@@ -113,7 +111,7 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         mImageLoader = PicassoProvider.getInstance(context);
     }
 
-    // TODO
+    // TODO Remove Temperory URL
     // Return sample URL for now
     private static String buildImageUrl(String resource, String id) {
         /**
@@ -370,10 +368,29 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         holder.onListElementInternalClickListener.setElements(elementList);
 
         /* Handling embedded list items. */
+
+        for(int i=0 ; i<holder.elementItems.size(); i++){
+            DashboardElement element = elementList.get(i);
+            holder.elementItems.get(i).setVisibility(element == null ? View.INVISIBLE : View.VISIBLE);
+            holder.elementItems.get(i).setText(element == null ? EMPTY_FIELD : element.getDisplayName());
+        }
+
+        for(int i=0 ; i<holder.elementItemDeleteButtons.size(); i++){
+            DashboardElement element = holder.getElement(elementList, i);
+            if (element == null || !mDashboardAccess.isUpdate()) {
+                holder.elementItemDeleteButtons.get(i).setVisibility(View.INVISIBLE);
+            } else {
+                holder.elementItemDeleteButtons.get(i).setVisibility(View.VISIBLE);
+            }
+        }
+
+        // TODO Remove below butterknife commented out code if above implementation is correct
+        /**
         ButterKnife.apply(holder.elementItems,
                 holder.ELEMENT_ITEMS_SETTER, elementList);
         ButterKnife.apply(holder.elementItemDeleteButtons,
                 holder.ELEMENT_ITEM_BUTTONS_SETTER, elementList);
+         **/
     }
 
     /* convenience method for removing dashboard items with animations */
@@ -591,86 +608,42 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
 
     static class ListItemViewHolder implements IElementContentViewHolder {
 
-        /* action which will be applied to list of content in item */
-        static final class ElementItemsSetter implements ButterKnife.Setter<TextView, List<DashboardElement>> {
-
-            @Override
-            public void set(TextView textView, List<DashboardElement> elements, int index) {
-                DashboardElement element = getElement(elements, index);
-                textView.setVisibility(element == null ? View.INVISIBLE : View.VISIBLE);
-                textView.setText(element == null ? EMPTY_FIELD : element.getDisplayName());
-            }
-        }
-
-        static final class ElementItemButtonsSetter implements ButterKnife.Setter<View, List<DashboardElement>> {
-            private final Access mDashboardAccess;
-
-            public ElementItemButtonsSetter(Access dashboardAccess) {
-                mDashboardAccess = dashboardAccess;
-            }
-
-            @Override
-            public void set(View view, List<DashboardElement> elements, int index) {
-                DashboardElement element = getElement(elements, index);
-
-                if (element == null || !mDashboardAccess.isUpdate()) {
-                    view.setVisibility(View.INVISIBLE);
-                } else {
-                    view.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-
-        final ElementItemsSetter ELEMENT_ITEMS_SETTER;
-        final ElementItemButtonsSetter ELEMENT_ITEM_BUTTONS_SETTER;
-
         final OnListElementInternalClickListener onListElementInternalClickListener;
         final View itemElementsContainer;
 
-        @BindViews({
-                R.id.element_item_0,
-                R.id.element_item_1,
-                R.id.element_item_2,
-                R.id.element_item_3,
-                R.id.element_item_4,
-                R.id.element_item_5,
-                R.id.element_item_6,
-                R.id.element_item_7
-        })
-        List<TextView> elementItems;
-
-        @BindViews({
-                R.id.element_item_0_delete_button,
-                R.id.element_item_1_delete_button,
-                R.id.element_item_2_delete_button,
-                R.id.element_item_3_delete_button,
-                R.id.element_item_4_delete_button,
-                R.id.element_item_5_delete_button,
-                R.id.element_item_6_delete_button,
-                R.id.element_item_7_delete_button
-        })
-        List<View> elementItemDeleteButtons;
+        List<TextView> elementItems = new ArrayList<>();
+        List<View> elementItemDeleteButtons = new ArrayList<>();
 
         public ListItemViewHolder(View view, OnItemClickListener listener, Access dashboardAccess) {
-            ELEMENT_ITEMS_SETTER = new ElementItemsSetter();
-            ELEMENT_ITEM_BUTTONS_SETTER = new ElementItemButtonsSetter(dashboardAccess);
 
             itemElementsContainer = view;
             onListElementInternalClickListener = new OnListElementInternalClickListener(listener);
 
-            ButterKnife.bind(this, view);
-            ButterKnife.apply(elementItems, new ButterKnife.Action<View>() {
-                @Override
-                public void apply(View view, int index) {
-                    view.setOnClickListener(onListElementInternalClickListener);
-                }
-            });
-            ButterKnife.apply(elementItemDeleteButtons, new ButterKnife.Action<View>() {
-                @Override
-                public void apply(View view, int index) {
-                    view.setOnClickListener(onListElementInternalClickListener);
-                }
-            });
+            elementItems.add((TextView)view.findViewById(R.id.element_item_0));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_1));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_2));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_3));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_4));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_5));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_6));
+            elementItems.add((TextView)view.findViewById(R.id.element_item_7));
+
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_0_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_1_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_2_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_3_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_4_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_5_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_6_delete_button));
+            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_7_delete_button));
+
+            for(TextView items : elementItems){
+                items.setOnClickListener(onListElementInternalClickListener);
+            }
+
+            for(TextView items : elementItems){
+                items.setOnClickListener(onListElementInternalClickListener);
+            }
         }
 
         static DashboardElement getElement(List<DashboardElement> elements, int position) {
