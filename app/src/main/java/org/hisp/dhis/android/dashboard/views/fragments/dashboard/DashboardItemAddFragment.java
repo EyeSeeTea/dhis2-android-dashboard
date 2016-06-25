@@ -35,6 +35,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,24 +59,16 @@ import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.OnClick;
-import butterknife.OnItemClick;
-import butterknife.OnTextChanged;
-
-// TODO Remove ButterKnife (if need be)
-// TODO see if ARG_DASHBOARD_ID is correct
+// TODO Consult if ARG_DASHBOARD_ID implementation in newInstance is correct
 public class DashboardItemAddFragment extends BaseDialogFragment
         implements DashboardItemAddFragmentView, PopupMenu.OnMenuItemClickListener
 {
     private static final String TAG = DashboardItemAddFragment.class.getSimpleName();
     private static final String ARG_DASHBOARD_ID = "arg:dashboardId";
-    private static final String ARG_PROGRAM_STAGE_ID = "arg:programStageId";
 
     @Inject
     DashboardItemAddFragmentPresenter dashboardItemAddFragmentPresenter;
@@ -87,6 +80,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     TextView mDialogLabel;
     ListView mListView;
     ImageView mFilterResources;
+    ImageView mCloseDialogButton;
 
     PopupMenu mResourcesMenu;
     DashboardItemSearchDialogAdapter mAdapter;
@@ -145,6 +139,20 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         mDialogLabel = (TextView)view.findViewById(R.id.dialog_label);
         mListView = (ListView)view.findViewById(R.id.simple_listview);
         mFilterResources = (ImageView)view.findViewById(R.id.filter_resources);
+        mCloseDialogButton = (ImageView)view.findViewById(R.id.close_dialog_button);
+
+        setClickListeners();
+
+        mFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                mAdapter.getFilter().filter(s.toString());
+            }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
 
         InputMethodManager imm = (InputMethodManager)
                 getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -158,29 +166,15 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         setupResourceMenu();
     }
 
+    // TODO Remove below code if replaced properly in OnViewCreated
+    /**
     @OnTextChanged(value = R.id.filter_options,
             callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     @SuppressWarnings("unused")
     public void afterTextChanged(Editable s) {
         mAdapter.getFilter().filter(s.toString());
     }
-
-    @OnClick({R.id.close_dialog_button, R.id.filter_resources})
-    @SuppressWarnings("unused")
-    public void onButtonClick(View v) {
-        if (R.id.close_dialog_button == v.getId()) {
-            dismissDialogFragment();
-        } else if (R.id.filter_resources == v.getId()) {
-            mResourcesMenu.show();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @OnItemClick(R.id.simple_listview)
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        OptionAdapterValue adapterValue = mAdapter.getItem(position);
-        dashboardItemAddFragmentPresenter.getDashboardContentFromId(adapterValue);
-    }
+    **/
 
     public void show(FragmentManager fragmentManager) {
         show(fragmentManager, TAG);
@@ -222,6 +216,30 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         }
     }
     **/
+
+    private void setClickListeners(){
+        mFilterResources.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mResourcesMenu.show();
+            }
+        });
+
+        mCloseDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialogFragment();
+            }
+        });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                OptionAdapterValue adapterValue = mAdapter.getItem(position);
+                dashboardItemAddFragmentPresenter.getDashboardContentFromId(adapterValue);
+            }
+        });
+    }
 
     private void setupResourceMenu(){
         mResourcesMenu = new PopupMenu(getActivity(), mFilterResources);
@@ -268,5 +286,4 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     private boolean isItemChecked(int id) {
         return mResourcesMenu.getMenu().findItem(id).isChecked();
     }
-
 }
