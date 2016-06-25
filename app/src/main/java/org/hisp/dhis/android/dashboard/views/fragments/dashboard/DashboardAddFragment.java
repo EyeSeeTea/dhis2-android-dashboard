@@ -43,9 +43,7 @@ import android.widget.TextView;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenter;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
-import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -118,6 +116,7 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
         mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
         mDashboardName = (EditText) view.findViewById(R.id.dashboard_name);
         mTextInputLayout = (TextInputLayout) view.findViewById(R.id.text_input_dashboard_name);
+
         mCloseDialogButton = (ImageView) view.findViewById(R.id.close_dialog_button);
         mCancelDashboardAddButton = (FontButton) view.findViewById(R.id.cancel_dashboard_add);
         mSaveDashboardButton = (FontButton) view.findViewById(R.id.save_dashboard);
