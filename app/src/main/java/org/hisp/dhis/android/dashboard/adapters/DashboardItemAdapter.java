@@ -619,31 +619,25 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
             itemElementsContainer = view;
             onListElementInternalClickListener = new OnListElementInternalClickListener(listener);
 
-            elementItems.add((TextView)view.findViewById(R.id.element_item_0));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_1));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_2));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_3));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_4));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_5));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_6));
-            elementItems.add((TextView)view.findViewById(R.id.element_item_7));
+            int[] elementItemsIds = {R.id.element_item_0, R.id.element_item_1, R.id.element_item_2,
+                    R.id.element_item_3, R.id.element_item_4, R.id.element_item_5,
+                    R.id.element_item_6, R.id.element_item_7};
 
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_0_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_1_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_2_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_3_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_4_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_5_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_6_delete_button));
-            elementItemDeleteButtons.add(view.findViewById(R.id.element_item_7_delete_button));
+            int[] elementItemDeleteButtonIds = {R.id.element_item_0_delete_button,
+                    R.id.element_item_1_delete_button, R.id.element_item_2_delete_button,
+                    R.id.element_item_3_delete_button, R.id.element_item_4_delete_button,
+                    R.id.element_item_5_delete_button, R.id.element_item_6_delete_button,
+                    R.id.element_item_7_delete_button};
 
-            for(TextView items : elementItems){
-                items.setOnClickListener(onListElementInternalClickListener);
+            for (int i = 0; i < elementItemsIds.length; i++) {
+                TextView item = (TextView)view.findViewById(elementItemsIds[i]);
+                View deleteButton = view.findViewById(elementItemDeleteButtonIds[i]);
+                elementItems.add(item);
+                elementItemDeleteButtons.add(deleteButton);
+                item.setOnClickListener(onListElementInternalClickListener);
+                deleteButton.setOnClickListener(onListElementInternalClickListener);
             }
 
-            for(TextView items : elementItems){
-                items.setOnClickListener(onListElementInternalClickListener);
-            }
         }
 
         static DashboardElement getElement(List<DashboardElement> elements, int position) {
