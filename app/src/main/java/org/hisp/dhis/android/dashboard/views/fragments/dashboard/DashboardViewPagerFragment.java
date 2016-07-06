@@ -82,8 +82,24 @@ public class DashboardViewPagerFragment extends BaseFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ((DashboardApp) getActivity().getApplication())
-                .getDashboardComponent().inject(this);
+//        ((DashboardApp) getActivity().getApplication())
+//                .getDashboardComponent().inject(this);
+
+        DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (dashboardComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
+            }
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
+        } else {
+            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
+        }
+        // inject dependencies
+        dashboardComponent.inject(this);
+
     }
 
     @Override
@@ -109,6 +125,8 @@ public class DashboardViewPagerFragment extends BaseFragment
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
+
+        dashboardViewPagerFragmentPresenter.sync();
     }
 
     @Override

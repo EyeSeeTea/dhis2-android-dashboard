@@ -16,6 +16,7 @@ import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.UserComponent;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.ImageViewFragment;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManager;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -51,26 +52,8 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO consult Araz about decision between User and Dashboard Component
-        // chosen one will contain the Presenter in the corresponding Module
-
-//        UserComponent userComponent = ((DashboardApp) getActivity().getApplication()).getUserComponent();
-//        userComponent.inject(this);
-
-         DashboardComponent dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-         // first time fragment is created
-        if (savedInstanceState == null) {
-            // it means we found old component and we have to release it
-            if (dashboardComponent != null) {
-                // create new instance of component
-                ((DashboardApp) getActivity().getApplication()).releaseDashboardComponent();
-            }
-            dashboardComponent = ((DashboardApp) getActivity().getApplication()).createDashboardComponent();
-        } else {
-            dashboardComponent = ((DashboardApp) getActivity().getApplication()).getDashboardComponent();
-        }
-        // inject dependencies
-         dashboardComponent.inject(this);
+        UserComponent userComponent = ((DashboardApp) getActivity().getApplication()).getUserComponent();
+        userComponent.inject(this);
     }
 
     @Override
