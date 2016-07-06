@@ -60,7 +60,6 @@ public interface DashboardComponent {
     // TODO specify injection targets
 
         //fragments
-        void inject(DashboardContainerFragment dashboardContainerFragment);
 
         void inject(DashboardEmptyFragment dashboardEmptyFragment);
 

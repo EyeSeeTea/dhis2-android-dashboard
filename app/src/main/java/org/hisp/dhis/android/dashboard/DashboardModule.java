@@ -64,31 +64,12 @@ public class DashboardModule {
         // explicit empty constructor
     }
 
-    // TODO Add dashboard interactor to SDK's D2.java
-    @Provides
-    @Nullable
-    @PerUser
-    public DashboardInteractor providesDashboardInteractor() {
-        if (D2.isConfigured()) {
-            return D2.dashboards();
-        }
-        return null;
-    }
-
     // TODO Add more arguements to SyncWrapper
     @Provides
     @PerUser
     public SyncWrapper providesSyncWrapper(
             @Nullable DashboardInteractor dashboardInteractor) {
         return new SyncWrapper(dashboardInteractor);
-    }
-
-    //  TODO Edit(if required)
-    @Provides
-    @PerUser
-    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
-            @Nullable DashboardInteractor dashboardInteractor, Logger logger) {
-        return new DashboardContainerFragmentPresenterImpl(dashboardInteractor, logger);
     }
 
     //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper

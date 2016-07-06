@@ -30,7 +30,10 @@ package org.hisp.dhis.android.dashboard;
 
 import android.content.Context;
 
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
 import org.hisp.dhis.client.sdk.android.user.CurrentUserInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
@@ -167,4 +170,23 @@ public class UserModule implements DefaultUserModule {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
 
+    // TODO Add dashboard interactor to SDK's D2.java
+    @Provides
+    @Nullable
+    @PerUser
+    public DashboardInteractor providesDashboardInteractor() {
+        if (D2.isConfigured()) {
+            return D2.dashboards();
+        }
+        return null;
+    }
+
+
+    //  TODO Edit(if required)
+    @Provides
+    @PerUser
+    public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
+            @Nullable DashboardInteractor dashboardInteractor, Logger logger) {
+        return new DashboardContainerFragmentPresenterImpl(dashboardInteractor, logger);
+    }
 }

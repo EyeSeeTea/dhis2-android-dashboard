@@ -28,6 +28,7 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManager;
 
 import dagger.Subcomponent;
@@ -46,11 +47,14 @@ public interface UserComponent {
     // TODO add sub-modules here
 
         DashboardComponent plus(DashboardModule dashboardModule);
+//        InterpretationComponent plus(InterpretationModule interpretationModule);
 
-    //------------------------------------------------------------------------
+        //------------------------------------------------------------------------
     // Injection targets
     //------------------------------------------------------------------------
     // TODO specify injection targets
+
+        void inject(DashboardContainerFragment dashboardContainerFragment);
 
         void inject(DefaultAppAccountManager appAccountManager);
 
