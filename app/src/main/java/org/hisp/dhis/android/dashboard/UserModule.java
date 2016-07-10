@@ -170,7 +170,6 @@ public class UserModule implements DefaultUserModule {
         return new SettingsPresenterImpl(appPreferences, appAccountManager);
     }
 
-    // TODO Add dashboard interactor to SDK's D2.java
     @Provides
     @Nullable
     @PerUser
