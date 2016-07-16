@@ -33,8 +33,6 @@ import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenterI
 import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
-import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
@@ -88,13 +86,14 @@ public class DashboardModule {
     @PerUser
     public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
             @Nullable DashboardInteractor dashboardInteractor,
+            @Nullable DashboardContentInteractor dashboardContentInteractor,
             SessionPreferences sessionPreferences,
             SyncDateWrapper syncDateWrapper,
             SyncWrapper syncWrapper,
             ApiExceptionHandler apiExceptionHandler, Logger logger
     ) {
         return new DashboardEmptyFragmentPresenterImpl(dashboardInteractor,
-                sessionPreferences, syncDateWrapper, syncWrapper,
+                dashboardContentInteractor, sessionPreferences, syncDateWrapper, syncWrapper,
                 apiExceptionHandler, logger);
     }
 
@@ -103,13 +102,14 @@ public class DashboardModule {
     @PerUser
     public DashboardViewPagerFragmentPresenter providesDashboardViewPagerFragmentPresenter(
             @Nullable DashboardInteractor dashboardInteractor,
+            @Nullable DashboardContentInteractor dashboardContentInteractor,
             SessionPreferences sessionPreferences,
             SyncDateWrapper syncDateWrapper,
             SyncWrapper syncWrapper,
             ApiExceptionHandler apiExceptionHandler, Logger logger
     ) {
         return new DashboardViewPagerFragmentPresenterImpl(dashboardInteractor,
-                sessionPreferences, syncDateWrapper, syncWrapper,
+                dashboardContentInteractor, sessionPreferences, syncDateWrapper, syncWrapper,
                 apiExceptionHandler, logger);
     }
 
