@@ -44,6 +44,7 @@ import org.hisp.dhis.android.dashboard.presenters.DashboardItemAddFragmentPresen
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
@@ -62,6 +63,16 @@ public class DashboardModule {
 
     public DashboardModule() {
         // explicit empty constructor
+    }
+
+    @Provides
+    @Nullable
+    @PerUser
+    public DashboardContentInteractor providesDashboardContentInteractor() {
+        if (D2.isConfigured()) {
+            return D2.dashboardContent();
+        }
+        return null;
     }
 
     // TODO Add more arguements to SyncWrapper
