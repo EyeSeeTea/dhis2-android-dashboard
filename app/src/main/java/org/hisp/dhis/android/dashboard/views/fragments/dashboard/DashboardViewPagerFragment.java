@@ -50,6 +50,7 @@ import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -126,7 +127,8 @@ public class DashboardViewPagerFragment extends BaseFragment
             mProgressBar.setVisibility(View.INVISIBLE);
         }
 
-        dashboardViewPagerFragmentPresenter.sync();
+        //TODO check repetition here
+        dashboardViewPagerFragmentPresenter.syncDashboardContent();
     }
 
     @Override
@@ -258,7 +260,7 @@ public class DashboardViewPagerFragment extends BaseFragment
                 return true;
             }
             case R.id.refresh: {
-                dashboardViewPagerFragmentPresenter.sync();
+                dashboardViewPagerFragmentPresenter.syncDashboardContent();
                 return true;
             }
             case R.id.add_dashboard: {
