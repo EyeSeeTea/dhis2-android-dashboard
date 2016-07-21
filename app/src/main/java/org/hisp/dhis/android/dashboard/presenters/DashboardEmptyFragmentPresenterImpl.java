@@ -112,6 +112,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         // if not, syncMetaData
         if (!isSyncing && !hasSyncedBefore) {
             logger.d(TAG, "!Syncing & !SyncedBefore");
+//            syncDashboardContent();
         }
     }
 
@@ -119,6 +120,48 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     public void detachView() {
         dashboardEmptyFragmentView.hideProgressBar();
         dashboardEmptyFragmentView = null;
+    }
+
+    @Override
+    public void syncDashboardContent() {
+        logger.d(TAG, "syncDashboardContent");
+        dashboardEmptyFragmentView.showProgressBar();
+        // TODO Write code for syncing
+        isSyncing = true;
+        subscription.add(dashboardContentInteractor.syncDashboardContent()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<DashboardContent>>() {
+                    @Override
+                    public void call(List<DashboardContent> dashboardContents) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+
+                        if (dashboardEmptyFragmentView != null) {
+                            dashboardEmptyFragmentView.hideProgressBar();
+                        }
+                        logger.d(TAG, "Synced dashboardContents successfully");
+                        if(dashboardContents!=null) {
+                            logger.d(TAG + "DashboardContents", dashboardContents.toString());
+                        }else{
+                            logger.d(TAG + "DashboardContents", "Empty pull");
+                        }
+                        //do something
+                        syncDashboard();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+                        if (dashboardEmptyFragmentView != null) {
+                            dashboardEmptyFragmentView.hideProgressBar();
+                        }
+                        logger.e(TAG, "Failed to sync dashboardContents", throwable);
+                        handleError(throwable);
+                    }
+                })
+        );
     }
 
     // Set hasSyncedBefore boolean to True
