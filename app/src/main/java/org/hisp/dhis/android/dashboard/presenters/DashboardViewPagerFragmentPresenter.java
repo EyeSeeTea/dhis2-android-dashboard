@@ -32,7 +32,9 @@ import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
 public interface DashboardViewPagerFragmentPresenter extends Presenter {
 
-    void sync();
+    void syncDashboard();
+
+    void syncDashboardContent();
 
     void loadLocalDashboards();
 
