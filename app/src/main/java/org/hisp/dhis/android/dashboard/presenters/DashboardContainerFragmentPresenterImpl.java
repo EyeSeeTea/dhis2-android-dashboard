@@ -86,6 +86,22 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     @Override
     public void onLoadLocalData() {
         logger.d(TAG, "onLoadLocalData()");
+        Observable<Boolean> hasData = checkIfSHasData();
+        hasData.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean hasData) {
+                        handleNavigation(hasData);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.d(TAG , "datError");
+                        logger.e(TAG, "HD", throwable);
+                        //handle error
+                    }
+                });
     }
 
     // TODO Replace by listByActions later
