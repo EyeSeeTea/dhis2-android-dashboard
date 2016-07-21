@@ -31,9 +31,11 @@ package org.hisp.dhis.android.dashboard.presenters;
 import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 ;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
@@ -55,6 +57,7 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragmentPresenter {
     private static final String TAG = DashboardEmptyFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
+    private final DashboardContentInteractor dashboardContentInteractor;
     private DashboardEmptyFragmentView dashboardEmptyFragmentView;
 
     private final SessionPreferences sessionPreferences;
@@ -68,12 +71,14 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     private boolean isSyncing;
 
     public DashboardEmptyFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
+                                               DashboardContentInteractor dashboardContentInteractor,
                                                SessionPreferences sessionPreferences,
                                                SyncDateWrapper syncDateWrapper,
                                                SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
         this.dashboardInteractor = dashboardInteractor;
+        this.dashboardContentInteractor = dashboardContentInteractor;
         this.sessionPreferences = sessionPreferences;
         this.syncDateWrapper = syncDateWrapper;
         this.syncWrapper = syncWrapper;
@@ -107,7 +112,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         // if not, syncMetaData
         if (!isSyncing && !hasSyncedBefore) {
             logger.d(TAG, "!Syncing & !SyncedBefore");
-            sync();
         }
     }
 
@@ -119,13 +123,12 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
 
     // Set hasSyncedBefore boolean to True
     @Override
-    public void sync() {
-        logger.d(TAG, "Syncing");
-        /** TODO Write code for syncing
-        /**
+    public void syncDashboard() {
+        logger.d(TAG, "syncDashboard");
         dashboardEmptyFragmentView.showProgressBar();
+        // TODO Write code for syncing
         isSyncing = true;
-        subscription.add(syncWrapper.syncMetaData()
+        subscription.add(dashboardInteractor.syncDashboards()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<List<Dashboard>>() {
@@ -133,12 +136,17 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
                     public void call(List<Dashboard> dashboards) {
                         isSyncing = false;
                         hasSyncedBefore = true;
-                        syncDateWrapper.setLastSyncedNow();
 
                         if (dashboardEmptyFragmentView != null) {
                             dashboardEmptyFragmentView.hideProgressBar();
                         }
                         logger.d(TAG, "Synced dashboards successfully");
+                        if(dashboards!=null) {
+                            logger.d(TAG + "Dashboards", dashboards.toString());
+                        }else{
+                            logger.d(TAG + "Dashboards", "Empty pull");
+                        }
+                        //do something
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -151,8 +159,8 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
                         logger.e(TAG, "Failed to sync dashboards", throwable);
                         handleError(throwable);
                     }
-                }));
-         **/
+                })
+        );
     }
 
     @Override
