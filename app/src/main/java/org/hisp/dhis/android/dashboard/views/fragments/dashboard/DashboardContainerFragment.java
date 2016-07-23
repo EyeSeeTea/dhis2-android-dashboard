@@ -63,17 +63,12 @@ public class DashboardContainerFragment extends BaseFragment implements Dashboar
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        logger.d(TAG, "onLoadLocalData()");
-        dashboardContainerFragmentPresenter.onLoadLocalData();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         logger.d(TAG, "onResume()");
         dashboardContainerFragmentPresenter.attachView(this);
+        logger.d(TAG, "onLoadLocalData()");
+        dashboardContainerFragmentPresenter.onLoadLocalData();
     }
 
     @Override
