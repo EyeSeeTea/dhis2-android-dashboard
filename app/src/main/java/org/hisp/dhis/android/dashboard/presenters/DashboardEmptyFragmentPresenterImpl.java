@@ -112,7 +112,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         // if not, syncMetaData
         if (!isSyncing && !hasSyncedBefore) {
             logger.d(TAG, "!Syncing & !SyncedBefore");
-//            syncDashboardContent();
+            syncDashboardContent();
         }
     }
 
