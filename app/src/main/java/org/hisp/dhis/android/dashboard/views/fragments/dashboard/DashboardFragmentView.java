@@ -12,4 +12,7 @@ public interface DashboardFragmentView extends View{
 
     void showDashboardItems(List<DashboardItem> dashboardItems);
 
+    void showError(String message);
+
+    void showUnexpectedError(String message);
 }
