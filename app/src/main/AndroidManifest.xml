@@ -21,6 +21,10 @@
             android:name=".views.activities.HomeActivity"
             android:theme="@style/AppTheme.Main" />
 
+        <activity
+            android:name="org.hisp.dhis.android.dashboard.views.activities.DashboardElementDetailActivity"
+            android:label="@string/title_activity_dashboard_item_detail" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_api_key}" />
