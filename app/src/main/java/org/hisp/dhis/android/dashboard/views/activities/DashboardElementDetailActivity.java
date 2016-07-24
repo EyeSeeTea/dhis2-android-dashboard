@@ -113,6 +113,10 @@ public class DashboardElementDetailActivity extends BaseActivity implements Dash
         long dashboardElementId = getDashboardElementId();
         long interpretationElementId = getInterpretationElementId();
 
+        dashboardElementDetailActivityPresenter.loadElement(dashboardElementId);
+
+        dashboardElementDetailActivityPresenter.loadInterpretation(interpretationElementId);
+
     }
 
 
