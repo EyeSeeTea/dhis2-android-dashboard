@@ -228,6 +228,16 @@ public class DashboardFragment extends BaseFragment
         return true;
     }
 
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
     private void setupRecyclerView(View view) {
         mViewSwitcher = (ViewSwitcher) view;
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -253,5 +263,17 @@ public class DashboardFragment extends BaseFragment
         mRecyclerView.addItemDecoration(new GridDividerDecoration(getActivity()
                 .getApplicationContext()));
         mRecyclerView.setAdapter(mDashboardItemsAdapter);
+    }
+
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
