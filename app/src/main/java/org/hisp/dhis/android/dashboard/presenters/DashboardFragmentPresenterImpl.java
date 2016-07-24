@@ -148,4 +148,9 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
             logger.e(TAG, "handleError", throwable);
         }
     }
+
+    @Override
+    public PreferencesModule getPreferenceModule(){
+        return preferencesModule;
+    }
 }
