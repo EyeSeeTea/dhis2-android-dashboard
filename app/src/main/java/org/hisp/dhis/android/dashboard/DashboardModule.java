@@ -148,6 +148,17 @@ public class DashboardModule {
 
     @Provides
     @PerUser
+    public DashboardElementDetailActivityPresenter providesDashboardElementDetailActivityPresenter(
+            @Nullable DashboardElementInteractor dashboardElementInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            PreferencesModule preferencesModule, Logger logger
+    ) {
+        return new DashboardElementDetailActivityPresenterImpl(dashboardElementInteractor,
+                apiExceptionHandler, logger,  preferencesModule);
+    }
+
+    @Provides
+    @PerUser
     public DashboardItemAddFragmentPresenter providesDashboardItemAddFragmentPresenter(
             @Nullable DashboardContentInteractor dashboardContentInteractor, Logger logger
     ) {
