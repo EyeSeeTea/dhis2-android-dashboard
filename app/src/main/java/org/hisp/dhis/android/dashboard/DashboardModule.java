@@ -30,6 +30,7 @@ package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardElementDetailActivityPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
@@ -37,13 +38,17 @@ import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresente
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.DashboardElementDetailActivityPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardItemAddFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardItemAddFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardItemInteractor;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 
@@ -69,6 +74,26 @@ public class DashboardModule {
     public DashboardContentInteractor providesDashboardContentInteractor() {
         if (D2.isConfigured()) {
             return D2.dashboardContent();
+        }
+        return null;
+    }
+
+    @Provides
+    @Nullable
+    @PerUser
+    public DashboardItemInteractor providesDashboardItemInteractor() {
+        if (D2.isConfigured()) {
+            return D2.dashboardItems();
+        }
+        return null;
+    }
+
+    @Provides
+    @Nullable
+    @PerUser
+    public DashboardElementInteractor providesDashboardElementsInteractor() {
+        if (D2.isConfigured()) {
+            return D2.dashboardElements();
         }
         return null;
     }
@@ -103,32 +128,30 @@ public class DashboardModule {
     public DashboardViewPagerFragmentPresenter providesDashboardViewPagerFragmentPresenter(
             @Nullable DashboardInteractor dashboardInteractor,
             @Nullable DashboardContentInteractor dashboardContentInteractor,
-            SessionPreferences sessionPreferences,
-            SyncDateWrapper syncDateWrapper,
-            SyncWrapper syncWrapper,
             ApiExceptionHandler apiExceptionHandler, Logger logger
     ) {
         return new DashboardViewPagerFragmentPresenterImpl(dashboardInteractor,
-                dashboardContentInteractor, sessionPreferences, syncDateWrapper, syncWrapper,
-                apiExceptionHandler, logger);
+                dashboardContentInteractor, apiExceptionHandler, logger);
     }
 
     @Provides
     @PerUser
     public DashboardFragmentPresenter providesDashboardFragmentPresenter(
-            @Nullable DashboardInteractor dashboardInteractor,
-            SessionPreferences sessionPreferences, Logger logger
+            @Nullable DashboardItemInteractor dashboardItemInteractor,
+            @Nullable DashboardElementInteractor dashboardElementInteractor,
+            PreferencesModule preferencesModule, ApiExceptionHandler apiExceptionHandler,
+            Logger logger
     ) {
-        return new DashboardFragmentPresenterImpl(dashboardInteractor,
-                sessionPreferences, logger);
+        return new DashboardFragmentPresenterImpl(dashboardItemInteractor,
+                dashboardElementInteractor, apiExceptionHandler, preferencesModule,logger);
     }
 
     @Provides
     @PerUser
     public DashboardItemAddFragmentPresenter providesDashboardItemAddFragmentPresenter(
-            @Nullable DashboardInteractor dashboardInteractor, Logger logger
+            @Nullable DashboardContentInteractor dashboardContentInteractor, Logger logger
     ) {
-        return new DashboardItemAddFragmentPresenterImpl(dashboardInteractor, logger);
+        return new DashboardItemAddFragmentPresenterImpl(dashboardContentInteractor, logger);
     }
 
     @Provides
