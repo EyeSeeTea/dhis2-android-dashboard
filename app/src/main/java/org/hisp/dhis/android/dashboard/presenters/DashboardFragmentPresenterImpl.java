@@ -105,6 +105,33 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
     @Override
     public void loadLocalDashboardItems(String uId) {
         logger.d(TAG, "LoadDashboardItems()");
+
+        final Observable<List<DashboardItem>> dashboardItems = dashboardItemInteractor.list(uId);
+        dashboardItems.subscribeOn(Schedulers.newThread());
+        dashboardItems.observeOn(AndroidSchedulers.mainThread());
+        dashboardItems.subscribe(new Action1<List<DashboardItem>>() {
+            @Override
+            public void call(List<DashboardItem> dashboardItemList) {
+                logger.d(TAG ,"LoadDashboardItems " + dashboardItemList.toString());
+
+                if (dashboardItemList != null && !dashboardItemList.isEmpty()) {
+                    for (DashboardItem dashboardItem : dashboardItemList) {
+                        List<DashboardElement> dashboardElements = dashboardElementInteractor.list(dashboardItem).toBlocking().first();
+                        Log.d(TAG +" DElements", dashboardElements.toString());
+                        dashboardItem.setDashboardElements(dashboardElements);
+                    }
+                }
+
+                dashboardFragmentView.showDashboardItems(dashboardItemList);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "LoadDashboardItems failed");
+                handleError(throwable);
+            }
+        });
+        // TODO replace this by actual loading from SDK
     }
 
     // TODO Add deleteDashboardItem() method to DashboardInteractor in SDK
