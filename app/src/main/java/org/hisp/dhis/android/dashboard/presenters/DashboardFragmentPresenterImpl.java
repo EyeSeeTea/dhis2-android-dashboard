@@ -29,26 +29,31 @@
 package org.hisp.dhis.android.dashboard.presenters;
 
 
+import android.util.Log;
+
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragmentView;
-import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
-import org.hisp.dhis.client.sdk.core.common.utils.CodeGenerator;
-import org.hisp.dhis.client.sdk.models.common.Access;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardItemInteractor;
+import org.hisp.dhis.client.sdk.core.common.network.ApiException;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
-import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
-import org.hisp.dhis.client.sdk.utils.Preconditions;
-import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.net.HttpURLConnection;
 import java.util.List;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
@@ -56,20 +61,25 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 // TODO Remove getFakeData() and loadData properly
 public class DashboardFragmentPresenterImpl implements DashboardFragmentPresenter {
     private static final String TAG = DashboardFragmentPresenterImpl.class.getSimpleName();
-    private final DashboardInteractor dashboardInteractor;
+    private final DashboardItemInteractor dashboardItemInteractor;
+    private final DashboardElementInteractor dashboardElementInteractor;
     private DashboardFragmentView dashboardFragmentView;
-
-    private final SessionPreferences sessionPreferences;
+    private final ApiExceptionHandler apiExceptionHandler;
+    private final PreferencesModule preferencesModule;
     private final Logger logger;
 
     private CompositeSubscription subscription;
 
-    public DashboardFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
-                                          SessionPreferences sessionPreferences,
+    public DashboardFragmentPresenterImpl(DashboardItemInteractor dashboardItemInteractor,
+                                          DashboardElementInteractor dashboardElementInteractor,
+                                          ApiExceptionHandler apiExceptionHandler,
+                                          PreferencesModule preferencesModule,
                                           Logger logger) {
 
-        this.dashboardInteractor = dashboardInteractor;
-        this.sessionPreferences = sessionPreferences;
+        this.dashboardItemInteractor = dashboardItemInteractor;
+        this.dashboardElementInteractor = dashboardElementInteractor;
+        this.apiExceptionHandler = apiExceptionHandler;
+        this.preferencesModule = preferencesModule;
         this.logger = logger;
 
         this.subscription = new CompositeSubscription();
@@ -93,16 +103,14 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
 
     //TODO loadDashboardItems() Code using RxAndroid
     @Override
-    public void loadLocalDashboardItems(long uId) {
+    public void loadLocalDashboardItems(String uId) {
         logger.d(TAG, "LoadDashboardItems()");
-        // TODO replace this by actual loading from SDK
-        dashboardFragmentView.showDashboardItems(null);
     }
 
     // TODO Add deleteDashboardItem() method to DashboardInteractor in SDK
     @Override
     public void deleteDashboardItem(DashboardItem dashboardItem) {
-//        dashboardInteractor.deleteDashboardItem();
+//        dashboardItemInteractor.deleteDashboardItem();
         // TODO syncDashboards() in parentViewPager
     }
 
@@ -113,24 +121,31 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
         // TODO syncDashboards() in parentViewPager
     }
 
-    // Temporary hack for creating DashboardItems like legacy.
-    // TODO Use DashboardInteractor to create new DashboardItem wherever required
-    private List<DashboardItem> getFakeData(){
-        /**
-        List<DashboardItemContent> resources = new Select().from(DashboardItemContent.class)
-                .where(generalCondition).queryList();
-        Collections.sort(resources, DashboardItemContent.DISPLAY_NAME_COMPARATOR);
+    @Override
+    public void handleError(final Throwable throwable) {
+        AppError error = apiExceptionHandler.handleException(TAG, throwable);
 
-        List<OptionAdapterValue> adapterValues = new ArrayList<>();
-        for (DashboardItemContent dashboardItemContent : resources) {
-            adapterValues.add(new OptionAdapterValue(dashboardItemContent.getUId(),
-                    dashboardItemContent.getDisplayName()));
+        if (throwable instanceof ApiException) {
+            ApiException exception = (ApiException) throwable;
+
+            if (exception.getResponse() != null) {
+                switch (exception.getResponse().getStatus()) {
+                    case HttpURLConnection.HTTP_UNAUTHORIZED: {
+                        dashboardFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    case HttpURLConnection.HTTP_NOT_FOUND: {
+                        dashboardFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    default: {
+                        dashboardFragmentView.showUnexpectedError(error.getDescription());
+                        break;
+                    }
+                }
+            }
+        } else {
+            logger.e(TAG, "handleError", throwable);
         }
-        List<DashboardItem> itemsData = new ArrayList<DashboardItem>() ;
-        return itemsData;
-         **/
-
-        return null;
     }
-
 }
