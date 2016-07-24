@@ -28,12 +28,12 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
 public interface DashboardFragmentPresenter extends Presenter {
-
 
     void loadLocalDashboardItems(String uId);
 
@@ -41,4 +41,7 @@ public interface DashboardFragmentPresenter extends Presenter {
 
     void deleteDashboardElement(DashboardElement dashboardElement);
 
+    void handleError(final Throwable throwable);
+
+    PreferencesModule getPreferenceModule();
 }
