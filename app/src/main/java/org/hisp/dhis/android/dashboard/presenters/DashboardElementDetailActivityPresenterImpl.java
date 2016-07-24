@@ -119,4 +119,10 @@ public class DashboardElementDetailActivityPresenterImpl implements DashboardEle
             logger.e(TAG, "handleError", throwable);
         }
     }
+
+    @Override
+    public PreferencesModule getPreferenceModule() {
+        return preferencesModule;
+    }
+
 }
