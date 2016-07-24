@@ -116,7 +116,7 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         dashboardEmptyFragmentPresenter.attachView(this);
 
         boolean isLoading = dashboardEmptyFragmentPresenter.isSyncing();
-        ;
+
         if ((savedInstanceState != null &&
                 savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
             mProgressBar.setVisibility(View.VISIBLE);
@@ -206,7 +206,7 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
         logger.d(TAG, "onMenuItemClick()");
         switch (item.getItemId()) {
             case R.id.action_refresh: {
-                dashboardEmptyFragmentPresenter.sync();
+                dashboardEmptyFragmentPresenter.syncDashboardContent();
                 return true;
             }
             case R.id.add_dashboard: {
