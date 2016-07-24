@@ -33,9 +33,11 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +48,8 @@ import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemAdapter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
+import org.hisp.dhis.client.sdk.core.common.network.Configuration;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.views.GridDividerDecoration;
 import org.hisp.dhis.android.dashboard.views.activities.DashboardElementDetailActivity;
 import org.hisp.dhis.client.sdk.models.common.Access;
@@ -63,7 +67,7 @@ import javax.inject.Inject;
 public class DashboardFragment extends BaseFragment
         implements DashboardFragmentView, DashboardItemAdapter.OnItemClickListener {
     static final String TAG = DashboardFragment.class.getSimpleName();
-    private static final String DASHBOARD_ID = "arg:dashboardId";
+    private static final String DASHBOARD_UID = "arg:dashboardUid";
     private static final String DELETE = "arg:delete";
     private static final String UPDATE = "arg:update";
     private static final String READ = "arg:read";
@@ -83,12 +87,14 @@ public class DashboardFragment extends BaseFragment
 
     DashboardItemAdapter mDashboardItemsAdapter;
 
+    AlertDialog alertDialog;
+
     public static DashboardFragment newInstance(Dashboard dashboard) {
         DashboardFragment fragment = new DashboardFragment();
         Access access = dashboard.getAccess();
 
         Bundle args = new Bundle();
-        args.putLong(DASHBOARD_ID, dashboard.getId());
+        args.putString(DASHBOARD_UID, dashboard.getUId());
         args.putBoolean(DELETE, access.isDelete());
         args.putBoolean(UPDATE, access.isUpdate());
         args.putBoolean(READ, access.isRead());
@@ -130,6 +136,7 @@ public class DashboardFragment extends BaseFragment
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        logger.d(TAG, "onViewCreated()");
         setupRecyclerView(view);
     }
 
@@ -138,7 +145,7 @@ public class DashboardFragment extends BaseFragment
         super.onActivityCreated(savedInstanceState);
         logger.d(TAG, "onActivityCreated()");
         if(isAdded()) {
-            dashboardFragmentPresenter.loadLocalDashboardItems(getArguments().getLong(DASHBOARD_ID));
+            dashboardFragmentPresenter.loadLocalDashboardItems(getArguments().getString(DASHBOARD_UID));
         }
     }
 
@@ -146,6 +153,9 @@ public class DashboardFragment extends BaseFragment
     public void onDestroy() {
         super.onDestroy();
         logger.d(TAG, "onDestroy()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
         dashboardFragmentPresenter.detachView();
     }
 
@@ -164,12 +174,12 @@ public class DashboardFragment extends BaseFragment
     }
 
     /** TODO when to set null
-    @Override
-    public void onLoaderReset(Loader<List<DashboardItem>> loader) {
-        if (loader.getId() == LOADER_ID) {
-            mDashboardItemsAdapter.swapData(null);
-        }
-    }
+     @Override
+     public void onLoaderReset(Loader<List<DashboardItem>> loader) {
+     if (loader.getId() == LOADER_ID) {
+     mDashboardItemsAdapter.swapData(null);
+     }
+     }
      **/
 
     @Override
@@ -224,8 +234,10 @@ public class DashboardFragment extends BaseFragment
 
         final int spanCount = getResources().getInteger(R.integer.column_nums);
 
+        final PreferencesModule preferencesModule = dashboardFragmentPresenter.getPreferenceModule();
+
         mDashboardItemsAdapter = new DashboardItemAdapter(getActivity(),
-                getAccessFromBundle(getArguments()), spanCount, this);
+                getAccessFromBundle(getArguments()), spanCount, preferencesModule, this);
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -242,5 +254,4 @@ public class DashboardFragment extends BaseFragment
                 .getApplicationContext()));
         mRecyclerView.setAdapter(mDashboardItemsAdapter);
     }
-
 }
