@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, University of Oslo
+ * Copyright (c) 2016, University of Oslo
  *
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -32,23 +32,45 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.raizlabs.android.dbflow.sql.language.Select;
 
+import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.DashboardElementDetailActivityPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.ImageViewFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.WebViewFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
 import org.hisp.dhis.client.sdk.ui.activities.BaseActivity;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
-public class DashboardElementDetailActivity extends BaseActivity {
+import javax.inject.Inject;
+
+import okhttp3.HttpUrl;
+
+public class DashboardElementDetailActivity extends BaseActivity implements DashboardElementDetailActivityView {
+    public static final String TAG = DashboardElementDetailActivity.class.getSimpleName();
     private static final String DASHBOARD_ELEMENT_ID = "arg:dashboardElementId";
     private static final String INTERPRETATION_ELEMENT_ID = "arg:interpretationElementId";
 
+    @Inject
+    DashboardElementDetailActivityPresenter dashboardElementDetailActivityPresenter;
+
+    @Inject
+    Logger logger;
+
     Toolbar mToolbar;
+
+    AlertDialog alertDialog;
 
     public static Intent newIntentForDashboardElement(Activity activity, long dashboardElementId) {
         Intent intent = new Intent(activity, DashboardElementDetailActivity.class);
@@ -62,22 +84,7 @@ public class DashboardElementDetailActivity extends BaseActivity {
         return intent;
     }
 
-    // TODO Build Image URL with SDK Controller / Interactor
-    // Returns sample url right now
-    private static String buildImageUrl(String resource, String id) {
-//        return DhisController.getInstance().getServerUrl().newBuilder()
-//                .addPathSegment("api").addPathSegment(resource).addPathSegment(id).addPathSegment("data.png")
-//                .addQueryParameter("width", "480").addQueryParameter("height", "320")
-//                .toString();
-        return "https://upload.wikimedia.org/wikipedia/commons/4/4b/Peanut_butter_chocolate_chip_cookies,_stacked,_November_2009.jpg";
-    }
-
-    private long getDashboardElementId() {
-        return getIntent().getLongExtra(DASHBOARD_ELEMENT_ID, -1);
-    }
-
-    private long getInterpretationElementId() {
-        return getIntent().getLongExtra(INTERPRETATION_ELEMENT_ID, -1);
+    private String buildImageUrl(String resource, String id) {
     }
 
     @Override
@@ -92,9 +99,13 @@ public class DashboardElementDetailActivity extends BaseActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        ((DashboardApp) getApplication())
+                .getDashboardComponent().inject(this);
+
+        dashboardElementDetailActivityPresenter.attachView(this);
     }
 
-    /** TODO onPostCreate() Code
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -102,27 +113,30 @@ public class DashboardElementDetailActivity extends BaseActivity {
         long dashboardElementId = getDashboardElementId();
         long interpretationElementId = getInterpretationElementId();
 
-        if (dashboardElementId > 0) {
-            DashboardElement element = new Select()
-                    .from(DashboardElement.class)
-                    .where(Condition.column(DashboardElement$Table.ID)
-                            .is(getDashboardElementId()))
-                    .querySingle();
-            handleDashboardElement(element);
-        }
-
-        if (interpretationElementId > 0) {
-            InterpretationElement element = new Select()
-                    .from(InterpretationElement.class)
-                    .where(Condition.column(InterpretationElement$Table
-                            .ID).is(interpretationElementId))
-                    .querySingle();
-            handleInterpretationElement(element);
-        }
     }
-    **/
 
-    private void handleDashboardElement(DashboardElement element) {
+
+    private long getDashboardElementId() {
+        return getIntent().getLongExtra(DASHBOARD_ELEMENT_ID, -1);
+    }
+
+    private long getInterpretationElementId() {
+        return getIntent().getLongExtra(INTERPRETATION_ELEMENT_ID, -1);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        logger.d(TAG, "onPause()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+        dashboardElementDetailActivityPresenter.detachView();
+    }
+
+    @Override
+    public void handleDashboardElement(DashboardElement element) {
 
         if (element == null || element.getDashboardItem() == null) {
             return;
@@ -147,15 +161,14 @@ public class DashboardElementDetailActivity extends BaseActivity {
             }
             case DashboardContent.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
-                /** TODO uncomment after refacotoring WebFragment
                 attachFragment(WebViewFragment.newInstance(elementId));
-                 **/
                 break;
             }
         }
     }
 
-    private void handleInterpretationElement(InterpretationElement element) {
+    @Override
+    public void handleInterpretationElement(InterpretationElement element) {
         if (element == null || element.getInterpretation() == null) {
             return;
         }
@@ -174,15 +187,23 @@ public class DashboardElementDetailActivity extends BaseActivity {
             }
             case InterpretationElement.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
-                /** TODO uncomment after refacotoring WebFragment
                  attachFragment(WebViewFragment.newInstance(elementId));
-                 **/
                 break;
             }
             case InterpretationElement.TYPE_DATA_SET: {
                 break;
             }
         }
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
     }
 
     private void attachFragment(Fragment fragment) {
@@ -205,5 +226,17 @@ public class DashboardElementDetailActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
