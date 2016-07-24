@@ -28,10 +28,10 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragmentView;
+
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.core.common.utils.CodeGenerator;
@@ -51,26 +51,25 @@ import org.joda.time.DateTime;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
+import rx.Observable;
+
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
-// TODO Remove getFakeData()
-// TODO loadLocalData properly
-// TODO Handle syncing properly
 public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPagerFragmentPresenter {
     private static final String TAG = DashboardViewPagerFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
+    private final DashboardContentInteractor dashboardContentInteractor;
     private DashboardViewPagerFragmentView dashboardViewPagerFragmentView;
 
-    private final SessionPreferences sessionPreferences;
-    private final SyncDateWrapper syncDateWrapper;
-    private final SyncWrapper syncWrapper;
     private final ApiExceptionHandler apiExceptionHandler;
     private final Logger logger;
 
@@ -79,15 +78,11 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     private boolean isSyncing;
 
     public DashboardViewPagerFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
-                                               SessionPreferences sessionPreferences,
-                                               SyncDateWrapper syncDateWrapper,
-                                               SyncWrapper syncWrapper,
-                                               ApiExceptionHandler apiExceptionHandler,
-                                               Logger logger) {
+                                                   DashboardContentInteractor dashboardContentInteractor,
+                                                   ApiExceptionHandler apiExceptionHandler,
+                                                   Logger logger) {
         this.dashboardInteractor = dashboardInteractor;
-        this.sessionPreferences = sessionPreferences;
-        this.syncDateWrapper = syncDateWrapper;
-        this.syncWrapper = syncWrapper;
+        this.dashboardContentInteractor = dashboardContentInteractor;
         this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
 
@@ -117,10 +112,10 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
 
         // check if metadata was synced,
         // if not, syncMetaData
-         if (!isSyncing && !hasSyncedBefore) {
-             logger.d(TAG, "!Syncing & !SyncedBefore");
-             sync();
-         }
+        if (!isSyncing && !hasSyncedBefore) {
+            logger.d(TAG, "!Syncing & !SyncedBefore");
+            syncDashboardContent();
+        }
     }
 
     @Override
@@ -129,14 +124,56 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         dashboardViewPagerFragmentView = null;
     }
 
+    @Override
+    public void syncDashboardContent() {
+        logger.d(TAG, "syncDashboardContent");
+        dashboardViewPagerFragmentView.showProgressBar();
+        // TODO Write code for syncing
+        isSyncing = true;
+        subscription.add(dashboardContentInteractor.syncDashboardContent()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<DashboardContent>>() {
+                    @Override
+                    public void call(List<DashboardContent> dashboardContents) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+
+                        if (dashboardViewPagerFragmentView != null) {
+                            dashboardViewPagerFragmentView.hideProgressBar();
+                        }
+                        logger.d(TAG, "Synced dashboardContents successfully");
+                        if(dashboardContents!=null) {
+                            logger.d(TAG + "DashboardContents", dashboardContents.toString());
+                        }else{
+                            logger.d(TAG + "DashboardContents", "Empty pull");
+                        }
+                        //do something
+                        syncDashboard();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+                        if (dashboardViewPagerFragmentView != null) {
+                            dashboardViewPagerFragmentView.hideProgressBar();
+                        }
+                        logger.e(TAG, "Failed to sync dashboardContents", throwable);
+                        handleError(throwable);
+                    }
+                })
+        );
+    }
+
     // Set hasSyncedBefore boolean to True
     @Override
-    public void sync() {
-        logger.d(TAG, "Syncing");
-        /** TODO Write code for syncing
+    public void syncDashboard() {
+        logger.d(TAG, "syncDashboard");
         dashboardViewPagerFragmentView.showProgressBar();
+        // TODO Write code for syncing
         isSyncing = true;
-        subscription.add(syncWrapper.syncMetaData()
+        subscription.add(dashboardInteractor.syncDashboards()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<List<Dashboard>>() {
@@ -144,12 +181,17 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                     public void call(List<Dashboard> dashboards) {
                         isSyncing = false;
                         hasSyncedBefore = true;
-                        syncDateWrapper.setLastSyncedNow();
 
                         if (dashboardViewPagerFragmentView != null) {
                             dashboardViewPagerFragmentView.hideProgressBar();
                         }
                         logger.d(TAG, "Synced dashboards successfully");
+                        if(dashboards!=null) {
+                            logger.d(TAG + "Dashboards", dashboards.toString());
+                        }else{
+                            logger.d(TAG + "Dashboards", "Empty pull");
+                        }
+                        //do something
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -162,37 +204,12 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                         logger.e(TAG, "Failed to sync dashboards", throwable);
                         handleError(throwable);
                     }
-                }));
-         **/
+                })
+        );
     }
 
     @Override
     public void loadLocalDashboards() {
-        /**
-        logger.e(TAG, "onLoadDashboards()");
-        // TODO loadDashboardItems() Code using RxAndroid
-        logger.d(TAG, "loadDashboards()");
-        subscription.add(dashboardInteractor.list()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<Dashboard>>() {
-                    @Override
-                    public void call(List<Dashboard> dashboards) {
-                        logger.d(TAG, "2");
-                        if (dashboardViewPagerFragmentView != null) {
-                            dashboardViewPagerFragmentView.setDashboards(dashboards);
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.e(TAG, "Failed listing dashboards.", throwable);
-                    }
-                }));
-         **/
-
-        //Temporary Hack
-        dashboardViewPagerFragmentView.setDashboards(getFakeData());
     }
 
     @Override
@@ -235,7 +252,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     // Temporary hack for creating Dashboards like legacy.
     // TODO Use DashboardInteractor to create new Dashboard wherever required
     private List<Dashboard> getFakeData(){
-        // BaseIdentifiableObject {id=11, uId=nghVC4wtyzi, name=Antenatal Care, displayName=Antenatal Care, created=2013-09-08T21:47:17.960Z, lastUpdated=2016-06-19T14:42:27.046Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=3, uId=iMnYyBfSxmM, name=Delivery, displayName=Delivery, created=2013-09-09T21:14:14.696Z, lastUpdated=2016-06-19T14:42:42.720Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=15, uId=vqh4MBWOTi4, name=Disease Surveillance, displayName=Disease Surveillance, created=2014-04-06T11:46:01.989Z, lastUpdated=2014-04-14T13:04:29.916Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=4, uId=TAMlzYkstb7, name=Immunization, displayName=Immunization, created=2013-09-09T21:13:49.245Z, lastUpdated=2016-06-14T04:33:33.326Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=17, uId=L1BtjXgpUpd, name=Immunization data, displayName=Immunization data, created=2014-11-03T11:13:52.812Z, lastUpdated=2016-04-21T18:20:14.942Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=16, uId=SCtS6Szuubz, name=Info Videos, displayName=Info Videos, created=2016-04-20T15:43:41.790Z, lastUpdated=2016-04-20T19:45:50.735Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}];
+        // BaseIdentifiableObject {id=11, uId=nghVC4wtyzi, name=Antenatal Care, displayName=Antenatal Care, created=20130908T21:47:17.960Z, lastUpdated=20160619T14:42:27.046Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=3, uId=iMnYyBfSxmM, name=Delivery, displayName=Delivery, created=20130909T21:14:14.696Z, lastUpdated=20160619T14:42:42.720Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=15, uId=vqh4MBWOTi4, name=Disease Surveillance, displayName=Disease Surveillance, created=20140406T11:46:01.989Z, lastUpdated=20140414T13:04:29.916Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=4, uId=TAMlzYkstb7, name=Immunization, displayName=Immunization, created=20130909T21:13:49.245Z, lastUpdated=20160614T04:33:33.326Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=17, uId=L1BtjXgpUpd, name=Immunization data, displayName=Immunization data, created=20141103T11:13:52.812Z, lastUpdated=20160421T18:20:14.942Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}, BaseIdentifiableObject {id=16, uId=SCtS6Szuubz, name=Info Videos, displayName=Info Videos, created=20160420T15:43:41.790Z, lastUpdated=20160420T19:45:50.735Z, access=Access {manage=true, externalize=true, write=true, read=true, update=true, delete=true}}];
         List<Dashboard> data = new ArrayList<Dashboard>() ;
         Dashboard testD1 = tempCreateDashboard("Antenatal Care");
         Dashboard testD2 = tempCreateDashboard("Delivery");
@@ -281,8 +298,8 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         dashboard.setName(name);
         dashboard.setDisplayName(name);
         // Temp Date Time for testing
-        dashboard.setCreated(new DateTime("2013-09-08T21:47:17.960Z"));
-        dashboard.setLastUpdated(new DateTime("2013-09-08T21:47:17.960Z"));
+        dashboard.setCreated(new DateTime("20130908T21:47:17.960Z"));
+        dashboard.setLastUpdated(new DateTime("20130908T21:47:17.960Z"));
         dashboard.setAccess(Access.createDefaultAccess());
 
         return dashboard;
@@ -328,17 +345,17 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
 
     private DashboardContent tempCreateDashboardContent(){
         /**
-        {id=5, uId=qpIt5yG7zFO, name=Inpatient: ANC coverage, height, weight,
-            BMI last 12 months, displayName=Inpatient: ANC coverage, height, weight,
-            BMI last 12 months, created=2015-07-15T18:25:20.897Z,
-                lastUpdated=2015-07-15T18:25:20.898Z, access=}
+         {id=5, uId=qpIt5yG7zFO, name=Inpatient: ANC coverage, height, weight,
+         BMI last 12 months, displayName=Inpatient: ANC coverage, height, weight,
+         BMI last 12 months, created=20150715T18:25:20.897Z,
+         lastUpdated=20150715T18:25:20.898Z, access=}
          **/
         DashboardContent content = new DashboardContent();
         content.setUId("qpIt5yG7zFO");
         content.setName("Inpatient: ANC coverage, height, weight,\n" +
                 "            BMI last 12 months");
-        content.setCreated(new DateTime("2013-09-08T21:47:17.960Z"));
-        content.setLastUpdated(new DateTime("2013-09-08T21:47:17.960Z"));
+        content.setCreated(new DateTime("20130908T21:47:17.960Z"));
+        content.setLastUpdated(new DateTime("20130908T21:47:17.960Z"));
         content.setDisplayName("Inpatient: ANC coverage, height, weight,\n" +
                 "            BMI last 12 months");
         content.setAccess(Access.createDefaultAccess());
@@ -348,7 +365,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     }
 
     private DashboardElement tempCreateDashboardElement(DashboardItem item,
-                                                  DashboardContent content){
+                                                        DashboardContent content){
         DashboardElement element = new DashboardElement();
         element.setUId(content.getUId());
         element.setName(content.getName());
@@ -360,4 +377,5 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
 
         return element;
     }
+}
 }
