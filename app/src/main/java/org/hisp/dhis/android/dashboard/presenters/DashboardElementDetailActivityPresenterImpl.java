@@ -84,6 +84,27 @@ public class DashboardElementDetailActivityPresenterImpl implements DashboardEle
     @Override
     public void loadElement(long dashboardElementId) {
         logger.d(TAG, "loadElement");
+
+        if (dashboardElementId > 0) {
+
+            Observable<DashboardElement> dashboardElement = dashboardElementInteractor.get(dashboardElementId);
+            dashboardElement.subscribeOn(Schedulers.newThread());
+            dashboardElement.observeOn(AndroidSchedulers.mainThread());
+            dashboardElement.subscribe(new Action1<DashboardElement>() {
+                @Override
+                public void call(DashboardElement element) {
+                    logger.d(TAG ,"loadedElementWithId " + element.toString());
+                    dashboardElementDetailActivityView.handleDashboardElement(element);
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    logger.d(TAG , "loadedElementWithId failed");
+                    handleError(throwable);
+                }
+            });
+        }
+
     }
 
     // TODO

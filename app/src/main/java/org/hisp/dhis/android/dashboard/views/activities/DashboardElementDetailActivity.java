@@ -85,6 +85,12 @@ public class DashboardElementDetailActivity extends BaseActivity implements Dash
     }
 
     private String buildImageUrl(String resource, String id) {
+        PreferencesModule preferencesModule =  dashboardElementDetailActivityPresenter.getPreferenceModule();
+        HttpUrl url = HttpUrl.parse(preferencesModule.getConfigurationPreferences().get().getServerUrl());
+        return url.newBuilder()
+                .addPathSegment("api").addPathSegment(resource).addPathSegment(id).addPathSegment("data.png")
+                .addQueryParameter("width", "480").addQueryParameter("height", "320").build()
+                .toString();
     }
 
     @Override
