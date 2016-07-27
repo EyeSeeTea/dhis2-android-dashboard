@@ -31,7 +31,9 @@ package org.hisp.dhis.android.dashboard;
 import android.app.Application;
 import android.content.Context;
 
+import org.hisp.dhis.client.sdk.android.api.preferences.PreferencesModuleImpl;
 import org.hisp.dhis.client.sdk.android.api.utils.LoggerImpl;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.AppPreferences;
 import org.hisp.dhis.client.sdk.ui.AppPreferencesImpl;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
@@ -89,6 +91,12 @@ public class AppModule implements DefaultAppModule {
     @Override
     public SessionPreferences providesSessionPreferences(Context context) {
         return new SessionPreferencesImpl(context);
+    }
+
+    @Provides
+    @Singleton
+    public PreferencesModule providesPreferencesModule(Context context) {
+        return new PreferencesModuleImpl(context);
     }
 
     @Provides
