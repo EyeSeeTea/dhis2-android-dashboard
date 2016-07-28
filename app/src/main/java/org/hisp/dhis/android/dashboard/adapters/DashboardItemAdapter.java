@@ -44,6 +44,7 @@ import com.squareup.picasso.Picasso;
 
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.utils.PicassoProvider;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
@@ -52,6 +53,8 @@ import org.hisp.dhis.client.sdk.ui.adapters.AbsAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.HttpUrl;
 
 // TODO Replacing ButterKnife(if need be) and buildImage URL
 public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardItemAdapter.ItemViewHolder> {
@@ -96,31 +99,35 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
      */
     private final Picasso mImageLoader;
 
+    /**
+     * Server Url fetched from PreferenceModule
+     */
+    private final PreferencesModule mPreferencesModule;
+
     public DashboardItemAdapter(Context context, Access dashboardAccess,
-                                int maxSpanCount, OnItemClickListener clickListener) {
+                                int maxSpanCount, PreferencesModule preferencesModule, OnItemClickListener clickListener) {
         super(context, LayoutInflater.from(context));
 
         mDashboardAccess = dashboardAccess;
         mMaxSpanCount = maxSpanCount;
         mClickListener = clickListener;
+        mPreferencesModule = preferencesModule;
 
         mUsersName = context.getString(R.string.users);
         mReportsName = context.getString(R.string.reports);
         mResourcesName = context.getString(R.string.resources);
 
-        mImageLoader = PicassoProvider.getInstance(context);
+        mImageLoader = new PicassoProvider().getInstance(context , mPreferencesModule);
     }
 
     // TODO Remove Temperory URL
     // Return sample URL for now
-    private static String buildImageUrl(String resource, String id) {
-        /**
-        return DhisController.getInstance().getServerUrl().newBuilder()
+    private String buildImageUrl(String resource, String id) {
+        HttpUrl url = HttpUrl.parse(mPreferencesModule.getConfigurationPreferences().get().getServerUrl());
+        return url.newBuilder()
                 .addPathSegment("api").addPathSegment(resource).addPathSegment(id).addPathSegment("data.png")
-                .addQueryParameter("width", "480").addQueryParameter("height", "320")
+                .addQueryParameter("width", "480").addQueryParameter("height", "320").build()
                 .toString();
-         **/
-        return "https://upload.wikimedia.org/wikipedia/commons/4/4b/Peanut_butter_chocolate_chip_cookies,_stacked,_November_2009.jpg";
     }
 
     /* returns type of row depending on item content type. */
@@ -370,13 +377,13 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         /* Handling embedded list items. */
 
         for(int i=0 ; i<holder.elementItems.size(); i++){
-            DashboardElement element = elementList.get(i);
+            DashboardElement element = getElement(elementList, i);
             holder.elementItems.get(i).setVisibility(element == null ? View.INVISIBLE : View.VISIBLE);
             holder.elementItems.get(i).setText(element == null ? EMPTY_FIELD : element.getDisplayName());
         }
 
         for(int i=0 ; i<holder.elementItemDeleteButtons.size(); i++){
-            DashboardElement element = holder.getElement(elementList, i);
+            DashboardElement element = getElement(elementList, i);
             if (element == null || !mDashboardAccess.isUpdate()) {
                 holder.elementItemDeleteButtons.get(i).setVisibility(View.INVISIBLE);
             } else {
@@ -640,18 +647,18 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
 
         }
 
-        static DashboardElement getElement(List<DashboardElement> elements, int position) {
-            if (elements != null && elements.size() > position) {
-                return elements.get(position);
-            }
-
-            return null;
-        }
-
         @Override
         public View getView() {
             return itemElementsContainer;
         }
+    }
+
+    static DashboardElement getElement(List<DashboardElement> elements, int position) {
+        if (elements != null && elements.size() > position) {
+            return elements.get(position);
+        }
+
+        return null;
     }
 
     private static class MenuButtonHandler implements View.OnClickListener {
