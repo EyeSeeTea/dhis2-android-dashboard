@@ -35,26 +35,94 @@ import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
+import org.hisp.dhis.android.dashboard.BuildConfig;
 import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.client.sdk.core.common.network.UserCredentials;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
+import org.hisp.dhis.client.sdk.core.common.preferences.UserPreferences;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
-public final class PicassoProvider {
+import static android.text.TextUtils.isEmpty;
+import static okhttp3.Credentials.basic;
 
-    private static Picasso mPicasso;
+public class PicassoProvider {
+    private static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 15 * 1000;   // 15s
+    private static final int DEFAULT_READ_TIMEOUT_MILLIS = 20 * 1000;      // 20s
+    private static final int DEFAULT_WRITE_TIMEOUT_MILLIS = 20 * 1000;     // 20s
 
-    private PicassoProvider() {
+    public PicassoProvider() {
     }
 
-    public static Picasso getInstance(Context context) {
+    public Picasso getInstance(Context context , PreferencesModule preferencesModule) {
 
-        if (mPicasso == null) {
-            final OkHttpClient client = ((DashboardApp) context.getApplicationContext()).providesOkHttpClient();
+        AuthInterceptor authInterceptor = new AuthInterceptor(
+                preferencesModule.getUserPreferences());
 
-            mPicasso = new Picasso.Builder(context)
-                    .downloader(new OkHttp3Downloader(client))
-                    .build();
+        OkHttpClient client = null;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
+                .connectTimeout(DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .readTimeout(DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .writeTimeout(DEFAULT_WRITE_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+        if(BuildConfig.DEBUG){
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            builder.addInterceptor(loggingInterceptor);
+            client = builder.build();
+        }else{
+            client = builder.build();
         }
 
-        return mPicasso;
+        return new Picasso.Builder(context)
+                .downloader(new OkHttp3Downloader(client))
+                .build();
+    }
+
+    private static class AuthInterceptor implements Interceptor {
+        private final UserPreferences mUserPreferences;
+
+        public AuthInterceptor(UserPreferences preferences) {
+            mUserPreferences = preferences;
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            UserCredentials userCredentials = mUserPreferences.get();
+            if (isEmpty(userCredentials.getUsername()) ||
+                    isEmpty(userCredentials.getPassword())) {
+                return chain.proceed(chain.request());
+            }
+
+            String base64Credentials = basic(
+                    userCredentials.getUsername(),
+                    userCredentials.getPassword());
+            Request request = chain.request().newBuilder()
+                    .addHeader("Authorization", base64Credentials)
+                    .build();
+
+            Response response = chain.proceed(request);
+            if (mUserPreferences.isUserConfirmed()) {
+                if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    mUserPreferences.invalidateUser();
+                }
+            } else {
+                if (response.isSuccessful()) {
+                    mUserPreferences.confirmUser();
+                } else {
+                    mUserPreferences.clear();
+                }
+            }
+
+            return response;
+        }
     }
 }
