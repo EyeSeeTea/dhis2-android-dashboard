@@ -44,7 +44,6 @@ import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardElementDetailActivityPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.ImageViewFragment;
-import org.hisp.dhis.android.dashboard.views.fragments.WebViewFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
@@ -156,22 +155,22 @@ public class DashboardElementDetailActivity extends BaseActivity implements Dash
         switch (element.getDashboardItem().getType()) {
             case DashboardContent.TYPE_CHART: {
                 String request = buildImageUrl("charts", element.getUId());
-                attachFragment(ImageViewFragment.newInstance(request));
+//                attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
             case DashboardContent.TYPE_EVENT_CHART: {
                 String request = buildImageUrl("eventCharts", element.getUId());
-                attachFragment(ImageViewFragment.newInstance(request));
+//                attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
             case DashboardContent.TYPE_MAP: {
                 String request = buildImageUrl("maps", element.getUId());
-                attachFragment(ImageViewFragment.newInstance(request));
-                break;
+//                attachFragment(ImageViewFragment.newInstance(request));
+//                break;
             }
             case DashboardContent.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
-                attachFragment(WebViewFragment.newInstance(elementId));
+//                attachFragment(WebViewFragment.newInstance(elementId));
                 break;
             }
         }
@@ -187,17 +186,17 @@ public class DashboardElementDetailActivity extends BaseActivity implements Dash
         switch (element.getInterpretation().getType()) {
             case InterpretationElement.TYPE_CHART: {
                 String request = buildImageUrl("charts", element.getUId());
-                attachFragment(ImageViewFragment.newInstance(request));
+//                attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
             case InterpretationElement.TYPE_MAP: {
                 String request = buildImageUrl("maps", element.getUId());
-                attachFragment(ImageViewFragment.newInstance(request));
+//                attachFragment(ImageViewFragment.newInstance(request));
                 break;
             }
             case InterpretationElement.TYPE_REPORT_TABLE: {
                 String elementId = element.getUId();
-                 attachFragment(WebViewFragment.newInstance(elementId));
+//                 attachFragment(WebViewFragment.newInstance(elementId));
                 break;
             }
             case InterpretationElement.TYPE_DATA_SET: {
