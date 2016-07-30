@@ -160,9 +160,9 @@ public class DashboardModule {
     @Provides
     @PerUser
     public DashboardItemAddFragmentPresenter providesDashboardItemAddFragmentPresenter(
-            @Nullable DashboardContentInteractor dashboardContentInteractor, Logger logger
+            @Nullable DashboardInteractor dashboardInteractor, Logger logger
     ) {
-        return new DashboardItemAddFragmentPresenterImpl(dashboardContentInteractor, logger);
+        return new DashboardItemAddFragmentPresenterImpl(dashboardInteractor, logger);
     }
 
     @Provides
