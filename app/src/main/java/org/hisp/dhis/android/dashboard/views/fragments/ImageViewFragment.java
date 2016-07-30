@@ -78,9 +78,9 @@ public class ImageViewFragment extends BaseFragment {
         mAttacher = new PhotoViewAttacher(mImageView);
         mAttacher.update();
 
-        PicassoProvider.getInstance(getActivity().getApplicationContext())
-                .load(getImageUrl())
-                .placeholder(R.mipmap.ic_placeholder_image)
-                .into(mImageView);
+//        PicassoProvider.getInstance(getActivity().getApplicationContext())
+//                .load(getImageUrl())
+//                .placeholder(R.mipmap.ic_placeholder_image)
+//                .into(mImageView);
     }
 }
