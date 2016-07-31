@@ -35,9 +35,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.utils.PicassoProvider;
+import org.hisp.dhis.android.dashboard.presenters.ImageViewFragmentPresenter;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
+import org.hisp.dhis.client.sdk.utils.Logger;
+
+import javax.inject.Inject;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -47,8 +54,24 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 public class ImageViewFragment extends BaseFragment {
     private static final String IMAGE_URL = "arg:imageUrl";
 
+    @Inject
+    ImageViewFragmentPresenter imageViewFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     ImageView mImageView;
     PhotoViewAttacher mAttacher;
+
+    /**
+     * Image loading utility.
+     */
+    private Picasso mImageLoader;
+
+    /**
+     * Server Url fetched from PreferenceModule
+     */
+    private PreferencesModule mPreferencesModule;
 
     public static ImageViewFragment newInstance(String imageUrl) {
         isNull(imageUrl, "Image URL must not be null");
@@ -72,15 +95,20 @@ public class ImageViewFragment extends BaseFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((DashboardApp) getActivity().getApplication())
+                .getDashboardComponent().inject(this);
+
+        mPreferencesModule = imageViewFragmentPresenter.getPreferenceModule();
+
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         mImageView = (ImageView) view;
 
         mAttacher = new PhotoViewAttacher(mImageView);
         mAttacher.update();
-
-//        PicassoProvider.getInstance(getActivity().getApplicationContext())
-//                .load(getImageUrl())
-//                .placeholder(R.mipmap.ic_placeholder_image)
-//                .into(mImageView);
     }
 }
