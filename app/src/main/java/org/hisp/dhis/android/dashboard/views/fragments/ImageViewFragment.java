@@ -40,6 +40,7 @@ import com.squareup.picasso.Picasso;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.ImageViewFragmentPresenter;
+import org.hisp.dhis.android.dashboard.utils.PicassoProvider;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -110,5 +111,12 @@ public class ImageViewFragment extends BaseFragment {
 
         mAttacher = new PhotoViewAttacher(mImageView);
         mAttacher.update();
+
+        mImageLoader = new PicassoProvider().getInstance(getActivity() , mPreferencesModule);
+
+        mImageLoader
+                .load(getImageUrl())
+                .placeholder(R.mipmap.ic_placeholder_image)
+                .into(mImageView);
     }
 }
