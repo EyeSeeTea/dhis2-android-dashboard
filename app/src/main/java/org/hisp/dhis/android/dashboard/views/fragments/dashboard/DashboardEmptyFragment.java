@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, dhis2
+ * Copyright (c) 2016, University of Oslo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,14 +26,9 @@
 
 package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,7 +40,6 @@ import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
-import org.hisp.dhis.client.sdk.ui.fragments.WrapperFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import javax.inject.Inject;

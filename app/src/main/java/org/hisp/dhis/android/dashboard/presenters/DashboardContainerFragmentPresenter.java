@@ -30,8 +30,6 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 
-//TODO  Write Code for DashboardContainerFragmentPresenter
-
 public interface DashboardContainerFragmentPresenter extends Presenter {
 
     void onLoadLocalData();

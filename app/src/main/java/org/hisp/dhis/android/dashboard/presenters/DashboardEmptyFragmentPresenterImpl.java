@@ -59,10 +59,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     private final DashboardInteractor dashboardInteractor;
     private final DashboardContentInteractor dashboardContentInteractor;
     private DashboardEmptyFragmentView dashboardEmptyFragmentView;
-
-    private final SessionPreferences sessionPreferences;
-    private final SyncDateWrapper syncDateWrapper;
-    private final SyncWrapper syncWrapper;
     private final ApiExceptionHandler apiExceptionHandler;
     private final Logger logger;
 
@@ -72,16 +68,10 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
 
     public DashboardEmptyFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
                                                DashboardContentInteractor dashboardContentInteractor,
-                                               SessionPreferences sessionPreferences,
-                                               SyncDateWrapper syncDateWrapper,
-                                               SyncWrapper syncWrapper,
                                                ApiExceptionHandler apiExceptionHandler,
                                                Logger logger) {
         this.dashboardInteractor = dashboardInteractor;
         this.dashboardContentInteractor = dashboardContentInteractor;
-        this.sessionPreferences = sessionPreferences;
-        this.syncDateWrapper = syncDateWrapper;
-        this.syncWrapper = syncWrapper;
         this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
 

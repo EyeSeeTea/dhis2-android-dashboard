@@ -28,23 +28,15 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-import android.util.Log;
-
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragmentView;
-import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.api.utils.DefaultOnSubscribe;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
-import org.hisp.dhis.client.sdk.core.common.persistence.DbAction;
-import org.hisp.dhis.client.sdk.models.common.state.Action;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
-import java.util.EnumSet;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,7 +46,6 @@ import rx.schedulers.Schedulers;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
-// TODO Edit PresenterImpl Code
 public class DashboardContainerFragmentPresenterImpl implements DashboardContainerFragmentPresenter {
     private static final String TAG = DashboardContainerFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
