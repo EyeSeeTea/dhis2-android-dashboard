@@ -53,6 +53,7 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 public class WebViewFragmentPresenterImpl implements WebViewFragmentPresenter {
     private static final String TAG = WebViewFragmentPresenterImpl.class.getSimpleName();
+    private final DashboardContentInteractor dashboardContentInteractor;
 
     private WebViewFragmentView webViewFragmentView;
     private final ApiExceptionHandler apiExceptionHandler;
@@ -61,9 +62,11 @@ public class WebViewFragmentPresenterImpl implements WebViewFragmentPresenter {
 
     Dashboard dashboard;
 
-    public WebViewFragmentPresenterImpl(ApiExceptionHandler apiExceptionHandler,
+    public WebViewFragmentPresenterImpl(DashboardContentInteractor dashboardContentInteractor,
+                                        ApiExceptionHandler apiExceptionHandler,
                                         Logger logger) {
 
+        this.dashboardContentInteractor = dashboardContentInteractor;
         this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
     }
