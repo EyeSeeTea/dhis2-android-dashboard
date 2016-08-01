@@ -85,6 +85,25 @@ public class WebViewFragmentPresenterImpl implements WebViewFragmentPresenter {
 
     @Override
     public void getReportTableData(String uId){
+
+        new CompositeSubscription().add(dashboardContentInteractor.getReportTableData(uId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String data) {
+                        logger.d(TAG ,"getReportTableData " + data);
+                        webViewFragmentView.onDataDownloaded(data);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.d(TAG , "getReportTableData failed");
+                        handleError(throwable);
+                    }
+                }
+                )
+        );
     }
 
     @Override
