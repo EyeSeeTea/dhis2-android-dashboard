@@ -83,7 +83,6 @@ android {
     sourceSets {
         main {
             java {
-                exclude '**/WebViewFragment.java'
                 exclude '**/InterpretationCreateFragment.java'
             }
         }
