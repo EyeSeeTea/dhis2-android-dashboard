@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, University of Oslo
+ * Copyright (c) 2016, University of Oslo
  *
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -29,27 +29,37 @@
 package org.hisp.dhis.android.dashboard.views.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 
+import org.hisp.dhis.android.dashboard.presenters.WebViewFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
+import javax.inject.Inject;
+
 
 import static android.text.TextUtils.isEmpty;
 
-public class WebViewFragment extends BaseFragment {
+public class WebViewFragment extends BaseFragment implements WebViewFragmentView {
     private static final String DASHBOARD_ELEMENT_ID = "arg:dashboardElementId";
+
+    @Inject
+    WebViewFragmentPresenter webViewFragmentPresenter;
+
+    @Inject
+    Logger logger;
 
     WebView mWebView;
     View mProgressBarContainer;
+    AlertDialog alertDialog;
 
     public static WebViewFragment newInstance(String id) {
         Bundle args = new Bundle();
@@ -59,6 +69,16 @@ public class WebViewFragment extends BaseFragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ((DashboardApp) getActivity().getApplication())
+                .getDashboardComponent().inject(this);
+
+        webViewFragmentPresenter.attachView(this);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,78 +94,12 @@ public class WebViewFragment extends BaseFragment {
         mWebView.getSettings().setBuiltInZoomControls(true);
         if (getArguments() != null && !isEmpty(getArguments()
                 .getString(DASHBOARD_ELEMENT_ID))) {
-            JobExecutor.enqueueJob(new GetReportTableJob(this, getArguments()
-                    .getString(DASHBOARD_ELEMENT_ID)));
         }
     }
 
-    public void onDataDownloaded(ResponseHolder<String> data) {
+    @Override
+    public void onDataDownloaded(String data) {
         mProgressBarContainer.setVisibility(View.GONE);
-
-        if (data.getApiException() == null) {
-            mWebView.loadData(data.getItem(), "text/html", "UTF-8");
-        } else {
-            if (isAdded()) {
-                ((DhisApplication) (getActivity().getApplication()))
-                        .showApiExceptionMessage(data.getApiException());
-            }
-        }
-    }
-
-    static class GetReportTableJob extends Job<ResponseHolder<String>> {
-        static final int JOB_ID = 4573452;
-
-        final WeakReference<WebViewFragment> mFragmentRef;
-        final String mDashboardElementId;
-
-        public GetReportTableJob(WebViewFragment fragment, String dashboardElementId) {
-            super(JOB_ID);
-
-            mFragmentRef = new WeakReference<>(fragment);
-            mDashboardElementId = dashboardElementId;
-        }
-
-        static String readInputStream(TypedInput in) {
-            StringBuilder builder = new StringBuilder();
-            try {
-                BufferedReader bufferedStream
-                        = new BufferedReader(new InputStreamReader(in.in()));
-                try {
-                    String line;
-                    while ((line = bufferedStream.readLine()) != null) {
-                        builder.append(line);
-                        builder.append('\n');
-                    }
-                    return builder.toString();
-                } finally {
-                    bufferedStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return builder.toString();
-        }
-
-        @Override
-        public ResponseHolder<String> inBackground() {
-            ResponseHolder<String> responseHolder = new ResponseHolder<>();
-
-            try {
-                DhisApi dhisApi = RepoManager.createService(DhisController.getInstance().getServerUrl(),
-                        DhisController.getInstance().getUserCredentials());
-                responseHolder.setItem(readInputStream(dhisApi.getReportTableData(mDashboardElementId).getBody()));
-            } catch (APIException exception) {
-                responseHolder.setApiException(exception);
-            }
-
-            return responseHolder;
-        }
-
-        @Override
-        public void onFinish(ResponseHolder<String> result) {
-            if (mFragmentRef.get() != null) {
-                mFragmentRef.get().onDataDownloaded(result);
-            }
-        }
+        mWebView.loadData(data, "text/html", "UTF-8");
     }
 }
