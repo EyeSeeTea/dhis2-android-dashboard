@@ -94,6 +94,8 @@ public class WebViewFragment extends BaseFragment implements WebViewFragmentView
         mWebView.getSettings().setBuiltInZoomControls(true);
         if (getArguments() != null && !isEmpty(getArguments()
                 .getString(DASHBOARD_ELEMENT_ID))) {
+            webViewFragmentPresenter.getReportTableData(getArguments()
+                    .getString(DASHBOARD_ELEMENT_ID));
         }
     }
 
