@@ -102,4 +102,25 @@ public class WebViewFragment extends BaseFragment implements WebViewFragmentView
         mProgressBarContainer.setVisibility(View.GONE);
         mWebView.loadData(data, "text/html", "UTF-8");
     }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
+    }
 }
