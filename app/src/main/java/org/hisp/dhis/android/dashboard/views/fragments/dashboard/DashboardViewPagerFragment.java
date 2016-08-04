@@ -273,7 +273,7 @@ public class DashboardViewPagerFragment extends BaseFragment
                         .getDashboard(mViewPager.getCurrentItem());
                 // TODO Write code for DashboardManageFragment and add it
                 DashboardManageFragment
-                        .newInstance(dashboard.getId())
+                        .newInstance(dashboard.getUId())
                         .show(getChildFragmentManager());
                 return true;
             }
