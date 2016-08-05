@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, University of Oslo
+ * Copyright (c) 2016, University of Oslo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -126,9 +126,6 @@ public class DashboardViewPagerFragment extends BaseFragment
         } else {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
-
-        //TODO check repetition here
-        dashboardViewPagerFragmentPresenter.syncDashboardContent();
     }
 
     @Override

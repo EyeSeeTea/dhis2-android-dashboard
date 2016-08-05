@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, University of Oslo
+ * Copyright (c) 2016, University of Oslo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -120,8 +120,6 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         mImageLoader = new PicassoProvider().getInstance(context , mPreferencesModule);
     }
 
-    // TODO Remove Temperory URL
-    // Return sample URL for now
     private String buildImageUrl(String resource, String id) {
         HttpUrl url = HttpUrl.parse(mPreferencesModule.getConfigurationPreferences().get().getServerUrl());
         return url.newBuilder()

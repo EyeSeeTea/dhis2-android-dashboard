@@ -38,12 +38,10 @@ import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardItemInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
-import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -58,7 +56,6 @@ import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
-// TODO Remove getFakeData() and loadData properly
 public class DashboardFragmentPresenterImpl implements DashboardFragmentPresenter {
     private static final String TAG = DashboardFragmentPresenterImpl.class.getSimpleName();
     private final DashboardItemInteractor dashboardItemInteractor;

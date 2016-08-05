@@ -7,9 +7,6 @@ import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter
 
 import java.util.List;
 
-
-//TODO  Write Code for DashboardItemAddFragmentView
-
 public interface DashboardItemAddFragmentView extends View{
 
     void showOptionAdapterValues(List<OptionAdapterValue> optionAdapterValues);
