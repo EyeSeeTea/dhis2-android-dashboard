@@ -85,9 +85,34 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
         }
     }
 
-    // TODO loadAdapterValues() to load data from Database using RxAndroid
     @Override
     public void loadOptionAdapterValues(List<String> typesToInclude) {
+
+        Set<String> types = new HashSet<>(typesToInclude);
+        Observable<List<DashboardContent>> dashboardContents =
+                dashboardContentInteractor.list(types);
+        dashboardContents.subscribeOn(Schedulers.newThread());
+        dashboardContents.observeOn(AndroidSchedulers.mainThread());
+        dashboardContents.subscribe(new Action1<List<DashboardContent>>() {
+            @Override
+            public void call(List<DashboardContent> dashboardContents) {
+                logger.d(TAG ,"loadDashboardContentItemAddF " + dashboardContents);
+
+                Collections.sort(dashboardContents, DashboardContent.DISPLAY_NAME_COMPARATOR);
+
+                List<DashboardItemSearchDialogAdapter.OptionAdapterValue> adapterValues = new ArrayList<>();
+                for (DashboardContent dashboardItemContent : dashboardContents) {
+                    adapterValues.add(new DashboardItemSearchDialogAdapter.OptionAdapterValue(dashboardItemContent.getUId(),
+                            dashboardItemContent.getDisplayName()));
+                }
+                dashboardItemAddFragmentView.showOptionAdapterValues(adapterValues);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "loadDashboardContentItemAddF failed");
+            }
+        });
     }
 
     @Override
