@@ -28,37 +28,42 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-
-
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardItemAddFragmentView;
-import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
 
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
 public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFragmentPresenter {
     private static final String TAG = DashboardItemAddFragmentPresenterImpl.class.getSimpleName();
-    private final DashboardInteractor dashboardInteractor;
+    private final DashboardContentInteractor dashboardContentInteractor;
     private DashboardItemAddFragmentView dashboardItemAddFragmentView;
 
     private final Logger logger;
 
     private CompositeSubscription subscription;
 
-    public DashboardItemAddFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
+    public DashboardItemAddFragmentPresenterImpl(DashboardContentInteractor dashboardContentInteractor,
                                                  Logger logger) {
 
-        this.dashboardInteractor = dashboardInteractor;
+        this.dashboardContentInteractor = dashboardContentInteractor;
         this.logger = logger;
 
         this.subscription = new CompositeSubscription();
@@ -83,51 +88,6 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
     // TODO loadAdapterValues() to load data from Database using RxAndroid
     @Override
     public void loadOptionAdapterValues(List<String> typesToInclude) {
-        /**
-        static class DbQuery implements Query<List<DashboardItemSearchDialogAdapter.OptionAdapterValue>> {
-            private List<String> mTypes;
-
-            public DbQuery(List<String> types) {
-                mTypes = types;
-            }
-
-            @Override
-            public List<DashboardItemSearchDialogAdapter.OptionAdapterValue> query(Context context) {
-                if (mTypes.isEmpty()) {
-                    return new ArrayList<>();
-                }
-
-                CombinedCondition generalCondition =
-                        CombinedCondition.begin(column(DashboardItemContent$Table.TYPE).isNotNull());
-                CombinedCondition columnConditions = null;
-                for (String type : mTypes) {
-                    if (columnConditions == null) {
-                        columnConditions = CombinedCondition
-                                .begin(column(DashboardItemContent$Table.TYPE).is(type));
-                    } else {
-                        columnConditions = columnConditions
-                                .or(column(DashboardItemContent$Table.TYPE).is(type));
-                    }
-                }
-                generalCondition.and(columnConditions);
-
-                List<DashboardContent> resources = new Select().from(DashboardContent.class)
-                        .where(generalCondition).queryList();
-                Collections.sort(resources, DashboardContent.DISPLAY_NAME_COMPARATOR);
-
-                List<DashboardItemSearchDialogAdapter.OptionAdapterValue> adapterValues = new ArrayList<>();
-                for (DashboardContent dashboardItemContent : resources) {
-                    adapterValues.add(new DashboardItemSearchDialogAdapter.OptionAdapterValue(dashboardItemContent.getUId(),
-                            dashboardItemContent.getDisplayName()));
-                }
-
-                return adapterValues;
-            }
-        }
-        **/
-
-        // Replace null with adapterValues
-        dashboardItemAddFragmentView.showOptionAdapterValues(null);
     }
 
     @Override
