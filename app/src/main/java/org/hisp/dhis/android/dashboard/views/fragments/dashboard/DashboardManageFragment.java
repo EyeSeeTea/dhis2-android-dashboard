@@ -85,6 +85,7 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     FontButton mDeleteDashboardButton;
 
     Dashboard mDashboard;
+    AlertDialog alertDialog;
 
     public static DashboardManageFragment newInstance(String uId) {
         Bundle args = new Bundle();
@@ -140,6 +141,16 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
         super.onPause();
         logger.d(TAG, "onPause()");
         dashboardManageFragmentPresenter.detachView();
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
     }
 
     private String getDashboardUId() {
@@ -225,4 +236,14 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
         mDashboardName.clearFocus();
     }
 
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
+    }
 }
