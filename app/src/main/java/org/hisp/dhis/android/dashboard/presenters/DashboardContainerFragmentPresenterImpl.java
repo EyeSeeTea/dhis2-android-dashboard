@@ -52,9 +52,6 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     private DashboardContainerFragmentView dashboardContainerFragmentView;
     private final Logger logger;
 
-    private static final Boolean TEST_BOOL_EMPTY_DASHBOARD = false;
-    private static final Boolean TEST_BOOL_VIEWPAGER = true;
-
     // TODO
     public DashboardContainerFragmentPresenterImpl(
             DashboardInteractor dashboardInteractor,Logger logger) {
@@ -120,12 +117,12 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
             // if onLoad() has to be done before loading empty fragment, do not check for !=null
             logger.d(TAG, "hasData");
             if (dashboardContainerFragmentView != null) {
-                dashboardContainerFragmentView.navigationAfterLoadingData(TEST_BOOL_VIEWPAGER);
+                dashboardContainerFragmentView.navigationAfterLoadingData(true);
             }
         } else{
             logger.d(TAG , "hasNoData");
             if (dashboardContainerFragmentView != null) {
-                dashboardContainerFragmentView.navigationAfterLoadingData(TEST_BOOL_EMPTY_DASHBOARD);
+                dashboardContainerFragmentView.navigationAfterLoadingData(false);
             }
         }
     }
