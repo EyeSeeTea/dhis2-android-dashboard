@@ -236,6 +236,15 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
         mDashboardName.clearFocus();
     }
 
+    @Override
+    public void setCurrentDashboard(Dashboard dashboard) {
+        mDashboard = dashboard;
+
+        mDashboardName.setText(mDashboard.getDisplayName());
+        mDeleteButton.setEnabled(mDashboard.getAccess().isDelete());
+    }
+
+
     private void showErrorDialog(String title, String message) {
         if (alertDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

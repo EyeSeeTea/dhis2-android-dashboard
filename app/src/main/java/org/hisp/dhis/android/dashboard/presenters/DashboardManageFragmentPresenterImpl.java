@@ -30,10 +30,23 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardManageFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.event.Event;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.net.HttpURLConnection;
+import java.util.Collections;
+import java.util.List;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
@@ -43,6 +56,7 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
     private static final String TAG = DashboardManageFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
     private DashboardManageFragmentView dashboardManageFragmentView;
+    private final ApiExceptionHandler apiExceptionHandler;
 
     private final Logger logger;
 
@@ -51,9 +65,11 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
     Dashboard dashboard;
 
     public DashboardManageFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
+                                                ApiExceptionHandler apiExceptionHandler,
                                                 Logger logger) {
 
         this.dashboardInteractor = dashboardInteractor;
+        this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
 
         this.subscription = new CompositeSubscription();
@@ -75,39 +91,84 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
         }
     }
 
-    // TODO write code according to SDK
     @Override
-    public Dashboard getDashboard(long dashboardId) {
-        /**
-         Dashboard dashboard = new Select()
-         .from(Dashboard.class)
-         .where(Condition.column(Dashboard$Table
-         .ID).is(getArguments().getLong(Dashboard$Table.ID)))
-         .querySingle();
-         **/
+    public void setDashboard(String dashboardUId) {
 
-        // this.dashboard = dashboard;
+        logger.e(TAG, "onGetDashboards()");
 
-        return null;
+        Observable<Dashboard> dashboards = dashboardInteractor.get(dashboardUId);
+        dashboards.subscribeOn(Schedulers.newThread());
+        dashboards.observeOn(AndroidSchedulers.mainThread());
+        dashboards.subscribe(new Action1<Dashboard>() {
+            @Override
+            public void call(Dashboard dashboard) {
+                logger.d(TAG ,"onGetDashboards " + dashboard.toString());
+                dashboardManageFragmentView.setCurrentDashboard(dashboard);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onGetDashboards failed");
+                handleError(throwable);
+            }
+        });
     }
 
-    // TODO Write code for updation
     @Override
-    public void updateDashboard(String dashboardName) {
+    public void updateDashboard(Dashboard dashboard, String dashboardName) {
         // Do something to update
         // After updation do the following
-        dashboardManageFragmentView.dismissDialogFragment();
-        dashboardManageFragmentView.dashboardNameClearFocus();
-        UiEventSync();
+        logger.e(TAG, "onUpdateDashboards()");
+
+        // Change name
+        dashboard.updateDashboard(dashboardName);
+
+        // Save tghe changes
+        Observable<Boolean> dashboards = dashboardInteractor.save(dashboard);
+        dashboards.subscribeOn(Schedulers.io());
+        dashboards.observeOn(AndroidSchedulers.mainThread());
+        dashboards.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                logger.d(TAG ,"onUpdateDashboards " + aBoolean.toString());
+                // TODO trigger syncing of dashboards
+
+                dashboardManageFragmentView.dismissDialogFragment();
+                dashboardManageFragmentView.dashboardNameClearFocus();
+                UiEventSync();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onUpdateDashboards failed");
+                handleError(throwable);
+            }
+        });
+
     }
 
     @Override
-    public void deleteDashboard() {
-        // Do something to update
-        //dashboardInteractor.remove(dashboard);
+    public void deleteDashboard(Dashboard dashboard) {
 
-        // After updation do sync
-        UiEventSync();
+        logger.e(TAG, "onDeleteDashboards()");
+
+        Observable<Boolean> dashboards = dashboardInteractor.remove(dashboard);
+        dashboards.subscribeOn(Schedulers.io());
+        dashboards.observeOn(AndroidSchedulers.mainThread());
+        dashboards.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                logger.d(TAG ,"onDeleteDashboards " + aBoolean.toString());
+                // TODO trigger syncing of dashboards
+                UiEventSync();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onDeleteDashboards failed");
+                handleError(throwable);
+            }
+        });
     }
 
     // TODO handle UiEventSync
@@ -119,5 +180,34 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
             EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
         }
          **/
+    }
+
+
+    @Override
+    public void handleError(final Throwable throwable) {
+        AppError error = apiExceptionHandler.handleException(TAG, throwable);
+
+        if (throwable instanceof ApiException) {
+            ApiException exception = (ApiException) throwable;
+
+            if (exception.getResponse() != null) {
+                switch (exception.getResponse().getStatus()) {
+                    case HttpURLConnection.HTTP_UNAUTHORIZED: {
+                        dashboardManageFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    case HttpURLConnection.HTTP_NOT_FOUND: {
+                        dashboardManageFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    default: {
+                        dashboardManageFragmentView.showUnexpectedError(error.getDescription());
+                        break;
+                    }
+                }
+            }
+        } else {
+            logger.e(TAG, "handleError", throwable);
+        }
     }
 }
