@@ -33,6 +33,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
 public final class DashboardManageFragment extends BaseDialogFragment implements DashboardManageFragmentView{
     private static final String TAG = DashboardManageFragment.class.getSimpleName();
-    private static final String ARG_DASHBOARD_ID = "arg:dashboardId";
+    private static final String ARG_DASHBOARD_UID = "arg:dashboardUId";
 
     @Inject
     DashboardManageFragmentPresenter dashboardManageFragmentPresenter;
@@ -85,9 +86,9 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
 
     Dashboard mDashboard;
 
-    public static DashboardManageFragment newInstance(long dashboardId) {
+    public static DashboardManageFragment newInstance(String uId) {
         Bundle args = new Bundle();
-        args.putLong(ARG_DASHBOARD_ID, dashboardId);
+        args.putString(ARG_DASHBOARD_UID, uId);
 
         DashboardManageFragment fragment = new DashboardManageFragment();
         fragment.setArguments(args);
@@ -103,6 +104,9 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
 
         ((DashboardApp) getActivity().getApplication())
                 .getDashboardComponent().inject(this);
+
+        dashboardManageFragmentPresenter.attachView(this);
+
     }
 
     @Nullable
@@ -114,19 +118,13 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        mDashboard = dashboardManageFragmentPresenter.getDashboard(getDashboardId());
-
         initViews(view);
 
         mDialogLabel.setText(getString(R.string.manage_dashboard));
         mActionName.setText(getString(R.string.edit_name));
 
-        // TODO remove setting of temporary name and access and set actual
-        mDashboardName.setText("temp");
-        mDeleteButton.setEnabled(true);
-
-        //mDashboardName.setText(mDashboard.getDisplayName());
-        //mDeleteButton.setEnabled(mDashboard.getAccess().isDelete());
+        // Dashboard is set in setCurrentDashboard()
+        dashboardManageFragmentPresenter.setDashboard(getDashboardUId());
 
         setFragmentBarActionMode(false);
     }
@@ -135,7 +133,6 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     public void onResume() {
         super.onResume();
         logger.d(TAG, "onResume()");
-        dashboardManageFragmentPresenter.attachView(this);
     }
 
     @Override
@@ -145,8 +142,8 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
         dashboardManageFragmentPresenter.detachView();
     }
 
-    private long getDashboardId() {
-        return getArguments().getLong(ARG_DASHBOARD_ID);
+    private String getDashboardUId() {
+        return getArguments().getString(ARG_DASHBOARD_UID);
     }
 
     private void initViews(View view){
@@ -192,12 +189,12 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
                     mTextInputLayout.setError(message);
 
                     if (!isEmptyName) {
-                        dashboardManageFragmentPresenter.updateDashboard(mDashboardName.getText().toString());
+                        dashboardManageFragmentPresenter.updateDashboard(mDashboard, mDashboardName.getText().toString());
                     }
                     break;
                 }
                 case R.id.delete_dashboard_button: {
-                    dashboardManageFragmentPresenter.deleteDashboard();
+                    dashboardManageFragmentPresenter.deleteDashboard(mDashboard);
                 }
                 case R.id.close_dialog_button: {
                     dismissDialogFragment();
@@ -227,4 +224,5 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     public void dashboardNameClearFocus() {
         mDashboardName.clearFocus();
     }
+
 }
