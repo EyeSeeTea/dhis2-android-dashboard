@@ -110,7 +110,6 @@ public class DashboardModule {
         return new SyncWrapper(dashboardInteractor);
     }
 
-    //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
     @Provides
     @PerUser
     public DashboardEmptyFragmentPresenter providesDashboardEmptyFragmentPresenter(
@@ -122,7 +121,6 @@ public class DashboardModule {
                 dashboardContentInteractor, apiExceptionHandler, logger);
     }
 
-    //  TODO    SyncDateWrapper syncDateWrapper, SyncWrapper syncWrapper
     @Provides
     @PerUser
     public DashboardViewPagerFragmentPresenter providesDashboardViewPagerFragmentPresenter(
