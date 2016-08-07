@@ -83,7 +83,13 @@ android {
     sourceSets {
         main {
             java {
+                exclude '**/InterpretationFragment.java'
+                exclude '**/InterpretationEmptyFragment.java'
                 exclude '**/InterpretationCreateFragment.java'
+                exclude '**/InterpretationCommentEditFragment.java'
+                exclude '**/InterpretationCommentsFragment.java'
+                exclude '**/InterpretationTextEditFragment.java'
+                exclude '**/InterpretationTextFragment.java'
             }
         }
     }
@@ -93,7 +99,6 @@ dependencies {
     // Local
     compile project(":core-rules")
     compile project(":ui-bindings")
-
 
     // Dependencies for testing
     testCompile "junit:junit:${libs.jUnitVersion}"
