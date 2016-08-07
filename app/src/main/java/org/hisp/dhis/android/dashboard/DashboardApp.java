@@ -55,6 +55,7 @@ public final class DashboardApp extends Application {
     private AppComponent appComponent;
     private UserComponent userComponent;
     private DashboardComponent dashboardComponent;
+    private InterpretationComponent interpretationComponent;
 
     @Override
     public void onCreate() {
@@ -144,15 +145,16 @@ public final class DashboardApp extends Application {
                 .build();
     }
 
+    public UserComponent getUserComponent() {
+        return userComponent;
+    }
+
+    // Adding Dashboard Component
     public DashboardComponent createDashboardComponent() {
         isNull(userComponent, "UserComponent must not be null");
 
         dashboardComponent = userComponent.plus(new DashboardModule());
         return dashboardComponent;
-    }
-
-    public UserComponent getUserComponent() {
-        return userComponent;
     }
 
     public DashboardComponent getDashboardComponent() {
@@ -162,5 +164,21 @@ public final class DashboardApp extends Application {
     public void releaseDashboardComponent() {
         dashboardComponent = null;
     }
+
+     // Adding Interpretation Component
+     public InterpretationComponent createInterpretationComponent() {
+     isNull(userComponent, "UserComponent must not be null");
+
+     interpretationComponent = userComponent.plus(new InterpretationModule());
+     return interpretationComponent;
+     }
+
+     public InterpretationComponent getInterpretationComponent() {
+     return interpretationComponent;
+     }
+
+     public void releaseInterpretationComponent() {
+     interpretationComponent = null;
+     }
 
 }
