@@ -39,7 +39,10 @@ import org.hisp.dhis.client.sdk.utils.Logger;
 import java.util.List;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
@@ -69,6 +72,23 @@ public class InterpretationContainerFragmentPresenterImpl implements Interpretat
 
     @Override
     public void onLoadLocalData() {
+        logger.d(TAG, "InterpretationOnLoadLocalData()");
+        Observable<Boolean> hasData = checkIfSHasData();
+        hasData.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean hasData) {
+                        handleNavigation(hasData);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.d(TAG , "datError");
+                        logger.e(TAG, "HD", throwable);
+                        //handle error
+                    }
+                });
     }
 
     // TODO Replace by listByActions later
