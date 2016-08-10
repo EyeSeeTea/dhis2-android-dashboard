@@ -36,42 +36,43 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
-
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
-import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
-import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
-import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
-
+import org.hisp.dhis.client.sdk.models.user.User;
+import org.hisp.dhis.client.sdk.ui.views.FontButton;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
+import javax.inject.Inject;
 
 /**
- * Fragment responsible for creation of new dashboards.
+ * Fragment responsible for creation of new interpretations.
  */
-public final class InterpretationCreateFragment extends BaseDialogFragment {
+public final class InterpretationCreateFragment extends BaseDialogFragment{
     private static final String TAG = InterpretationCreateFragment.class.getSimpleName();
+    private static final String ARG_DASHBOARD_ITEM_ID = "arg:dashboardItemId";
 
-    @Bind(R.id.dialog_label)
     TextView mDialogLabel;
 
-    @Bind(R.id.interpretation_text)
     EditText mInterpretationText;
 
     DashboardItem mDashboardItem;
 
+    ImageView mCloseDialogButton;
+    FontButton mCancelInterpretationCreateButton;
+    FontButton mCreateInterpretationButton;
+
     public static InterpretationCreateFragment newInstance(long itemId) {
         Bundle args = new Bundle();
-        args.putLong(DashboardItem$Table.ID, itemId);
+        args.putLong(ARG_DASHBOARD_ITEM_ID, itemId);
 
         InterpretationCreateFragment fragment = new InterpretationCreateFragment();
         fragment.setArguments(args);
@@ -94,67 +95,69 @@ public final class InterpretationCreateFragment extends BaseDialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
 
-        long dashboardItemId = getArguments().getLong(DashboardItem$Table.ID);
-        mDashboardItem = new Select()
-                .from(DashboardItem.class)
-                .where(Condition.column(DashboardItem$Table
-                        .ID).is(dashboardItemId))
-                .querySingle();
+        mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
 
-        List<DashboardElement> elements = new Select()
-                .from(DashboardElement.class)
-                .where(Condition.column(DashboardElement$Table
-                        .DASHBOARDITEM_DASHBOARDITEM).is(dashboardItemId))
-                .and(Condition.column(DashboardElement$Table
-                        .STATE).isNot(State.TO_DELETE.toString()))
-                .queryList();
+        mInterpretationText = (EditText) view.findViewById(R.id.interpretation_text);
 
-        mDashboardItem.setDashboardElements(elements);
+        mCloseDialogButton = (ImageView) view.findViewById(R.id.close_dialog_button);
+        mCancelInterpretationCreateButton = (FontButton) view.findViewById(R.id.cancel_interpretation_create);
+        mCreateInterpretationButton = (FontButton) view.findViewById(R.id.create_interpretation);
+
+        mCloseDialogButton.setOnClickListener(onClickListener);
+        mCancelInterpretationCreateButton.setOnClickListener(onClickListener);
+        mCreateInterpretationButton.setOnClickListener(onClickListener);
+
+        long dashboardItemId = getArguments().getLong(ARG_DASHBOARD_ITEM_ID);
+
         mDialogLabel.setText(getString(R.string.create_interpretation));
     }
 
-    @OnClick({R.id.close_dialog_button, R.id.cancel_interpretation_create, R.id.create_interpretation})
-    @SuppressWarnings("unused")
-    public void onButtonClicked(View view) {
-        if (view.getId() == R.id.create_interpretation) {
-            // read user
-            UserAccount userAccount = UserAccount
-                    .getCurrentUserAccountFromDb();
-            User user = new Select()
-                    .from(User.class)
-                    .where(Condition.column(User$Table
-                            .UID).is(userAccount.getUId()))
-                    .querySingle();
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.create_interpretation) {
 
-            // create interpretation
-            Interpretation interpretation = createInterpretation(mDashboardItem,
-                    user, mInterpretationText.getText().toString());
-            List<InterpretationElement> elements = interpretation
-                    .getInterpretationElements();
 
-            // save interpretation
-            interpretation.save();
-            if (elements != null && !elements.isEmpty()) {
-                for (InterpretationElement element : elements) {
-                    // save corresponding interpretation elements
-                    element.save();
-                }
+//                // read user
+//                UserAccount userAccount = UserAccount
+//                        .getCurrentUserAccountFromDb();
+//                User user = new Select()
+//                        .from(User.class)
+//                        .where(Condition.column(User$Table
+//                                .UID).is(userAccount.getUId()))
+//                        .querySingle();
+
+//                // create interpretation
+//                Interpretation interpretation = createInterpretation(mDashboardItem,
+//                        user, mInterpretationText.getText().toString());
+//                List<InterpretationElement> elements = interpretation
+//                        .getInterpretationElements();
+//
+//                // save interpretation
+//                interpretation.save();
+//                if (elements != null && !elements.isEmpty()) {
+//                    for (InterpretationElement element : elements) {
+//                        // save corresponding interpretation elements
+//                        element.save();
+//                    }
+//                }
+
+                // TODO SYNCING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                if (isDhisServiceBound()) {
+//                    getDhisService().syncInterpretations();
+//                    EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_INTERPRETATIONS));
+//                }
+
+                Toast.makeText(getActivity(),
+                        getString(R.string.successfully_created_interpretation), Toast.LENGTH_SHORT).show();
             }
-
-            if (isDhisServiceBound()) {
-                getDhisService().syncInterpretations();
-                EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_INTERPRETATIONS));
-            }
-
-            Toast.makeText(getActivity(),
-                    getString(R.string.successfully_created_interpretation), Toast.LENGTH_SHORT).show();
+            dismiss();
         }
-        dismiss();
-    }
+    };
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
     }
+
 }
