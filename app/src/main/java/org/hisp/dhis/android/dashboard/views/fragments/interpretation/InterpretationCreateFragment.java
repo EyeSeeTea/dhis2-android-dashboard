@@ -60,6 +60,12 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
     private static final String TAG = InterpretationCreateFragment.class.getSimpleName();
     private static final String ARG_DASHBOARD_ITEM_ID = "arg:dashboardItemId";
 
+    @Inject
+    InterpretationCreateFragmentPresenter interpretationCreateFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     TextView mDialogLabel;
 
     EditText mInterpretationText;
@@ -85,6 +91,11 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
+
+        ((DashboardApp) getActivity().getApplication())
+                .getInterpretationComponent().inject(this);
+
+        interpretationCreateFragmentPresenter.attachView(this);
     }
 
     @Nullable
@@ -118,7 +129,6 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
         public void onClick(View v) {
             if (v.getId() == R.id.create_interpretation) {
 
-
 //                // read user
 //                UserAccount userAccount = UserAccount
 //                        .getCurrentUserAccountFromDb();
@@ -127,6 +137,7 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
 //                        .where(Condition.column(User$Table
 //                                .UID).is(userAccount.getUId()))
 //                        .querySingle();
+
 
 //                // create interpretation
 //                Interpretation interpretation = createInterpretation(mDashboardItem,
