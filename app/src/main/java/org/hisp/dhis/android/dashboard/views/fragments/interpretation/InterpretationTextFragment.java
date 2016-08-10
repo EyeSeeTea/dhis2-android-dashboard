@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2015, University of Oslo
- *
+ * Copyright (c) 2016, University of Oslo
  * All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright notice, this
@@ -35,36 +35,31 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.builder.Condition;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.models.Interpretation;
-import org.hisp.dhis.android.dashboard.api.models.Interpretation$Table;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 
 /**
  * Handles editing (changing text) of given interpretation.
  */
 public final class InterpretationTextFragment extends DialogFragment {
     private static final String TAG = InterpretationTextFragment.class.getSimpleName();
+    private static final String ARG_INTERPRETATION_ID = "arg:interpretationId";
 
-    @Bind(R.id.dialog_label)
     TextView mDialogLabel;
-
-    @Bind(R.id.interpretation_text)
     TextView mInterpretationText;
 
     Interpretation mInterpretation;
 
+    ImageView mCloseDialogButton ;
+
     public static InterpretationTextFragment newInstance(long interpretationId) {
         Bundle args = new Bundle();
-        args.putLong(Interpretation$Table.ID, interpretationId);
+        args.putLong(ARG_INTERPRETATION_ID, interpretationId);
 
         InterpretationTextFragment fragment = new InterpretationTextFragment();
         fragment.setArguments(args);
@@ -87,27 +82,26 @@ public final class InterpretationTextFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ButterKnife.bind(this, view);
+
+        mDialogLabel = (TextView) view.findViewById(R.id.dialog_label);
+        mInterpretationText = (TextView) view.findViewById(R.id.interpretation_text);
+
+        mCloseDialogButton = (ImageView) view.findViewById(R.id.close_dialog_button);
+        mCloseDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
         mInterpretation = new Select()
                 .from(Interpretation.class)
                 .where(Condition.column(Interpretation$Table
-                        .ID).is(getArguments().getLong(Interpretation$Table.ID)))
+                        .ID).is(getArguments().getLong(ARG_INTERPRETATION_ID)))
                 .querySingle();
 
         mDialogLabel.setText(getString(R.string.interpretation_text));
         mInterpretationText.setText(mInterpretation.getText());
-    }
-
-
-    @OnClick(R.id.close_dialog_button)
-    @SuppressWarnings("unused")
-    public void onButtonClick(View view) {
-        switch (view.getId()) {
-            case R.id.close_dialog_button: {
-                dismiss();
-            }
-        }
     }
 
     public void show(FragmentManager manager) {
