@@ -31,6 +31,7 @@ package org.hisp.dhis.android.dashboard.views.fragments.interpretation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,9 +40,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast
+import android.widget.Toast;
+import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.InterpretationComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.InterpretationAdapter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.activities.DashboardElementDetailActivity;
 import org.hisp.dhis.android.dashboard.views.activities.InterpretationCommentsActivity;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
@@ -49,6 +53,10 @@ import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.ui.views.GridDividerDecoration;
+import org.hisp.dhis.client.sdk.utils.Logger;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
@@ -58,22 +66,76 @@ public final class InterpretationFragment extends BaseFragment implements
     public static final String TAG = InterpretationFragment.class.getSimpleName();
     private static final String STATE_IS_LOADING = "state:isLoading";
 
+    @Inject
+    InterpretationFragmentPresenter interpretationFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     // Progress bar
     SmoothProgressBar mProgressBar;
 
     RecyclerView mRecyclerView;
+
+    AlertDialog alertDialog;
 
     InterpretationAdapter mAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        InterpretationComponent interpretationComponent = ((DashboardApp) getActivity().getApplication()).getInterpretationComponent();
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (interpretationComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseInterpretationComponent();
+            }
+            interpretationComponent = ((DashboardApp) getActivity().getApplication()).createInterpretationComponent();
+        } else {
+            interpretationComponent = ((DashboardApp) getActivity().getApplication()).getInterpretationComponent();
+        }
+        // inject dependencies
+        interpretationComponent.inject(this);
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_interpretations, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        logger.d(TAG, "onActivityCreated()");
+        if(isAdded()) {
+            interpretationFragmentPresenter.loadLocalInterpretations();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        logger.d(TAG, "onResume()");
+        // Have to add attachView here , because Container Fragment's onResume()
+        // and InterpretationFragment's onResume() is called after setInterpretations()
+        // Syncing is checked here with isSyncing and hasSyncedBefore booleans
+//        interpretationFragmentPresenter.attachView(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        logger.d(TAG, "onDestroy()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+        interpretationFragmentPresenter.detachView();
     }
 
     @Override
