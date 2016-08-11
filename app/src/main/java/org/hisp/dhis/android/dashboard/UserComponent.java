@@ -29,6 +29,7 @@
 package org.hisp.dhis.android.dashboard;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardContainerFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationContainerFragment;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManager;
 
 import dagger.Subcomponent;
@@ -47,7 +48,7 @@ public interface UserComponent {
     // TODO add sub-modules here
 
         DashboardComponent plus(DashboardModule dashboardModule);
-//        InterpretationComponent plus(InterpretationModule interpretationModule);
+        InterpretationComponent plus(InterpretationModule interpretationModule);
 
         //------------------------------------------------------------------------
     // Injection targets
@@ -55,6 +56,8 @@ public interface UserComponent {
     // TODO specify injection targets
 
         void inject(DashboardContainerFragment dashboardContainerFragment);
+
+        void inject(InterpretationContainerFragment interpretationContainerFragment);
 
         void inject(DefaultAppAccountManager appAccountManager);
 
