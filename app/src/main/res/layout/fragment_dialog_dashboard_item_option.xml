@@ -49,7 +49,7 @@
     <View
         android:layout_width="1px"
         android:layout_height="match_parent"
-        android:background="@color/dark_grey"/>
+        android:background="@color/color_text_secondary"/>
 
     <org.hisp.dhis.client.sdk.ui.views.FontTextView
         android:layout_width="56dp"
