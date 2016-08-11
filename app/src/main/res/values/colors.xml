@@ -32,7 +32,4 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
 
-    <color name="light_grey">#FFE5E5E5</color>
-    <color name="dark_grey">#FF9E9E9E</color>
-
 </resources>
