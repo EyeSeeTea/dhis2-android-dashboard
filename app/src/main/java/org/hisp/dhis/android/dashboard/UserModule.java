@@ -32,11 +32,15 @@ import android.content.Context;
 
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationContainerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationContainerFragmentPresenterImpl;
 import org.hisp.dhis.client.sdk.android.api.D2;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.android.interpretation.InterpretationInteractor;
 import org.hisp.dhis.client.sdk.android.organisationunit.UserOrganisationUnitInteractor;
 import org.hisp.dhis.client.sdk.android.user.CurrentUserInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
+import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.ui.AppPreferences;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
@@ -180,12 +184,27 @@ public class UserModule implements DefaultUserModule {
         return null;
     }
 
+    @Provides
+    @Nullable
+    @PerUser
+    public InterpretationInteractor providesInterpretationInteractor() {
+        if (D2.isConfigured()) {
+            return D2.interpretations();
+        }
+        return null;
+    }
 
-    //  TODO Edit(if required)
     @Provides
     @PerUser
     public DashboardContainerFragmentPresenter providesDashboardContainerFragmentPresenter(
             @Nullable DashboardInteractor dashboardInteractor, Logger logger) {
         return new DashboardContainerFragmentPresenterImpl(dashboardInteractor, logger);
+    }
+
+    @Provides
+    @PerUser
+    public InterpretationContainerFragmentPresenter providesInterpretationContainerFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor, Logger logger) {
+        return new InterpretationContainerFragmentPresenterImpl(interpretationInteractor, logger);
     }
 }
