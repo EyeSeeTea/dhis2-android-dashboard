@@ -113,7 +113,7 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
 
                 if (dashboardItemList != null && !dashboardItemList.isEmpty()) {
                     for (DashboardItem dashboardItem : dashboardItemList) {
-                        List<DashboardElement> dashboardElements = dashboardElementInteractor.list(dashboardItem).toBlocking().first();
+                        List<DashboardElement> dashboardElements = dashboardElementInteractor.list(dashboardItem.getUId()).toBlocking().first();
                         Log.d(TAG +" DElements", dashboardElements.toString());
                         dashboardItem.setDashboardElements(dashboardElements);
                     }
