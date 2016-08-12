@@ -106,7 +106,43 @@ public class InterpretationEmptyFragmentPresenterImpl implements InterpretationE
     // Set hasSyncedBefore boolean to True
     @Override
     public void syncInterpretations() {
+        logger.d(TAG, "syncInterpretations");
+        interpretationEmptyFragmentView.showProgressBar();
+        // TODO Write code for syncing
+        isSyncing = true;
+        subscription.add(interpretationInteractor.syncInterpretations()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Interpretation>>() {
+                    @Override
+                    public void call(List<Interpretation> interpretations) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
 
+                        if (interpretationEmptyFragmentView != null) {
+                            interpretationEmptyFragmentView.hideProgressBar();
+                        }
+                        logger.d(TAG, "Synced interpretations successfully");
+                        if(interpretations!=null) {
+                            logger.d(TAG + "Interpretations", interpretations.toString());
+                        }else{
+                            logger.d(TAG + "Interpretations", "Empty pull");
+                        }
+                        //do something
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+                        if (interpretationEmptyFragmentView != null) {
+                            interpretationEmptyFragmentView.hideProgressBar();
+                        }
+                        logger.e(TAG, "Failed to sync interpretations", throwable);
+                        handleError(throwable);
+                    }
+                })
+        );
     }
 
     @Override
