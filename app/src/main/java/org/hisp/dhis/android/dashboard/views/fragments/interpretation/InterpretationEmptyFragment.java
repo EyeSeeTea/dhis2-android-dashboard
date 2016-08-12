@@ -27,11 +27,15 @@ package org.hisp.dhis.android.dashboard.views.fragments.interpretation;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.InterpretationComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationEmptyFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
@@ -44,12 +48,21 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 /**
  * Created by laavanye on 1/8/16.
  */
-public class InterpretationEmptyFragment extends BaseFragment{
+public class InterpretationEmptyFragment extends BaseFragment
+        implements InterpretationEmptyFragmentView{
     public static final String TAG = InterpretationEmptyFragment.class.getSimpleName();
     private static final String STATE_IS_LOADING = "state:isLoading";
 
+    @Inject
+    InterpretationEmptyFragmentPresenter interpretationEmptyFragmentPresenter;
+
+    @Inject
+    Logger logger;
+
     // Progress bar
     SmoothProgressBar mProgressBar;
+    // events
+    AlertDialog alertDialog;
 
     @Nullable
     @Override
@@ -61,6 +74,24 @@ public class InterpretationEmptyFragment extends BaseFragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        ((InterpretationApp) getActivity().getApplication())
+//                .getInterpretationComponent().inject(this);
+
+        InterpretationComponent interpretationComponent = ((DashboardApp) getActivity().getApplication()).getInterpretationComponent();
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (interpretationComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseInterpretationComponent();
+            }
+            interpretationComponent = ((DashboardApp) getActivity().getApplication()).createInterpretationComponent();
+        } else {
+            interpretationComponent = ((DashboardApp) getActivity().getApplication()).getInterpretationComponent();
+        }
+        // inject dependencies
+        interpretationComponent.inject(this);
     }
 
     @Override
@@ -70,6 +101,19 @@ public class InterpretationEmptyFragment extends BaseFragment{
 
         setupToolbar();
         mProgressBar = (SmoothProgressBar) view.findViewById(R.id.progress_bar);
+
+        // Syncing is Handled here in attachView only
+        // Syncing is checked here with isSyncing and hasSyncedBefore booleans
+        interpretationEmptyFragmentPresenter.attachView(this);
+
+        boolean isLoading = interpretationEmptyFragmentPresenter.isSyncing();
+
+        if ((savedInstanceState != null &&
+                savedInstanceState.getBoolean(STATE_IS_LOADING)) || isLoading) {
+            mProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -77,6 +121,47 @@ public class InterpretationEmptyFragment extends BaseFragment{
         outState.putBoolean(STATE_IS_LOADING, mProgressBar
                 .getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        logger.d(TAG, "onResume()");
+        interpretationEmptyFragmentPresenter.attachView(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        logger.d(TAG, "onPause()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+        interpretationEmptyFragmentPresenter.detachView();
+    }
+
+    @Override
+    public void showProgressBar() {
+        logger.d(TAG, "showProgressBar()");
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        logger.d(TAG, "hideProgressBar()");
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
     }
 
     @Override
@@ -97,6 +182,7 @@ public class InterpretationEmptyFragment extends BaseFragment{
 
     private void setupToolbar() {
         if (getToolbarOfContainer() != null) {
+            logger.d(TAG, "nonNullToolbar");
             getToolbarOfContainer().inflateMenu(R.menu.menu_interpretations_fragment);
             getToolbarOfContainer().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -116,6 +202,17 @@ public class InterpretationEmptyFragment extends BaseFragment{
             }
         }
         return false;
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 
 }
