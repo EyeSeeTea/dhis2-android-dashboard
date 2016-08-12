@@ -28,6 +28,12 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_api_key}" />
+
+
+        <activity
+            android:name="org.hisp.dhis.android.dashboard.views.activities.InterpretationCommentsActivity"
+            android:label="@string/title_activity_interpretation_comments" />
+
     </application>
 
 </manifest>
