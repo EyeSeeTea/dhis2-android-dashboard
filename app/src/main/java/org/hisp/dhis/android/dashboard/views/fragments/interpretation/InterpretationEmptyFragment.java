@@ -197,7 +197,7 @@ public class InterpretationEmptyFragment extends BaseFragment
     public boolean onMenuItemClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh: {
-                syncInterpretations();
+                interpretationEmptyFragmentPresenter.syncInterpretations();
                 return true;
             }
         }
