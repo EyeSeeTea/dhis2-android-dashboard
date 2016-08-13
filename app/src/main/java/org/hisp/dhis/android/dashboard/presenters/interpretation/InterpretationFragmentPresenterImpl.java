@@ -123,10 +123,84 @@ public class InterpretationFragmentPresenterImpl implements InterpretationFragme
 
     @Override
     public void loadLocalInterpretations() {
+        logger.d(TAG, "LoadInterpretationItems()");
+
+        final Observable<List<Interpretation>> interpretation = interpretationInteractor.list();
+        interpretation.subscribeOn(Schedulers.newThread());
+        interpretation.observeOn(AndroidSchedulers.mainThread());
+        interpretation.subscribe(new Action1<List<Interpretation>>() {
+            @Override
+            public void call(List<Interpretation> interpretationList) {
+                if (interpretationList != null && !interpretationList.isEmpty()) {
+                    logger.d(TAG ,"LoadInterpretationItems " + interpretationList.toString());
+                    for (Interpretation interpretation : interpretationList) {
+
+                        List<InterpretationElement> interpretationElements =
+                                interpretationElementInteractor.list(interpretation).toBlocking().first();
+                        Log.d(TAG +" IElements", interpretationElements.toString());
+                        interpretation.setInterpretationElements(interpretationElements);
+
+                        List<InterpretationComment> interpretationComments =
+                                interpretationCommentInteractor.list(interpretation.getUId()).toBlocking().first();
+                        Log.d(TAG +" IComments", interpretationComments.toString());
+                        interpretation.setComments(interpretationComments);
+                    }
+                }
+                // sort interpretations by created field in reverse order.
+                Collections.sort(interpretationList,
+                        Collections.reverseOrder(Interpretation.CREATED_COMPARATOR));
+                interpretationFragmentView.showInterpretations(interpretationList);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "LoadInterpretation failed");
+                handleError(throwable);
+            }
+        });
     }
 
+
+    // Set hasSyncedBefore boolean to True
     @Override
     public void syncInterpretations() {
+        logger.d(TAG, "syncInterpretations");
+        interpretationFragmentView.showProgressBar();
+        // TODO Write code for syncing
+        isSyncing = true;
+        subscription.add(interpretationInteractor.syncInterpretations()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Interpretation>>() {
+                    @Override
+                    public void call(List<Interpretation> interpretations) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+
+                        if (interpretationFragmentView != null) {
+                            interpretationFragmentView.hideProgressBar();
+                        }
+                        logger.d(TAG, "Synced interpretations successfully");
+                        if(interpretations!=null) {
+                            logger.d(TAG + "Interpretations", interpretations.toString());
+                        }else{
+                            logger.d(TAG + "Interpretations", "Empty pull");
+                        }
+                        //do something
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        isSyncing = false;
+                        hasSyncedBefore = true;
+                        if (interpretationFragmentView != null) {
+                            interpretationFragmentView.hideProgressBar();
+                        }
+                        logger.e(TAG, "Failed to sync interpretations", throwable);
+                        handleError(throwable);
+                    }
+                })
+        );
     }
 
     @Override
