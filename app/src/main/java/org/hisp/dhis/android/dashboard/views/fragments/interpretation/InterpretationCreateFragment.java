@@ -46,6 +46,7 @@ import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
+import org.hisp.dhis.client.sdk.models.user.User;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -56,7 +57,7 @@ import javax.inject.Inject;
 /**
  * Fragment responsible for creation of new interpretations.
  */
-public final class InterpretationCreateFragment extends BaseDialogFragment {
+public final class InterpretationCreateFragment extends BaseDialogFragment implements InterpretationCreateFragmentView {
     private static final String TAG = InterpretationCreateFragment.class.getSimpleName();
     private static final String ARG_DASHBOARD_ITEM_UID = "arg:dashboardItemUId";
 
@@ -75,6 +76,8 @@ public final class InterpretationCreateFragment extends BaseDialogFragment {
     ImageView mCloseDialogButton;
     FontButton mCancelInterpretationCreateButton;
     FontButton mCreateInterpretationButton;
+
+    AlertDialog alertDialog;
 
     public static InterpretationCreateFragment newInstance(String itemUId) {
         Bundle args = new Bundle();
@@ -186,5 +189,26 @@ public final class InterpretationCreateFragment extends BaseDialogFragment {
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
