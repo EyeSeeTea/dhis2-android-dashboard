@@ -236,6 +236,14 @@ public final class InterpretationFragment extends BaseFragment implements
     }
 
     @Override
+    public void showInterpretations(List<Interpretation> interpretations) {
+        if (interpretations != null) {
+            logger.d(TAG, "showInterpretations()");
+            mAdapter.swapData(interpretations);
+        }
+    }
+
+    @Override
     public void showError(String message) {
         showErrorDialog(getString(R.string.title_error), message);
     }
