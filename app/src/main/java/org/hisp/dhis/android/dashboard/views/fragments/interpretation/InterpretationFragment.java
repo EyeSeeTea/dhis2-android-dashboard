@@ -194,7 +194,7 @@ public final class InterpretationFragment extends BaseFragment implements
     @Override
     public void onInterpretationTextClick(Interpretation interpretation) {
         InterpretationTextFragment
-                .newInstance(interpretation.getId())
+                .newInstance(interpretation.getUId())
                 .show(getChildFragmentManager());
     }
 
@@ -212,14 +212,14 @@ public final class InterpretationFragment extends BaseFragment implements
     @Override
     public void onInterpretationEditClick(Interpretation interpretation) {
         InterpretationTextEditFragment
-                .newInstance(interpretation.getId())
+                .newInstance(interpretation.getUId())
                 .show(getChildFragmentManager());
     }
 
     @Override
     public void onInterpretationCommentsClick(Interpretation interpretation) {
         Intent intent = InterpretationCommentsActivity
-                .newIntent(getActivity(), interpretation.getId());
+                .newIntent(getActivity(), interpretation.getUId());
         startActivity(intent);
     }
 
