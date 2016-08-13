@@ -45,6 +45,7 @@ import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
 import org.hisp.dhis.client.sdk.models.user.User;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
@@ -123,6 +124,10 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
         mCreateInterpretationButton.setOnClickListener(onClickListener);
 
         String dashboardItemUId = getArguments().getString(ARG_DASHBOARD_ITEM_UID);
+
+        interpretationCreateFragmentPresenter.getDashboardItem(dashboardItemUId);
+
+        interpretationCreateFragmentPresenter.getDashboardElements(dashboardItemUId);
 
         mDialogLabel.setText(getString(R.string.create_interpretation));
     }
