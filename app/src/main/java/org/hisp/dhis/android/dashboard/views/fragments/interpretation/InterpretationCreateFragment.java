@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,6 @@ import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
-import org.hisp.dhis.client.sdk.models.user.User;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
@@ -56,9 +56,9 @@ import javax.inject.Inject;
 /**
  * Fragment responsible for creation of new interpretations.
  */
-public final class InterpretationCreateFragment extends BaseDialogFragment{
+public final class InterpretationCreateFragment extends BaseDialogFragment {
     private static final String TAG = InterpretationCreateFragment.class.getSimpleName();
-    private static final String ARG_DASHBOARD_ITEM_ID = "arg:dashboardItemId";
+    private static final String ARG_DASHBOARD_ITEM_UID = "arg:dashboardItemUId";
 
     @Inject
     InterpretationCreateFragmentPresenter interpretationCreateFragmentPresenter;
@@ -76,9 +76,9 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
     FontButton mCancelInterpretationCreateButton;
     FontButton mCreateInterpretationButton;
 
-    public static InterpretationCreateFragment newInstance(long itemId) {
+    public static InterpretationCreateFragment newInstance(String itemUId) {
         Bundle args = new Bundle();
-        args.putLong(ARG_DASHBOARD_ITEM_ID, itemId);
+        args.putString(ARG_DASHBOARD_ITEM_UID, itemUId);
 
         InterpretationCreateFragment fragment = new InterpretationCreateFragment();
         fragment.setArguments(args);
@@ -119,15 +119,32 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
         mCancelInterpretationCreateButton.setOnClickListener(onClickListener);
         mCreateInterpretationButton.setOnClickListener(onClickListener);
 
-        long dashboardItemId = getArguments().getLong(ARG_DASHBOARD_ITEM_ID);
+        String dashboardItemUId = getArguments().getString(ARG_DASHBOARD_ITEM_UID);
 
         mDialogLabel.setText(getString(R.string.create_interpretation));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        logger.d(TAG, "onPause()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+        interpretationCreateFragmentPresenter.detachView();
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.create_interpretation) {
+
+
+                // Call createInterpretation from presenter only, after User is retreived
+                // interpretationCreateFragmentPresenter.createInterpretation(mDashboardItem,
+                //         mUser, mInterpretationText.getText().toString());
+
 
 //                // read user
 //                UserAccount userAccount = UserAccount
@@ -170,5 +187,4 @@ public final class InterpretationCreateFragment extends BaseDialogFragment{
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
     }
-
 }
