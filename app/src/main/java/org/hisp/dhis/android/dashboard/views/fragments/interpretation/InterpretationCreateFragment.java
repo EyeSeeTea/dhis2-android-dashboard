@@ -47,6 +47,7 @@ import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationC
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
+import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.models.user.User;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -208,6 +209,16 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
     @Override
     public void showUnexpectedError(String message) {
         showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public void setCurrentDashboardItem(DashboardItem dashboardItem) {
+        mDashboardItem = dashboardItem;
+    }
+
+    @Override
+    public void setDashboardElements(List<DashboardElement> dashboardElements) {
+        mDashboardItem.setDashboardElements(dashboardElements);
     }
 
     private void showErrorDialog(String title, String message) {
