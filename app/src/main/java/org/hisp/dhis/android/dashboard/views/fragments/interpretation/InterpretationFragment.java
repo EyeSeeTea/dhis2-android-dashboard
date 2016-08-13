@@ -60,9 +60,8 @@ import javax.inject.Inject;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
-// TODO Uncomment methods
 public final class InterpretationFragment extends BaseFragment implements
-        InterpretationAdapter.OnItemClickListener{
+        InterpretationAdapter.OnItemClickListener, InterpretationFragmentView {
     public static final String TAG = InterpretationFragment.class.getSimpleName();
     private static final String STATE_IS_LOADING = "state:isLoading";
 
@@ -194,10 +193,9 @@ public final class InterpretationFragment extends BaseFragment implements
 
     @Override
     public void onInterpretationTextClick(Interpretation interpretation) {
-        // TODO Uncomment
-//        InterpretationTextFragment
-//                .newInstance(interpretation.getId())
-//                .show(getChildFragmentManager());
+        InterpretationTextFragment
+                .newInstance(interpretation.getId())
+                .show(getChildFragmentManager());
     }
 
     @Override
@@ -213,10 +211,9 @@ public final class InterpretationFragment extends BaseFragment implements
 
     @Override
     public void onInterpretationEditClick(Interpretation interpretation) {
-        // TODO Uncomment
-//        InterpretationTextEditFragment
-//                .newInstance(interpretation.getId())
-//                .show(getChildFragmentManager());
+        InterpretationTextEditFragment
+                .newInstance(interpretation.getId())
+                .show(getChildFragmentManager());
     }
 
     @Override
@@ -225,6 +222,29 @@ public final class InterpretationFragment extends BaseFragment implements
                 .newIntent(getActivity(), interpretation.getId());
         startActivity(intent);
     }
+
+    @Override
+    public void showProgressBar() {
+        logger.d(TAG, "showProgressBar()");
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        logger.d(TAG, "hideProgressBar()");
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
 
     private void setupToolbar() {
         if (getToolbarOfContainer() != null) {
@@ -274,5 +294,16 @@ public final class InterpretationFragment extends BaseFragment implements
 
 //        interpretationFragmentPresenter.attachView(this);
 
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
