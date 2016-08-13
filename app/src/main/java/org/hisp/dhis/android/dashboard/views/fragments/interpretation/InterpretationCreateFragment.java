@@ -148,6 +148,10 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
         public void onClick(View v) {
             if (v.getId() == R.id.create_interpretation) {
 
+                User user = interpretationCreateFragmentPresenter.getUser();
+
+                interpretationCreateFragmentPresenter.createInterpretation(mDashboardItem, user,
+                        mInterpretationText.getText().toString());
 
                 // Call createInterpretation from presenter only, after User is retreived
                 // interpretationCreateFragmentPresenter.createInterpretation(mDashboardItem,
