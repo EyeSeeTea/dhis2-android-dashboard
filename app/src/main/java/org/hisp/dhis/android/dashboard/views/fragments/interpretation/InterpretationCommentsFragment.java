@@ -221,6 +221,33 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
     }
 
     @Override
+    public void setInterpretation(Interpretation interpretation) {
+        mInterpretation = interpretation;
+    }
+
+    @Override
+    public void setInterpretationComments(List<InterpretationComment> interpretationComments) {
+        mAdapter.swapData(interpretationComments);
+        mRecyclerView.smoothScrollToPosition(
+                mAdapter.getItemCount() > 0 ? mAdapter.getItemCount() - 1 : 0);
+    }
+
+    @Override
+    public void addCommentCallback(InterpretationComment comment) {
+        // now we need to new item to list and play animation.
+        mAdapter.getData().add(comment);
+        mRecyclerView.scrollToPosition(
+                mAdapter.getItemCount() > 0 ? mAdapter.getItemCount() - 1 : 0);
+        mAdapter.notifyItemInserted(mAdapter.getItemCount() - 1);
+
+        // we need to erase the previous comment from the field.
+        mNewCommentText.setText(EMPTY_FIELD);
+
+        // TODO !!!!!!!!!!!!!!!!
+        interpretationCommentsFragmentPresenter.UiEventSync();
+    }
+
+    @Override
     public void showError(String message) {
         showErrorDialog(getString(R.string.title_error), message);
     }
