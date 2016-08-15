@@ -101,7 +101,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/description"
                 android:padding="6dp"
-                android:src="@mipmap/ic_overflow" />
+                android:src="@drawable/ic_more_grey" />
         </LinearLayout>
 
         <org.hisp.dhis.client.sdk.ui.views.FontTextView
