@@ -31,11 +31,17 @@ package org.hisp.dhis.android.dashboard.presenters;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardAddFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
+import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
 import java.util.List;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
@@ -74,28 +80,28 @@ public class DashboardAddFragmentPresenterImpl implements DashboardAddFragmentPr
         }
     }
 
-    // TODO write code according to SDK
-    // TODO Handle dismissDialogFragment in callback
     @Override
     public void createDashboard(String dashboardName) {
-        /**
-        Dashboard newDashboard = Dashboard
-                .createDashboard(mDashboardName.getText().toString());
-        //newDashboard.save();
-        dashboardInteractor.save(newDashboard);
-        UiEventSync();
-        dashboardAddFragmentView.dismissDialogFragment();
-         **/
-    }
 
-    // TODO handle UiEventSync
-    @Override
-    public void UiEventSync() {
-        /**
-        if (isDhisServiceBound()) {
-            getDhisService().syncDashboards();
-            EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-        }
-         **/
+        Observable<Dashboard> dashboard =  dashboardInteractor.create(dashboardName);
+        dashboard.subscribeOn(Schedulers.newThread());
+        dashboard.observeOn(AndroidSchedulers.mainThread());
+        dashboard.subscribe(new Action1<Dashboard>() {
+            @Override
+            public void call(Dashboard dashboard) {
+                logger.d(TAG ,"onCreateDashboard " + dashboard.toString());
+
+                // save dashboard
+                dashboardInteractor.save(dashboard);
+                dashboardAddFragmentView.uiSync();
+                dashboardAddFragmentView.dismissDialogFragment();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onCreateDashboard failed");
+                handleError(throwable);
+            }
+        });
     }
 }
