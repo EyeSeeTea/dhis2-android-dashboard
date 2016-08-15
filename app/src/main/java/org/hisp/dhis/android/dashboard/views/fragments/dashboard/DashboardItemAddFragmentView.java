@@ -17,4 +17,8 @@ public interface DashboardItemAddFragmentView extends View{
 
     void setDashboard(Dashboard dashboard);
 
+    void showError(String message);
+
+    void showUnexpectedError(String message);
+
 }
