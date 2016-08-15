@@ -6,4 +6,5 @@ public interface DashboardAddFragmentView extends View{
 
     void dismissDialogFragment();
 
+    void uiSync();
 }
