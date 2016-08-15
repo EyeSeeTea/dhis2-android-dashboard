@@ -38,7 +38,5 @@ public interface InterpretationCommentEditFragmentPresenter extends Presenter {
 
     void updateInterpretationComment(InterpretationComment interpretationComment,String text);
 
-    void UiEventSync();
-
     void handleError(Throwable throwable);
 }

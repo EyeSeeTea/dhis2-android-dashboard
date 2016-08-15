@@ -45,8 +45,6 @@ public interface InterpretationCommentsFragmentPresenter extends Presenter {
 
     void deleteInterpretationComment(InterpretationComment comment);
 
-    void UiEventSync();
-
     void handleError(Throwable throwable);
 
     User getUserLocal();
