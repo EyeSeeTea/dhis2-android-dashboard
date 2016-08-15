@@ -106,9 +106,7 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
                 // save interpretationComment
                 interpretationCommentInteractor.save(interpretationComment);
                 interpretationCommentsFragmentView.addCommentCallback(interpretationComment);
-
-                // TODO
-                UiEventSync();
+                interpretationCommentsFragmentView.uiSync();
             }
         }, new Action1<Throwable>() {
             @Override
@@ -186,9 +184,7 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
             @Override
             public void call(Boolean deleted) {
                 logger.d(TAG ,"onDeleteInterpretationComment " + deleted.toString());
-
-                // TODO
-                UiEventSync();
+                interpretationCommentsFragmentView.uiSync();
             }
         }, new Action1<Throwable>() {
             @Override

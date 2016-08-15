@@ -38,7 +38,5 @@ public interface InterpretationTextEditFragmentPresenter extends Presenter {
 
     void updateInterpretation(Interpretation interpretation, String interpretationName);
 
-    void UiEventSync();
-
     void handleError(Throwable throwable);
 }

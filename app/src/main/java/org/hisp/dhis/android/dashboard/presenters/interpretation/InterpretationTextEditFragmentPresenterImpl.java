@@ -31,7 +31,6 @@ package org.hisp.dhis.android.dashboard.presenters.interpretation;
 import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationTextEditFragmentView;
 import org.hisp.dhis.client.sdk.android.interpretation.InterpretationInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
-import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
@@ -122,7 +121,7 @@ public class InterpretationTextEditFragmentPresenterImpl implements Interpretati
             public void call(Boolean success) {
                 logger.d(TAG ,"onUpdateInterpretationComment " + success.toString());
                 // save interpretationComment
-                interpretationTextEditFragmentView.updateInterpretationCallback();
+                interpretationTextEditFragmentView.uiSync();
 
             }
         }, new Action1<Throwable>() {
@@ -132,18 +131,6 @@ public class InterpretationTextEditFragmentPresenterImpl implements Interpretati
                 handleError(throwable);
             }
         });
-
-    }
-
-    // TODO handle UiEventSync
-    @Override
-    public void UiEventSync() {
-        /**
-        if (isDhisServiceBound()) {
-            getDhisService().syncDashboards();
-            EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-        }
-         **/
     }
 
     @Override

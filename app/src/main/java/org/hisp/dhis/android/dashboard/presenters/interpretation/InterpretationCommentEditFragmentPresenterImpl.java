@@ -93,7 +93,7 @@ public class InterpretationCommentEditFragmentPresenterImpl implements Interpret
             public void call(Boolean success) {
                 logger.d(TAG ,"onUpdateInterpretationComment " + success.toString());
                 // save interpretationComment
-                interpretationCommentEditFragmentView.updateCommentCallback();
+                interpretationCommentEditFragmentView.uiSync();
 
             }
         }, new Action1<Throwable>() {

@@ -135,7 +135,7 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
 
                 dashboardManageFragmentView.dismissDialogFragment();
                 dashboardManageFragmentView.dashboardNameClearFocus();
-                dashboardManageFragmentView.UiSync();
+                dashboardManageFragmentView.uiSync();
             }
         }, new Action1<Throwable>() {
             @Override
@@ -160,7 +160,7 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
             @Override
             public void call(Boolean aBoolean) {
                 logger.d(TAG ,"onDeleteDashboards " + aBoolean.toString());
-                dashboardManageFragmentView.UiSync();
+                dashboardManageFragmentView.uiSync();
             }
         }, new Action1<Throwable>() {
             @Override
