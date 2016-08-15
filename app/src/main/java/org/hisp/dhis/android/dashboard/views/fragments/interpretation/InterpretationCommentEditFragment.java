@@ -45,6 +45,7 @@ import android.widget.TextView;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentEditFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationComment;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
@@ -58,6 +59,9 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment implem
 
     @Inject
     InterpretationCommentEditFragmentPresenter interpretationCommentEditFragmentPresenter;
+
+    @Inject
+    InterpretationFragmentPresenter interpretationFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -156,9 +160,9 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment implem
     }
 
     @Override
-    public void updateCommentCallback() {
-        // TODO
-        interpretationCommentEditFragmentPresenter.UiEventSync();
+    public void uiSync() {
+        interpretationFragmentPresenter.syncInterpretations();
+        interpretationFragmentPresenter.loadLocalInterpretations();
     }
 
     @Override

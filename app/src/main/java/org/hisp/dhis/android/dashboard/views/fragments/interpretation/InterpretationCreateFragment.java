@@ -44,6 +44,7 @@ import android.widget.Toast;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
@@ -65,6 +66,9 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
 
     @Inject
     InterpretationCreateFragmentPresenter interpretationCreateFragmentPresenter;
+
+    @Inject
+    InterpretationFragmentPresenter interpretationFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -199,6 +203,12 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
+    }
+
+    @Override
+    public void uiSync() {
+        interpretationFragmentPresenter.syncInterpretations();
+        interpretationFragmentPresenter.loadLocalInterpretations();
     }
 
     @Override
