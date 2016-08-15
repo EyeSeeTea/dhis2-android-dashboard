@@ -99,10 +99,43 @@ public class InterpretationCreateFragmentPresenterImpl implements Interpretation
 
     @Override
     public User getUser() {
+        return interpretationInteractor.getCurrentUserLocal();
     }
 
     @Override
     public void createInterpretation(DashboardItem dashboardItem, User user, String text){
+
+        Observable<Interpretation> interpretation =  interpretationInteractor.create(dashboardItem,
+                user, text);
+        interpretation.subscribeOn(Schedulers.newThread());
+        interpretation.observeOn(AndroidSchedulers.mainThread());
+        interpretation.subscribe(new Action1<Interpretation>() {
+            @Override
+            public void call(Interpretation interpretation) {
+                logger.d(TAG ,"onCreateInterpretation " + interpretation.toString());
+
+                List<InterpretationElement> elements = interpretation
+                        .getInterpretationElements();
+
+                // save interpretation
+                interpretationInteractor.save(interpretation);
+//        interpretation.save();
+                if (elements != null && !elements.isEmpty()) {
+                    for (InterpretationElement element : elements) {
+                        // save corresponding interpretation elements
+                        interpretationElementInteractor.save(element);
+//                element.save();
+                    }
+                }
+            }
+
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onCreateInterpretation failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
