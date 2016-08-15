@@ -51,7 +51,6 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
  *         This fragment is shown in case there
  *         is no any dashboards in local database.
  */
-
 // TODO Decide where to attachView for the first time
 public class DashboardEmptyFragment extends BaseFragment implements DashboardEmptyFragmentView {
     public static final String TAG = DashboardEmptyFragment.class.getSimpleName();
@@ -173,6 +172,11 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     @Override
     public void syncDashboardsCallback() {
         dashboardContainerFragmentPresenter.onLoadLocalData();
+
+        // To Remove menu buttons, avoid duplicate menu inflations
+        if (getToolbarOfContainer() != null) {
+            getToolbarOfContainer().getMenu().clear();
+        }
     }
 
     @Override
