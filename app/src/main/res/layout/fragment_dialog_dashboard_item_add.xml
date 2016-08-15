@@ -64,8 +64,10 @@
 
             <ImageView
                 android:id="@+id/filter_resources"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
                 android:layout_marginBottom="12dp"
                 android:layout_marginTop="12dp"
                 android:adjustViewBounds="true"
@@ -73,7 +75,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/description"
                 android:padding="8dp"
-                android:src="@mipmap/ic_filter"/>
+                android:src="@drawable/ic_filter_grey"/>
 
         </LinearLayout>
 

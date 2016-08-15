@@ -56,17 +56,16 @@
                 android:textSize="12sp"
                 app:font="@string/light_font_name" />
 
-            <!-- TODO move ic_overflow to SDK ui-->
             <ImageView
                 android:id="@+id/dashboard_item_menu"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="31dp"
+                android:layout_height="31dp"
                 android:adjustViewBounds="true"
                 android:background="@drawable/transparent_selector"
                 android:clickable="true"
                 android:contentDescription="@string/description"
                 android:padding="4dp"
-                android:src="@mipmap/ic_overflow" />
+                android:src="@drawable/ic_more_grey" />
         </LinearLayout>
 
         <org.hisp.dhis.client.sdk.ui.views.FontTextView
