@@ -119,6 +119,10 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
+        interpretationCommentsFragmentPresenter.getInterpretation(getArguments().getString(INTERPRETATION_UID));
+
+        mUser = interpretationCommentsFragmentPresenter.getUserLocal();
+
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mNewCommentText = (EditText) view.findViewById(R.id.interpretation_comment_edit_text);
@@ -187,6 +191,8 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
 
     public void onAddComment() {
         String newCommentText = mNewCommentText.getText().toString();
+
+        interpretationCommentsFragmentPresenter.addInterpretationComment(mInterpretation, mUser, newCommentText);
     }
 
     @Override
@@ -203,6 +209,10 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
             mAdapter.getData().remove(position);
             mAdapter.notifyItemRemoved(position);
 
+            interpretationCommentsFragmentPresenter.deleteInterpretationComment(comment);
+
+            // TODO !!!!!!!!!!!!!!!!
+           interpretationCommentsFragmentPresenter.UiEventSync();
         }
     }
 
