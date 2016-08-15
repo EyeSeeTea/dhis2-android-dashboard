@@ -249,10 +249,10 @@ public class DashboardViewPagerFragment extends BaseFragment
         logger.d(TAG, "onMenuItemClick()");
         switch (item.getItemId()) {
             case R.id.add_dashboard_item: {
-                long dashboardId = mDashboardAdapter
-                        .getDashboard(mViewPager.getCurrentItem()).getId();
+                String dashboardUId = mDashboardAdapter
+                        .getDashboard(mViewPager.getCurrentItem()).getUId();
                  DashboardItemAddFragment
-                 .newInstance(dashboardId)
+                 .newInstance(dashboardUId)
                  .show(getChildFragmentManager());
                 return true;
             }
