@@ -163,19 +163,8 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
 
         // Replace null with DashboardContent
         dashboardItemAddFragmentView.addItemContent(null);
-        UiEventSync();
+        dashboardItemAddFragmentView.uiSync();
         dashboardItemAddFragmentView.dismissDialogFragment();
-    }
-
-    // TODO handle UiEventSync
-    @Override
-    public void UiEventSync() {
-        /**
-        if (isDhisServiceBound()) {
-            getDhisService().syncDashboards();
-            EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-        }
-         **/
     }
 
     @Override
