@@ -33,10 +33,16 @@ import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardItemAd
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
 
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.core.common.network.ApiException;
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -54,16 +60,22 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFragmentPresenter {
     private static final String TAG = DashboardItemAddFragmentPresenterImpl.class.getSimpleName();
     private final DashboardContentInteractor dashboardContentInteractor;
+    private final DashboardInteractor dashboardInteractor;
     private DashboardItemAddFragmentView dashboardItemAddFragmentView;
+    private ApiExceptionHandler apiExceptionHandler;
 
     private final Logger logger;
 
     private CompositeSubscription subscription;
 
     public DashboardItemAddFragmentPresenterImpl(DashboardContentInteractor dashboardContentInteractor,
+                                                 DashboardInteractor dashboardInteractor,
+                                                 ApiExceptionHandler apiExceptionHandler,
                                                  Logger logger) {
 
         this.dashboardContentInteractor = dashboardContentInteractor;
+        this.dashboardInteractor = dashboardInteractor;
+        this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
 
         this.subscription = new CompositeSubscription();
@@ -116,8 +128,26 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
     }
 
     @Override
-    public void getDashboardFromId(Long dashboardId) {
+    public void getDashboardFromUId(String dashboardUId) {
 
+        logger.e(TAG, "onGetDashboards()");
+
+        Observable<Dashboard> dashboards = dashboardInteractor.get(dashboardUId);
+        dashboards.subscribeOn(Schedulers.newThread());
+        dashboards.observeOn(AndroidSchedulers.mainThread());
+        dashboards.subscribe(new Action1<Dashboard>() {
+            @Override
+            public void call(Dashboard dashboard) {
+                logger.d(TAG ,"onGetDashboards " + dashboard.toString());
+                dashboardItemAddFragmentView.setDashboard(dashboard);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onGetDashboards failed");
+                handleError(throwable);
+            }
+        });
     }
 
     // TODO Get DashboardContent
@@ -146,5 +176,33 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
             EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
         }
          **/
+    }
+
+    @Override
+    public void handleError(final Throwable throwable) {
+        AppError error = apiExceptionHandler.handleException(TAG, throwable);
+
+        if (throwable instanceof ApiException) {
+            ApiException exception = (ApiException) throwable;
+
+            if (exception.getResponse() != null) {
+                switch (exception.getResponse().getStatus()) {
+                    case HttpURLConnection.HTTP_UNAUTHORIZED: {
+                        dashboardItemAddFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    case HttpURLConnection.HTTP_NOT_FOUND: {
+                        dashboardItemAddFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    default: {
+                        dashboardItemAddFragmentView.showUnexpectedError(error.getDescription());
+                        break;
+                    }
+                }
+            }
+        } else {
+            logger.e(TAG, "handleError", throwable);
+        }
     }
 }

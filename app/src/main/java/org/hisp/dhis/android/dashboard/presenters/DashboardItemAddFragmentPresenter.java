@@ -38,9 +38,9 @@ public interface DashboardItemAddFragmentPresenter extends Presenter {
 
     void loadOptionAdapterValues(List<String> typesToInclude);
 
-    void getDashboardFromId(Long dashboardId);
+    void getDashboardFromUId(String dashboardUId);
 
     void getDashboardContentFromId(OptionAdapterValue optionAdapterValue);
 
-    void UiEventSync();
+    void handleError(final Throwable throwable);
 }
