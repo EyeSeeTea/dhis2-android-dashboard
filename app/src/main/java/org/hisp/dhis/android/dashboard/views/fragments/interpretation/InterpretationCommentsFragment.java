@@ -136,7 +136,7 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                onBackPressedCustom();
             }
         });
 
@@ -271,5 +271,11 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.show();
+    }
+
+    public void onBackPressedCustom() {
+        if (isAdded()) {
+            getActivity().onBackPressed();
+        }
     }
 }
