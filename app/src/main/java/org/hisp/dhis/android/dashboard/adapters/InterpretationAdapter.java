@@ -83,10 +83,11 @@ public final class InterpretationAdapter extends AbsAdapter<Interpretation, Inte
         mImageLoader = new PicassoProvider().getInstance(context , mPreferencesModule);
     }
 
-    private static String buildImageUrl(String resource, String id) {
-        return DhisController.getInstance().getServerUrl().newBuilder()
+    private String buildImageUrl(String resource, String id) {
+        HttpUrl url = HttpUrl.parse(mPreferencesModule.getConfigurationPreferences().get().getServerUrl());
+        return url.newBuilder()
                 .addPathSegment("api").addPathSegment(resource).addPathSegment(id).addPathSegment("data.png")
-                .addQueryParameter("width", "480").addQueryParameter("height", "320")
+                .addQueryParameter("width", "480").addQueryParameter("height", "320").build()
                 .toString();
     }
 
