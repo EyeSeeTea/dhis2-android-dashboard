@@ -32,6 +32,7 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.views.activities.DashboardElementDetailActivityView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
+import org.hisp.dhis.client.sdk.android.interpretation.InterpretationElementInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
@@ -55,6 +56,7 @@ import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 public class DashboardElementDetailActivityPresenterImpl implements DashboardElementDetailActivityPresenter {
     private static final String TAG = DashboardElementDetailActivityPresenterImpl.class.getSimpleName();
     private final DashboardElementInteractor dashboardElementInteractor;
+    private final InterpretationElementInteractor interpretationElementInteractor;
     private DashboardElementDetailActivityView dashboardElementDetailActivityView;
 
     private final ApiExceptionHandler apiExceptionHandler;
@@ -63,9 +65,11 @@ public class DashboardElementDetailActivityPresenterImpl implements DashboardEle
     private final PreferencesModule preferencesModule;
 
     public DashboardElementDetailActivityPresenterImpl(DashboardElementInteractor dashboardElementInteractor,
+                                                       InterpretationElementInteractor interpretationElementInteractor,
                                                        ApiExceptionHandler apiExceptionHandler,
                                                        Logger logger, PreferencesModule preferencesModule) {
         this.dashboardElementInteractor = dashboardElementInteractor;
+        this.interpretationElementInteractor = interpretationElementInteractor;
         this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
         this.preferencesModule = preferencesModule;
@@ -111,6 +115,27 @@ public class DashboardElementDetailActivityPresenterImpl implements DashboardEle
     @Override
     public void loadInterpretation(long interpretationElementId) {
         logger.d(TAG, "loadInterpretation");
+
+        if (interpretationElementId > 0) {
+
+            Observable<InterpretationElement> interpretationElement =
+                    interpretationElementInteractor.get(interpretationElementId);
+            interpretationElement.subscribeOn(Schedulers.newThread());
+            interpretationElement.observeOn(AndroidSchedulers.mainThread());
+            interpretationElement.subscribe(new Action1<InterpretationElement>() {
+                @Override
+                public void call(InterpretationElement element) {
+                    logger.d(TAG ,"loadedInterpretationElementWithId " + element.toString());
+                    dashboardElementDetailActivityView.handleInterpretationElement(element);
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    logger.d(TAG , "loadedInterpretationElementWithId failed");
+                    handleError(throwable);
+                }
+            });
+        }
     }
 
     @Override
