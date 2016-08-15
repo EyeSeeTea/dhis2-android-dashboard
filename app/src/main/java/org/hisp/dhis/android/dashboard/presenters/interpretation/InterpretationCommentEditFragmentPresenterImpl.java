@@ -87,6 +87,24 @@ public class InterpretationCommentEditFragmentPresenterImpl implements Interpret
 
     @Override
     public void getInterpretationComment(final String interpretaionCommentUId) {
+
+        Observable<InterpretationComment> interpretationComment = interpretationCommentInteractor.get(interpretaionCommentUId);
+        interpretationComment.subscribeOn(Schedulers.newThread());
+        interpretationComment.observeOn(AndroidSchedulers.mainThread());
+        interpretationComment.subscribe(new Action1<InterpretationComment>() {
+            @Override
+            public void call(InterpretationComment interpretationComment) {
+                logger.d(TAG ,"onGetInterpretationComment " + interpretationComment.toString());
+                interpretationCommentEditFragmentView.setInterpretationComment(interpretationComment);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onGetInterpretationComment failed");
+                handleError(throwable);
+            }
+        });
+
     }
 
     @Override
