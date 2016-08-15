@@ -12,4 +12,6 @@ public interface InterpretationEmptyFragmentView extends View{
 
     void showUnexpectedError(String message);
 
+    void syncInterpretationsCallback();
+
 }

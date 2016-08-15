@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.InterpretationComponent;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationEmptyFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -55,6 +56,9 @@ public class InterpretationEmptyFragment extends BaseFragment
 
     @Inject
     InterpretationEmptyFragmentPresenter interpretationEmptyFragmentPresenter;
+
+    @Inject
+    InterpretationContainerFragmentPresenter interpretationContainerFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -140,6 +144,11 @@ public class InterpretationEmptyFragment extends BaseFragment
             alertDialog.dismiss();
         }
         interpretationEmptyFragmentPresenter.detachView();
+    }
+
+    @Override
+    public void syncInterpretationsCallback() {
+        interpretationContainerFragmentPresenter.onLoadLocalData();
     }
 
     @Override
