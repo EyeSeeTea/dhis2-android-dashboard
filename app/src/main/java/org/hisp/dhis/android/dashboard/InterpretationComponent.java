@@ -66,5 +66,7 @@ public interface InterpretationComponent {
         void inject(InterpretationEmptyFragment interpretationEmptyFragment);
 
         void inject(InterpretationFragment interpretationFragment);
+
+        void inject(InterpretationCreateFragment interpretationCreateFragment);
 }
 

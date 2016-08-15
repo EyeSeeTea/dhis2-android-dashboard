@@ -106,4 +106,20 @@ public class InterpretationModule {
                 interpretationElementInteractor, interpretationCommentInteractor,
                  apiExceptionHandler, preferencesModule, logger);
     }
+
+    @Provides
+    @PerUser
+    public InterpretationCreateFragmentPresenter providesInterpretationCreateFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor,
+            @Nullable DashboardElementInteractor dashboardElementInteractor,
+            @Nullable DashboardItemInteractor dashboardItemInteractor,
+            @Nullable InterpretationElementInteractor interpretationElementInteractor,
+            ApiExceptionHandler apiExceptionHandler, Logger logger
+    ) {
+        return new InterpretationCreateFragmentPresenterImpl(interpretationInteractor,
+                dashboardElementInteractor, dashboardItemInteractor, interpretationElementInteractor,
+                apiExceptionHandler, logger);
+    }
+
+
 }
