@@ -94,6 +94,29 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
 
     @Override
     public void addInterpretationComment(final Interpretation interpretation, User user, String text){
+
+        Observable<InterpretationComment> interpretationComment =  interpretationCommentInteractor.create(interpretation,
+                user, text);
+        interpretationComment.subscribeOn(Schedulers.newThread());
+        interpretationComment.observeOn(AndroidSchedulers.mainThread());
+        interpretationComment.subscribe(new Action1<InterpretationComment>() {
+            @Override
+            public void call(InterpretationComment interpretationComment) {
+                logger.d(TAG ,"onAddInterpretationComment " + interpretationComment.toString());
+                // save interpretationComment
+                interpretationCommentInteractor.save(interpretationComment);
+                interpretationCommentsFragmentView.addCommentCallback(interpretationComment);
+
+                // TODO
+                UiEventSync();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onAddInterpretationComment failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
