@@ -140,10 +140,61 @@ public class InterpretationCreateFragmentPresenterImpl implements Interpretation
 
     @Override
     public void getDashboardItem(String dashboardItemUId) {
+
+//        mDashboardItem = new Select()
+//                .from(DashboardItem.class)
+//                .where(Condition.column(DashboardItem$Table
+//                        .ID).is(dashboardItemId))
+//                .querySingle();
+
+        Observable<DashboardItem> dashboardItem = dashboardItemInteractor.get(dashboardItemUId);
+        dashboardItem.subscribeOn(Schedulers.newThread());
+        dashboardItem.observeOn(AndroidSchedulers.mainThread());
+        dashboardItem.subscribe(new Action1<DashboardItem>() {
+            @Override
+            public void call(DashboardItem dashboardItem) {
+                logger.d(TAG ,"onGetDashboardItem " + dashboardItem.toString());
+
+                interpretationCreateFragmentView.setCurrentDashboardItem(dashboardItem);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onGetDashboardItem failed");
+                handleError(throwable);
+            }
+        });
+
     }
 
     @Override
     public void getDashboardElements(String dashboardItemUId) {
+
+//        new Select()
+//                .from(DashboardElement.class)
+//                .where(Condition.column(DashboardElement$Table
+//                        .DASHBOARDITEM_DASHBOARDITEM).is(dashboardItemId))
+//                .and(Condition.column(DashboardElement$Table
+//                        .STATE).isNot(State.TO_DELETE.toString()))
+//                .queryList();
+
+        Observable<List<DashboardElement>> dashboardElements = dashboardElementInteractor.list(dashboardItemUId);
+        dashboardElements.subscribeOn(Schedulers.newThread());
+        dashboardElements.observeOn(AndroidSchedulers.mainThread());
+        dashboardElements.subscribe(new Action1<List<DashboardElement>>() {
+            @Override
+            public void call(List<DashboardElement> dashboardElements) {
+                logger.d(TAG ,"LoadedDashboardElements " + dashboardElements.toString());
+                interpretationCreateFragmentView.setDashboardElements(dashboardElements);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "LoadedDashboardElements failed");
+                handleError(throwable);
+            }
+        });
+
     }
 
     @Override
