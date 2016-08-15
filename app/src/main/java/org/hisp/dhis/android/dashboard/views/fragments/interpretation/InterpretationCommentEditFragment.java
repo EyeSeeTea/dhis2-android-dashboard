@@ -118,6 +118,9 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment implem
         mCancelInterpretationCommentEdit.setOnClickListener(onClickListener);
         mUpdateInterpretationComment.setOnClickListener(onClickListener);
 
+        interpretationCommentEditFragmentPresenter.
+                getInterpretationComment(getArguments().getString(ARG_INTERPRETATION_COMMENT_UID));
+
         mDialogLabel.setText(getString(R.string.edit_comment));
         mCommentEditText.setText(mInterpretationComment.getText());
     }
@@ -128,6 +131,8 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment implem
             switch (v.getId()) {
                 case R.id.update_interpretation_comment: {
 
+                    interpretationCommentEditFragmentPresenter.updateInterpretationComment(mInterpretationComment,
+                            mCommentEditText.getText().toString());
                     break;
                 }
             }
