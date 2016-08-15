@@ -92,4 +92,18 @@ public class InterpretationModule {
                  apiExceptionHandler, logger);
     }
 
+    @Provides
+    @PerUser
+    public InterpretationFragmentPresenter providesInterpretationFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor,
+            @Nullable InterpretationElementInteractor interpretationElementInteractor,
+            @Nullable InterpretationCommentInteractor interpretationCommentInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            PreferencesModule preferencesModule,
+            Logger logger
+    ) {
+        return new InterpretationFragmentPresenterImpl(interpretationInteractor,
+                interpretationElementInteractor, interpretationCommentInteractor,
+                 apiExceptionHandler, preferencesModule, logger);
+    }
 }
