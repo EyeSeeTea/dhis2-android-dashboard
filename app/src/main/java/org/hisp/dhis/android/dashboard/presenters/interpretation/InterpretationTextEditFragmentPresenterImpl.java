@@ -89,10 +89,50 @@ public class InterpretationTextEditFragmentPresenterImpl implements Interpretati
 
     @Override
     public void getInterpretation(final String interpretaionUId) {
+
+        logger.e(TAG, "onGetInterpretation()");
+
+        Observable<Interpretation> interpretations = interpretationInteractor.get(interpretaionUId);
+        interpretations.subscribeOn(Schedulers.newThread());
+        interpretations.observeOn(AndroidSchedulers.mainThread());
+        interpretations.subscribe(new Action1<Interpretation>() {
+            @Override
+            public void call(Interpretation interpretation) {
+                logger.d(TAG ,"onGetInterpretation " + interpretation.toString());
+                interpretationTextEditFragmentView.setCurrentInterpretation(interpretation);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onGetInterpretation failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
     public void updateInterpretation(Interpretation interpretation, String interpretationName) {
+
+        interpretation.updateInterpretation(interpretationName);
+        Observable<Boolean> success =  interpretationInteractor.save(interpretation);
+        success.subscribeOn(Schedulers.newThread());
+        success.observeOn(AndroidSchedulers.mainThread());
+        success.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean success) {
+                logger.d(TAG ,"onUpdateInterpretationComment " + success.toString());
+                // save interpretationComment
+                interpretationTextEditFragmentView.updateInterpretationCallback();
+
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onUpdateInterpretationComment failed");
+                handleError(throwable);
+            }
+        });
+
     }
 
     // TODO handle UiEventSync
