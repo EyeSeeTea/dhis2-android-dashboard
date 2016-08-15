@@ -149,6 +149,11 @@ public class InterpretationEmptyFragment extends BaseFragment
     @Override
     public void syncInterpretationsCallback() {
         interpretationContainerFragmentPresenter.onLoadLocalData();
+
+        // To Remove menu buttons, avoid duplicate menu inflations
+        if (getToolbarOfContainer() != null) {
+            getToolbarOfContainer().getMenu().clear();
+        }
     }
 
     @Override
