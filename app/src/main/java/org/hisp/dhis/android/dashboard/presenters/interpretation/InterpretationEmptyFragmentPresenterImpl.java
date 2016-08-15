@@ -125,10 +125,10 @@ public class InterpretationEmptyFragmentPresenterImpl implements InterpretationE
                         logger.d(TAG, "Synced interpretations successfully");
                         if(interpretations!=null) {
                             logger.d(TAG + "Interpretations", interpretations.toString());
+                            interpretationEmptyFragmentView.syncInterpretationsCallback();
                         }else{
                             logger.d(TAG + "Interpretations", "Empty pull");
                         }
-                        //do something
                     }
                 }, new Action1<Throwable>() {
                     @Override
