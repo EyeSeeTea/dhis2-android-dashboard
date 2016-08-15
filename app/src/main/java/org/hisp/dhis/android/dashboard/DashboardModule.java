@@ -52,7 +52,9 @@ import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardItemInteractor;
+import org.hisp.dhis.client.sdk.android.interpretation.InterpretationElementInteractor;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
+import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 
@@ -98,6 +100,17 @@ public class DashboardModule {
     public DashboardElementInteractor providesDashboardElementsInteractor() {
         if (D2.isConfigured()) {
             return D2.dashboardElements();
+        }
+        return null;
+    }
+
+    // Defining here , because it has to be used in ElementDetailActivity
+    @Provides
+    @Nullable
+    @PerUser
+    public InterpretationElementInteractor providesInterpretationElementsInteractor() {
+        if (D2.isConfigured()) {
+            return D2.interpretationElements();
         }
         return null;
     }
@@ -148,11 +161,12 @@ public class DashboardModule {
     @PerUser
     public DashboardElementDetailActivityPresenter providesDashboardElementDetailActivityPresenter(
             @Nullable DashboardElementInteractor dashboardElementInteractor,
+            @Nullable InterpretationElementInteractor interpretationElementInteractor,
             ApiExceptionHandler apiExceptionHandler,
             PreferencesModule preferencesModule, Logger logger
     ) {
         return new DashboardElementDetailActivityPresenterImpl(dashboardElementInteractor,
-                apiExceptionHandler, logger,  preferencesModule);
+                interpretationElementInteractor ,apiExceptionHandler, logger,  preferencesModule);
     }
 
     @Provides
