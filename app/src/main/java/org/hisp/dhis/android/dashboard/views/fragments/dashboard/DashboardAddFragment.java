@@ -52,7 +52,6 @@ import javax.inject.Inject;
 
 import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
 
-
 /**
  * Fragment responsible for creation of new dashboards.
  */

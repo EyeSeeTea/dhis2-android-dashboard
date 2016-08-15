@@ -33,6 +33,4 @@ import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 public interface DashboardAddFragmentPresenter extends Presenter {
 
     void createDashboard(String dashboardName);
-
-    void UiEventSync();
 }
