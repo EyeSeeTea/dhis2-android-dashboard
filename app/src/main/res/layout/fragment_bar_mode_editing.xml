@@ -26,8 +26,6 @@
   ~ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<!-- TODO Move ic_accept and ic_close_dialog to SDK -->
-
 <RelativeLayout
     android:id="@+id/fragment_bar_mode_editing"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,15 +37,17 @@
 
     <ImageView
         android:id="@+id/cancel_action"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_alignParentLeft="true"
         android:adjustViewBounds="true"
+        android:layout_centerVertical="true"
         android:background="@drawable/transparent_selector"
         android:clickable="true"
+        android:layout_marginLeft="5dp"
         android:contentDescription="@string/description"
-        android:padding="8dp"
-        android:src="@mipmap/ic_close_dialog"/>
+        android:padding="10dp"
+        android:src="@drawable/ic_cancel_white"/>
 
     <org.hisp.dhis.client.sdk.ui.views.FontTextView
         android:id="@+id/action_name"
@@ -67,14 +67,16 @@
 
     <ImageView
         android:id="@+id/accept_action"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="41dp"
+        android:layout_height="41dp"
         android:layout_alignParentRight="true"
         android:adjustViewBounds="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="5dp"
         android:background="@drawable/transparent_selector"
         android:clickable="true"
         android:contentDescription="@string/description"
         android:padding="8dp"
-        android:src="@mipmap/ic_accept"/>
+        android:src="@drawable/ic_tick"/>
 
 </RelativeLayout>
