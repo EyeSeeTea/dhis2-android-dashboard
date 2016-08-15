@@ -32,23 +32,33 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
-
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextFragmentPresenter;
 import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
+import org.hisp.dhis.client.sdk.utils.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Handles editing (changing text) of given interpretation.
  */
-public final class InterpretationTextFragment extends DialogFragment {
+public final class InterpretationTextFragment extends DialogFragment implements InterpretationTextFragmentView {
     private static final String TAG = InterpretationTextFragment.class.getSimpleName();
-    private static final String ARG_INTERPRETATION_ID = "arg:interpretationId";
+    private static final String ARG_INTERPRETATION_UID = "arg:interpretationUId";
+
+    @Inject
+    InterpretationTextFragmentPresenter interpretationTextFragmentPresenter;
+
+    @Inject
+    Logger logger;
 
     TextView mDialogLabel;
     TextView mInterpretationText;
@@ -57,9 +67,11 @@ public final class InterpretationTextFragment extends DialogFragment {
 
     ImageView mCloseDialogButton ;
 
-    public static InterpretationTextFragment newInstance(long interpretationId) {
+    AlertDialog alertDialog;
+
+    public static InterpretationTextFragment newInstance(String interpretationUId) {
         Bundle args = new Bundle();
-        args.putLong(ARG_INTERPRETATION_ID, interpretationId);
+        args.putString(ARG_INTERPRETATION_UID, interpretationUId);
 
         InterpretationTextFragment fragment = new InterpretationTextFragment();
         fragment.setArguments(args);
@@ -72,6 +84,11 @@ public final class InterpretationTextFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
+
+        ((DashboardApp) getActivity().getApplication())
+                .getInterpretationComponent().inject(this);
+
+        interpretationTextFragmentPresenter.attachView(this);
     }
 
     @Nullable
@@ -94,17 +111,32 @@ public final class InterpretationTextFragment extends DialogFragment {
             }
         });
 
-        mInterpretation = new Select()
-                .from(Interpretation.class)
-                .where(Condition.column(Interpretation$Table
-                        .ID).is(getArguments().getLong(ARG_INTERPRETATION_ID)))
-                .querySingle();
-
         mDialogLabel.setText(getString(R.string.interpretation_text));
         mInterpretationText.setText(mInterpretation.getText());
     }
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
