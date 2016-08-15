@@ -44,6 +44,7 @@ import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextEditFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
@@ -62,6 +63,9 @@ public final class InterpretationTextEditFragment extends BaseDialogFragment imp
 
     @Inject
     InterpretationTextEditFragmentPresenter interpretationTextEditFragmentPresenter;
+
+    @Inject
+    InterpretationFragmentPresenter interpretationFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -150,11 +154,10 @@ public final class InterpretationTextEditFragment extends BaseDialogFragment imp
         mInterpretation = interpretation;
     }
 
-
     @Override
-    public void updateInterpretationCallback() {
-        //TODO
-        interpretationTextEditFragmentPresenter.UiEventSync();
+    public void uiSync() {
+        interpretationFragmentPresenter.syncInterpretations();
+        interpretationFragmentPresenter.loadLocalInterpretations();
     }
 
     @Override
