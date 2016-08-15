@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,16 +42,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
-
+import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentEditFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationComment;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
-public class InterpretationCommentEditFragment extends BaseDialogFragment {
+import javax.inject.Inject;
+
+public class InterpretationCommentEditFragment extends BaseDialogFragment implements InterpretationCommentEditFragmentView{
     private static final String TAG = InterpretationCommentEditFragment.class.getSimpleName();
-    private static final String ARG_INTERPRETATION_COMMENT_ID = "arg:interpretationCommentId";
+    private static final String ARG_INTERPRETATION_COMMENT_UID = "arg:interpretationCommentUId";
+
+    @Inject
+    InterpretationCommentEditFragmentPresenter interpretationCommentEditFragmentPresenter;
+
+    @Inject
+    Logger logger;
 
     EditText mCommentEditText;
 
@@ -62,9 +72,11 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment {
     FontButton mCancelInterpretationCommentEdit;
     FontButton mUpdateInterpretationComment;
 
-    public static InterpretationCommentEditFragment newInstance(long commentId) {
+    AlertDialog alertDialog;
+
+    public static InterpretationCommentEditFragment newInstance(String commentUId) {
         Bundle args = new Bundle();
-        args.putLong(ARG_INTERPRETATION_COMMENT_ID, commentId);
+        args.putString(ARG_INTERPRETATION_COMMENT_UID, commentUId);
 
         InterpretationCommentEditFragment fragment
                 = new InterpretationCommentEditFragment();
@@ -78,6 +90,11 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
+
+        ((DashboardApp) getActivity().getApplication())
+                .getInterpretationComponent().inject(this);
+
+        interpretationCommentEditFragmentPresenter.attachView(this);
     }
 
     @Nullable
@@ -101,12 +118,6 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment {
         mCancelInterpretationCommentEdit.setOnClickListener(onClickListener);
         mUpdateInterpretationComment.setOnClickListener(onClickListener);
 
-        mInterpretationComment = new Select()
-                .from(InterpretationComment.class)
-                .where(Condition.column(InterpretationComment$Table
-                        .ID).is(getArguments().getLong(ARG_INTERPRETATION_COMMENT_ID)))
-                .querySingle();
-
         mDialogLabel.setText(getString(R.string.edit_comment));
         mCommentEditText.setText(mInterpretationComment.getText());
     }
@@ -116,12 +127,7 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.update_interpretation_comment: {
-                    mInterpretationComment.updateComment(
-                            mCommentEditText.getText().toString());
 
-                    if (isDhisServiceBound()) {
-                        getDhisService().syncInterpretations();
-                    }
                     break;
                 }
             }
@@ -137,5 +143,26 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment {
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
