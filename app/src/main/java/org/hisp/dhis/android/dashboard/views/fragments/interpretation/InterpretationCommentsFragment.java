@@ -51,6 +51,7 @@ import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.InterpretationCommentsAdapter;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentsFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
 import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationComment;
 import org.hisp.dhis.client.sdk.models.user.User;
@@ -70,6 +71,9 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
 
     @Inject
     InterpretationCommentsFragmentPresenter interpretationCommentsFragmentPresenter;
+
+    @Inject
+    InterpretationFragmentPresenter interpretationFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -210,9 +214,6 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
             mAdapter.notifyItemRemoved(position);
 
             interpretationCommentsFragmentPresenter.deleteInterpretationComment(comment);
-
-            // TODO !!!!!!!!!!!!!!!!
-           interpretationCommentsFragmentPresenter.UiEventSync();
         }
     }
 
@@ -242,9 +243,13 @@ public class InterpretationCommentsFragment extends BaseFragment implements Inte
 
         // we need to erase the previous comment from the field.
         mNewCommentText.setText(EMPTY_FIELD);
+        uiSync();
+    }
 
-        // TODO !!!!!!!!!!!!!!!!
-        interpretationCommentsFragmentPresenter.UiEventSync();
+    @Override
+    public void uiSync() {
+        interpretationFragmentPresenter.syncInterpretations();
+        interpretationFragmentPresenter.loadLocalInterpretations();
     }
 
     @Override
