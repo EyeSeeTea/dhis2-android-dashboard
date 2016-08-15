@@ -12,4 +12,5 @@ public interface DashboardEmptyFragmentView extends View{
 
     void showUnexpectedError(String message);
 
+    void syncDashboardsCallback();
 }

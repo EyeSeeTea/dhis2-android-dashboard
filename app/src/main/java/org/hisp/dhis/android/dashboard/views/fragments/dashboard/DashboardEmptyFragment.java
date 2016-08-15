@@ -38,6 +38,7 @@ import android.support.v7.widget.Toolbar;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -58,6 +59,9 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
 
     @Inject
     DashboardEmptyFragmentPresenter dashboardEmptyFragmentPresenter;
+
+    @Inject
+    DashboardContainerFragmentPresenter dashboardContainerFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -99,7 +103,6 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        // TODO to include super or not
         super.onViewCreated(view, savedInstanceState);
 
         setupToolbar();
@@ -165,6 +168,11 @@ public class DashboardEmptyFragment extends BaseFragment implements DashboardEmp
     @Override
     public void showUnexpectedError(String message) {
         showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public void syncDashboardsCallback() {
+        dashboardContainerFragmentPresenter.onLoadLocalData();
     }
 
     @Override
