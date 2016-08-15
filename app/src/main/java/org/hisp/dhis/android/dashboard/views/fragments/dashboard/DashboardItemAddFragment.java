@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -68,7 +69,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         implements DashboardItemAddFragmentView, PopupMenu.OnMenuItemClickListener
 {
     private static final String TAG = DashboardItemAddFragment.class.getSimpleName();
-    private static final String ARG_DASHBOARD_ID = "arg:dashboardId";
+    private static final String ARG_DASHBOARD_UID = "arg:dashboardUId";
 
     @Inject
     DashboardItemAddFragmentPresenter dashboardItemAddFragmentPresenter;
@@ -87,9 +88,11 @@ public class DashboardItemAddFragment extends BaseDialogFragment
 
     Dashboard mDashboard;
 
-    public static DashboardItemAddFragment newInstance(long dashboardId) {
+    AlertDialog alertDialog;
+
+    public static DashboardItemAddFragment newInstance(String dashboardUId) {
         Bundle args = new Bundle();
-        args.putLong(ARG_DASHBOARD_ID, dashboardId);
+        args.putString(ARG_DASHBOARD_UID, dashboardUId);
 
         DashboardItemAddFragment fragment = new DashboardItemAddFragment();
         fragment.setArguments(args);
@@ -132,8 +135,8 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         // Associate the Dashboard
-        long dashboardId = getArguments().getLong(ARG_DASHBOARD_ID);
-        dashboardItemAddFragmentPresenter.getDashboardFromId(dashboardId);
+        String dashboardUId = getArguments().getString(ARG_DASHBOARD_UID);
+        dashboardItemAddFragmentPresenter.getDashboardFromUId(dashboardUId);
 
         mFilter = (EditText) view.findViewById(R.id.filter_options);
         mDialogLabel = (TextView)view.findViewById(R.id.dialog_label);
@@ -195,7 +198,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     // TODO handle with DashboardInteractor or mDashboard ?
     @Override
     public void addItemContent(DashboardContent resource) {
-        //mDashboard.addItemContent(resource);
+        mDashboard.addItemContent(resource);
     }
 
     @Override
@@ -285,5 +288,27 @@ public class DashboardItemAddFragment extends BaseDialogFragment
 
     private boolean isItemChecked(int id) {
         return mResourcesMenu.getMenu().findItem(id).isChecked();
+    }
+
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }
