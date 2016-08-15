@@ -28,12 +28,23 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCommentEditFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCommentsFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCreateFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationEmptyFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationTextEditFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationTextFragment;
+
 import dagger.Subcomponent;
 
 @PerUser
 @Subcomponent(
         modules = {
-                InterpretationModule.class
+                InterpretationModule.class,
+
+                // Add DashboardModule here for it's interactors
+                DashboardModule.class
         }
 )
 public interface InterpretationComponent {
@@ -51,5 +62,7 @@ public interface InterpretationComponent {
     // TODO specify injection targets
 
         //fragments
+
+        void inject(InterpretationEmptyFragment interpretationEmptyFragment);
 }
 

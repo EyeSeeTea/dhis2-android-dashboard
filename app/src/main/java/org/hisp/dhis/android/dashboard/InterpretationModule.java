@@ -28,8 +28,37 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentEditFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentEditFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentsFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCommentsFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationEmptyFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationEmptyFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextEditFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextEditFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationTextFragmentPresenterImpl;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCommentEditFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCommentsFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCreateFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationEmptyFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationTextEditFragment;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationTextFragment;
 import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
+import org.hisp.dhis.client.sdk.android.dashboard.DashboardItemInteractor;
 import org.hisp.dhis.client.sdk.android.interpretation.InterpretationCommentInteractor;
+import org.hisp.dhis.client.sdk.android.interpretation.InterpretationElementInteractor;
+import org.hisp.dhis.client.sdk.android.interpretation.InterpretationInteractor;
+import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
+import org.hisp.dhis.client.sdk.models.interpretation.InterpretationComment;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
+import org.hisp.dhis.client.sdk.utils.Logger;
 
 import javax.annotation.Nullable;
 
@@ -52,4 +81,15 @@ public class InterpretationModule {
         }
         return null;
     }
+
+    @Provides
+    @PerUser
+    public InterpretationEmptyFragmentPresenter providesInterpretationEmptyFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor,
+            ApiExceptionHandler apiExceptionHandler, Logger logger
+    ) {
+        return new InterpretationEmptyFragmentPresenterImpl(interpretationInteractor,
+                 apiExceptionHandler, logger);
+    }
+
 }
