@@ -33,6 +33,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,8 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
     FontButton mCancelDashboardAddButton;
     FontButton mSaveDashboardButton;
 
+    AlertDialog alertDialog;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +114,9 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
     public void onPause() {
         super.onPause();
         logger.d(TAG, "onPause()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
         dashboardAddFragmentPresenter.detachView();
     }
 
@@ -159,5 +165,26 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
     @Override
     public void uiSync() {
         dashboardViewPagerFragmentPresenter.syncDashboard();
+    }
+
+    @Override
+    public void showError(String message) {
+        showErrorDialog(getString(R.string.title_error), message);
+    }
+
+    @Override
+    public void showUnexpectedError(String message) {
+        showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        if (alertDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setPositiveButton(R.string.option_confirm, null);
+            alertDialog = builder.create();
+        }
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
     }
 }

@@ -7,4 +7,8 @@ public interface DashboardAddFragmentView extends View{
     void dismissDialogFragment();
 
     void uiSync();
+
+    void showError(String message);
+
+    void showUnexpectedError(String message);
 }

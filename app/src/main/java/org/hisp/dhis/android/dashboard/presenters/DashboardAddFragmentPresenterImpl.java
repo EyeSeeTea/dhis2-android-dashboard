@@ -30,12 +30,16 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardAddFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
+import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.interpretation.Interpretation;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
+import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 
 import rx.Observable;
@@ -50,15 +54,18 @@ public class DashboardAddFragmentPresenterImpl implements DashboardAddFragmentPr
     private static final String TAG = DashboardAddFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
     private DashboardAddFragmentView dashboardAddFragmentView;
+    private ApiExceptionHandler apiExceptionHandler;
 
     private final Logger logger;
 
     private CompositeSubscription subscription;
 
     public DashboardAddFragmentPresenterImpl(DashboardInteractor dashboardInteractor,
+                                             ApiExceptionHandler apiExceptionHandler,
                                              Logger logger) {
 
         this.dashboardInteractor = dashboardInteractor;
+        this.apiExceptionHandler = apiExceptionHandler;
         this.logger = logger;
 
         this.subscription = new CompositeSubscription();
@@ -103,5 +110,33 @@ public class DashboardAddFragmentPresenterImpl implements DashboardAddFragmentPr
                 handleError(throwable);
             }
         });
+    }
+
+    @Override
+    public void handleError(final Throwable throwable) {
+        AppError error = apiExceptionHandler.handleException(TAG, throwable);
+
+        if (throwable instanceof ApiException) {
+            ApiException exception = (ApiException) throwable;
+
+            if (exception.getResponse() != null) {
+                switch (exception.getResponse().getStatus()) {
+                    case HttpURLConnection.HTTP_UNAUTHORIZED: {
+                        dashboardAddFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    case HttpURLConnection.HTTP_NOT_FOUND: {
+                        dashboardAddFragmentView.showError(error.getDescription());
+                        break;
+                    }
+                    default: {
+                        dashboardAddFragmentView.showUnexpectedError(error.getDescription());
+                        break;
+                    }
+                }
+            }
+        } else {
+            logger.e(TAG, "handleError", throwable);
+        }
     }
 }
