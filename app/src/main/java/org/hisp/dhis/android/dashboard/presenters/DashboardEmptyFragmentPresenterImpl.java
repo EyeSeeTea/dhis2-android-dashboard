@@ -176,6 +176,7 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
                         logger.d(TAG, "Synced dashboards successfully");
                         if(dashboards!=null) {
                             logger.d(TAG + "Dashboards", dashboards.toString());
+                            dashboardEmptyFragmentView.syncDashboardsCallback();
                         }else{
                             logger.d(TAG + "Dashboards", "Empty pull");
                         }
