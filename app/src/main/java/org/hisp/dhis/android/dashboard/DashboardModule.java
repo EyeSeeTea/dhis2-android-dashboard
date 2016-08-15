@@ -172,17 +172,23 @@ public class DashboardModule {
     @Provides
     @PerUser
     public DashboardItemAddFragmentPresenter providesDashboardItemAddFragmentPresenter(
-            @Nullable DashboardContentInteractor dashboardContentInteractor, Logger logger
+            @Nullable DashboardContentInteractor dashboardContentInteractor,
+            @Nullable DashboardInteractor dashboardInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            Logger logger
     ) {
-        return new DashboardItemAddFragmentPresenterImpl(dashboardContentInteractor, logger);
+        return new DashboardItemAddFragmentPresenterImpl(dashboardContentInteractor,
+                dashboardInteractor, apiExceptionHandler, logger);
     }
 
     @Provides
     @PerUser
     public DashboardAddFragmentPresenter providesDashboardAddFragmentPresenter(
-            @Nullable DashboardInteractor dashboardInteractor, Logger logger
+            @Nullable DashboardInteractor dashboardInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            Logger logger
     ) {
-        return new DashboardAddFragmentPresenterImpl(dashboardInteractor, logger);
+        return new DashboardAddFragmentPresenterImpl(dashboardInteractor, apiExceptionHandler,logger);
     }
 
     @Provides
