@@ -121,5 +121,26 @@ public class InterpretationModule {
                 apiExceptionHandler, logger);
     }
 
+    @Provides
+    @PerUser
+    public InterpretationTextFragmentPresenter providesInterpretationTextFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            Logger logger
+    ) {
+        return new InterpretationTextFragmentPresenterImpl(interpretationInteractor,
+                apiExceptionHandler, logger);
+    }
+
+    @Provides
+    @PerUser
+    public InterpretationTextEditFragmentPresenter providesInterpretationTextEditFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            Logger logger
+    ) {
+        return new InterpretationTextEditFragmentPresenterImpl(interpretationInteractor,
+                apiExceptionHandler, logger);
+    }
 
 }

@@ -68,5 +68,10 @@ public interface InterpretationComponent {
         void inject(InterpretationFragment interpretationFragment);
 
         void inject(InterpretationCreateFragment interpretationCreateFragment);
+
+        void inject(InterpretationTextFragment interpretationTextFragment);
+
+        void inject(InterpretationTextEditFragment interpretationTextEditFragment);
+
 }
 
