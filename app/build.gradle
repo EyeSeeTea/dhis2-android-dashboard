@@ -78,21 +78,6 @@ android {
     dexOptions {
         javaMaxHeapSize "2g"
     }
-
-    // TODO remove this after successfully refactoring code of following files
-    sourceSets {
-        main {
-            java {
-                exclude '**/InterpretationFragment.java'
-                exclude '**/InterpretationEmptyFragment.java'
-                exclude '**/InterpretationCreateFragment.java'
-                exclude '**/InterpretationCommentEditFragment.java'
-                exclude '**/InterpretationCommentsFragment.java'
-                exclude '**/InterpretationTextEditFragment.java'
-                exclude '**/InterpretationTextFragment.java'
-            }
-        }
-    }
 }
 
 dependencies {
