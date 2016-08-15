@@ -45,6 +45,7 @@ import android.widget.TextView;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardManageFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
@@ -67,6 +68,9 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
 
     @Inject
     DashboardManageFragmentPresenter dashboardManageFragmentPresenter;
+
+    @Inject
+    DashboardViewPagerFragmentPresenter dashboardViewPagerFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -125,7 +129,7 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
         mActionName.setText(getString(R.string.edit_name));
 
         // Dashboard is set in setCurrentDashboard()
-        dashboardManageFragmentPresenter.setDashboard(getDashboardUId());
+        dashboardManageFragmentPresenter.getDashboard(getDashboardUId());
 
         setFragmentBarActionMode(false);
     }
@@ -151,6 +155,11 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     @Override
     public void showUnexpectedError(String message) {
         showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public void UiSync() {
+        dashboardViewPagerFragmentPresenter.syncDashboard();
     }
 
     private String getDashboardUId() {

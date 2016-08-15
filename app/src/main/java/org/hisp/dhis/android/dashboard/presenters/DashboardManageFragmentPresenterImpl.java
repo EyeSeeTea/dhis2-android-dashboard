@@ -92,7 +92,7 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
     }
 
     @Override
-    public void setDashboard(String dashboardUId) {
+    public void getDashboard(String dashboardUId) {
 
         logger.e(TAG, "onGetDashboards()");
 
@@ -135,7 +135,7 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
 
                 dashboardManageFragmentView.dismissDialogFragment();
                 dashboardManageFragmentView.dashboardNameClearFocus();
-                UiEventSync();
+                dashboardManageFragmentView.UiSync();
             }
         }, new Action1<Throwable>() {
             @Override
@@ -160,8 +160,7 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
             @Override
             public void call(Boolean aBoolean) {
                 logger.d(TAG ,"onDeleteDashboards " + aBoolean.toString());
-                // TODO trigger syncing of dashboards
-                UiEventSync();
+                dashboardManageFragmentView.UiSync();
             }
         }, new Action1<Throwable>() {
             @Override
@@ -171,18 +170,6 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
             }
         });
     }
-
-    // TODO handle UiEventSync
-    @Override
-    public void UiEventSync() {
-        /**
-        if (isDhisServiceBound()) {
-            getDhisService().syncDashboards();
-            EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_DASHBOARDS));
-        }
-         **/
-    }
-
 
     @Override
     public void handleError(final Throwable throwable) {

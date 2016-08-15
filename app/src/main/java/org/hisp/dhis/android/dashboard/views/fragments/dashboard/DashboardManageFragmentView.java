@@ -14,4 +14,6 @@ public interface DashboardManageFragmentView extends View{
     void showError(String message);
 
     void showUnexpectedError(String message);
+
+    void UiSync();
 }
