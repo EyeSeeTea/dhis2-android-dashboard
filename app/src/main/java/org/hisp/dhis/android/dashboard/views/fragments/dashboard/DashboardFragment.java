@@ -49,6 +49,7 @@ import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemAdapter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCreateFragment;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.views.GridDividerDecoration;
@@ -222,9 +223,9 @@ public class DashboardFragment extends BaseFragment
     // TODO
     @Override
     public void onItemShareClick(DashboardItem item) {
-//        InterpretationCreateFragment
-//                .newInstance(item.getId())
-//                .show(getChildFragmentManager());
+        InterpretationCreateFragment
+                .newInstance(item.getUId())
+                .show(getChildFragmentManager());
     }
 
     @Override
