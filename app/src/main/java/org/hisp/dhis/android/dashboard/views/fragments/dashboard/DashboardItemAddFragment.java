@@ -176,16 +176,6 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         setupResourceMenu();
     }
 
-    // TODO Remove below code if replaced properly in OnViewCreated
-    /**
-    @OnTextChanged(value = R.id.filter_options,
-            callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
-    @SuppressWarnings("unused")
-    public void afterTextChanged(Editable s) {
-        mAdapter.getFilter().filter(s.toString());
-    }
-    **/
-
     public void show(FragmentManager fragmentManager) {
         show(fragmentManager, TAG);
     }
@@ -257,9 +247,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         mResourcesMenu.setOnMenuItemClickListener(this);
     }
 
-    // TODO handle restartLoader appropriately(if need be)
     private void queryApiResources() {
-        //getLoaderManager().restartLoader(LOADER_ID, getArguments(), this);
         dashboardItemAddFragmentPresenter.loadOptionAdapterValues(getTypesToInclude());
     }
 
@@ -310,6 +298,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     @Override
     public void uiSync(){
         dashboardViewPagerFragmentPresenter.syncDashboard();
+        dashboardViewPagerFragmentPresenter.loadLocalDashboards();
     }
 
     private void showErrorDialog(String title, String message) {

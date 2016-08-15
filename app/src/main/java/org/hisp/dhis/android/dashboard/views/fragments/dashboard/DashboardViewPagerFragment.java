@@ -268,7 +268,6 @@ public class DashboardViewPagerFragment extends BaseFragment
             case R.id.manage_dashboard: {
                 Dashboard dashboard = mDashboardAdapter
                         .getDashboard(mViewPager.getCurrentItem());
-                // TODO Write code for DashboardManageFragment and add it
                 DashboardManageFragment
                         .newInstance(dashboard.getUId())
                         .show(getChildFragmentManager());

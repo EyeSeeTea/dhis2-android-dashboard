@@ -160,6 +160,7 @@ public final class DashboardManageFragment extends BaseDialogFragment implements
     @Override
     public void uiSync() {
         dashboardViewPagerFragmentPresenter.syncDashboard();
+        dashboardViewPagerFragmentPresenter.loadLocalDashboards();
     }
 
     private String getDashboardUId() {

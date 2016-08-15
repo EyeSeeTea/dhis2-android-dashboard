@@ -165,6 +165,7 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
     @Override
     public void uiSync() {
         dashboardViewPagerFragmentPresenter.syncDashboard();
+        dashboardViewPagerFragmentPresenter.loadLocalDashboards();
     }
 
     @Override
