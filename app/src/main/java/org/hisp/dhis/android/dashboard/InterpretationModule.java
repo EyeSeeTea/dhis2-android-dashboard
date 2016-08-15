@@ -28,12 +28,28 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import org.hisp.dhis.client.sdk.android.api.D2;
+import org.hisp.dhis.client.sdk.android.interpretation.InterpretationCommentInteractor;
+
+import javax.annotation.Nullable;
+
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class InterpretationModule {
 
     public InterpretationModule() {
         // explicit empty constructor
+    }
+
+    @Provides
+    @Nullable
+    @PerUser
+    public InterpretationCommentInteractor providesInterpretationCommentInteractor() {
+        if (D2.isConfigured()) {
+            return D2.interpretationComments();
+        }
+        return null;
     }
 }
