@@ -120,6 +120,8 @@ public final class InterpretationTextEditFragment extends BaseDialogFragment imp
         mCancelInterpretationTextEditButton.setOnClickListener(onClickListener);
         mUpdateInterpretationText.setOnClickListener(onClickListener);
 
+        interpretationTextEditFragmentPresenter.getInterpretation(getArguments().getString(ARG_INTERPRETATION_UID));
+
         mDialogLabel.setText(getString(R.string.interpretation_text));
         mInterpretationText.setText(mInterpretation.getText());
     }
@@ -130,6 +132,8 @@ public final class InterpretationTextEditFragment extends BaseDialogFragment imp
             switch (v.getId()) {
                 case R.id.update_interpretation_text: {
 
+                    interpretationTextEditFragmentPresenter.updateInterpretation(mInterpretation,
+                            mInterpretationText.getText().toString());
                 }
                 break;
             }
@@ -139,6 +143,18 @@ public final class InterpretationTextEditFragment extends BaseDialogFragment imp
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
+    }
+
+    @Override
+    public void setCurrentInterpretation(Interpretation interpretation) {
+        mInterpretation = interpretation;
+    }
+
+
+    @Override
+    public void updateInterpretationCallback() {
+        //TODO
+        interpretationTextEditFragmentPresenter.UiEventSync();
     }
 
     @Override
