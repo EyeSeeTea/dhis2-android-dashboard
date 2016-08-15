@@ -43,6 +43,7 @@ import android.widget.TextView;
 import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.DashboardAddFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.ui.views.FontButton;
 import org.hisp.dhis.client.sdk.utils.Logger;
@@ -60,6 +61,9 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
 
     @Inject
     DashboardAddFragmentPresenter dashboardAddFragmentPresenter;
+
+    @Inject
+    DashboardViewPagerFragmentPresenter dashboardViewPagerFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -151,5 +155,10 @@ public final class DashboardAddFragment extends BaseDialogFragment implements Da
     @Override
     public void dismissDialogFragment() {
         dismiss();
+    }
+
+    @Override
+    public void uiSync() {
+        dashboardViewPagerFragmentPresenter.syncDashboard();
     }
 }

@@ -48,6 +48,7 @@ import org.hisp.dhis.android.dashboard.DashboardApp;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemAdapter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.client.sdk.core.common.network.Configuration;
 import org.hisp.dhis.client.sdk.core.common.preferences.PreferencesModule;
 import org.hisp.dhis.client.sdk.ui.views.GridDividerDecoration;
@@ -77,6 +78,9 @@ public class DashboardFragment extends BaseFragment
 
     @Inject
     DashboardFragmentPresenter dashboardFragmentPresenter;
+
+    @Inject
+    DashboardViewPagerFragmentPresenter dashboardViewPagerFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -236,6 +240,11 @@ public class DashboardFragment extends BaseFragment
     @Override
     public void showUnexpectedError(String message) {
         showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public void uiSync() {
+        dashboardViewPagerFragmentPresenter.syncDashboard();
     }
 
     private void setupRecyclerView(View view) {

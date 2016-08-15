@@ -54,6 +54,7 @@ import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
 
 import org.hisp.dhis.android.dashboard.presenters.DashboardItemAddFragmentPresenter;
+import org.hisp.dhis.android.dashboard.presenters.DashboardViewPagerFragmentPresenter;
 import org.hisp.dhis.android.dashboard.views.fragments.BaseDialogFragment;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
@@ -73,6 +74,9 @@ public class DashboardItemAddFragment extends BaseDialogFragment
 
     @Inject
     DashboardItemAddFragmentPresenter dashboardItemAddFragmentPresenter;
+
+    @Inject
+    DashboardViewPagerFragmentPresenter dashboardViewPagerFragmentPresenter;
 
     @Inject
     Logger logger;
@@ -299,6 +303,11 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     @Override
     public void showUnexpectedError(String message) {
         showErrorDialog(getString(R.string.title_error_unexpected), message);
+    }
+
+    @Override
+    public void uiSync(){
+        dashboardViewPagerFragmentPresenter.syncDashboard();
     }
 
     private void showErrorDialog(String title, String message) {
