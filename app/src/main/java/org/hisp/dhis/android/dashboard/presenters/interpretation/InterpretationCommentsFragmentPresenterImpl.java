@@ -178,6 +178,26 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
 
     @Override
     public void deleteInterpretationComment(InterpretationComment comment) {
+
+        Observable<Boolean> interpretationComment =  interpretationCommentInteractor.remove(comment);
+        interpretationComment.subscribeOn(Schedulers.newThread());
+        interpretationComment.observeOn(AndroidSchedulers.mainThread());
+        interpretationComment.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean deleted) {
+                logger.d(TAG ,"onDeleteInterpretationComment " + deleted.toString());
+
+                // TODO
+                UiEventSync();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onDeleteInterpretationComment failed");
+                handleError(throwable);
+            }
+        });
+
     }
 
     @Override
