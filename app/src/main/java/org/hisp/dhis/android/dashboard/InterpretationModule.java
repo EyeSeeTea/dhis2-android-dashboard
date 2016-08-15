@@ -143,4 +143,26 @@ public class InterpretationModule {
                 apiExceptionHandler, logger);
     }
 
+    @Provides
+    @PerUser
+    public InterpretationCommentsFragmentPresenter providesInterpretationCommentsFragmentPresenter(
+            @Nullable InterpretationInteractor interpretationInteractor,
+            @Nullable InterpretationCommentInteractor interpretationCommentInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            Logger logger
+    ) {
+        return new InterpretationCommentsFragmentPresenterImpl(interpretationInteractor,
+                interpretationCommentInteractor, apiExceptionHandler, logger);
+    }
+
+    @Provides
+    @PerUser
+    public InterpretationCommentEditFragmentPresenter providesInterpretationCommentEditFragmentPresenter(
+            @Nullable InterpretationCommentInteractor interpretationCommentInteractor,
+            ApiExceptionHandler apiExceptionHandler,
+            Logger logger
+    ) {
+        return new InterpretationCommentEditFragmentPresenterImpl(interpretationCommentInteractor,
+                apiExceptionHandler, logger);
+    }
 }
