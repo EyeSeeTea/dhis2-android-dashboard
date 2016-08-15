@@ -83,6 +83,26 @@ public class InterpretationCommentEditFragmentPresenterImpl implements Interpret
 
     @Override
     public void updateInterpretationComment(final InterpretationComment interpretationComment, String text){
+
+        interpretationComment.updateComment(text);
+        Observable<Boolean> success =  interpretationCommentInteractor.save(interpretationComment);
+        success.subscribeOn(Schedulers.newThread());
+        success.observeOn(AndroidSchedulers.mainThread());
+        success.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean success) {
+                logger.d(TAG ,"onUpdateInterpretationComment " + success.toString());
+                // save interpretationComment
+                interpretationCommentEditFragmentView.updateCommentCallback();
+
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onUpdateInterpretationComment failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
