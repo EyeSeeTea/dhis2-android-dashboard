@@ -51,13 +51,15 @@
 
     <ImageView
         android:id="@+id/close_dialog_button"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:layout_marginRight="7dp"
         android:background="@drawable/transparent_selector"
         android:clickable="true"
         android:contentDescription="@string/description"
         android:padding="8dp"
-        android:src="@mipmap/ic_close_dialog"/>
+        android:src="@drawable/ic_cancel_white"/>
 
 </LinearLayout>
