@@ -111,12 +111,19 @@ public final class InterpretationTextFragment extends DialogFragment implements 
             }
         });
 
+        interpretationTextFragmentPresenter.getInterpretation(getArguments().getString(ARG_INTERPRETATION_UID));
+
         mDialogLabel.setText(getString(R.string.interpretation_text));
         mInterpretationText.setText(mInterpretation.getText());
     }
 
     public void show(FragmentManager manager) {
         super.show(manager, TAG);
+    }
+
+    @Override
+    public void setCurrentInterpretation(Interpretation interpretation) {
+        mInterpretation = interpretation;
     }
 
     @Override
