@@ -132,6 +132,9 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     public void onDestroy() {
         super.onDestroy();
         logger.d(TAG, "onDestroy()");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
         dashboardItemAddFragmentPresenter.detachView();
     }
 
@@ -293,7 +296,6 @@ public class DashboardItemAddFragment extends BaseDialogFragment
     private boolean isItemChecked(int id) {
         return mResourcesMenu.getMenu().findItem(id).isChecked();
     }
-
 
     @Override
     public void showError(String message) {
