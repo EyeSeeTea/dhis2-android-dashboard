@@ -11,5 +11,5 @@ public interface InterpretationTextEditFragmentView extends View{
 
     void showUnexpectedError(String message);
 
-    void updateInterpretationCallback();
+    void uiSync();
 }

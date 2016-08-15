@@ -11,5 +11,6 @@ public interface InterpretationCommentEditFragmentView extends View{
 
     void setInterpretationComment(InterpretationComment interpretationComment);
 
-    void updateCommentCallback();
+    void uiSync();
+
 }

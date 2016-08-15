@@ -15,4 +15,7 @@ public interface InterpretationCreateFragmentView extends View{
     void setCurrentDashboardItem(DashboardItem dashboardItem);
 
     void setDashboardElements(List<DashboardElement> dashboardElements);
+
+    void uiSync();
+
 }
