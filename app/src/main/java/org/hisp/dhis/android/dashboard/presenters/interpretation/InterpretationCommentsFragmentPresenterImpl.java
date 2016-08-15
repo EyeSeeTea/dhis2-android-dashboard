@@ -89,6 +89,7 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
 
     @Override
     public User getUserLocal() {
+        return interpretationInteractor.getCurrentUserLocal();
     }
 
     @Override
