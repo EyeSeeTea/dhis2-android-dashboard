@@ -241,7 +241,7 @@ public final class InterpretationAdapter extends AbsAdapter<Interpretation, Inte
 
         holder.listener.setInterpretation(item);
         mImageLoader.load(request)
-                .placeholder(R.mipmap.ic_stub_dashboard_item)
+                .placeholder(R.mipmap.ic_placeholder_image)
                 .into(holder.imageView);
     }
 
