@@ -314,4 +314,10 @@ public final class InterpretationFragment extends BaseFragment implements
         alertDialog.setMessage(message);
         alertDialog.show();
     }
+
+
+    @Override
+    public boolean onBackPressed() {
+        return true;
+    }
 }
