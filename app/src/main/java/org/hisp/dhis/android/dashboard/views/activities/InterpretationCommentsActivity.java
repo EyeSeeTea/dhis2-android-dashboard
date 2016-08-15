@@ -33,17 +33,18 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import org.hisp.dhis.android.dashboard.R;
+import org.hisp.dhis.android.dashboard.views.fragments.interpretation.InterpretationCommentsFragment;
 import org.hisp.dhis.client.sdk.ui.activities.BaseActivity;
 
 /**
  * This activity is just placeholder for Fragment.
  */
 public class InterpretationCommentsActivity extends BaseActivity {
-    private static final String INTERPRETATION_ID = "arg:interpretationId";
+    private static final String INTERPRETATION_UID = "arg:interpretationUId";
 
-    public static Intent newIntent(Activity activity, long interpetationId) {
+    public static Intent newIntent(Activity activity, String interpetationUId) {
         Intent intent = new Intent(activity, InterpretationCommentsActivity.class);
-        intent.putExtra(INTERPRETATION_ID, interpetationId);
+        intent.putExtra(INTERPRETATION_UID, interpetationUId);
         return intent;
     }
 
@@ -51,11 +52,10 @@ public class InterpretationCommentsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_interpretation_comments);
-        long interpretationId = getIntent().getExtras().getLong(INTERPRETATION_ID);
-        // TODO Uncomment later
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.content_frame, InterpretationCommentsFragment
-//                        .newInstance(interpretationId))
-//                .commit();
+        String interpretationUId = getIntent().getExtras().getString(INTERPRETATION_UID);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, InterpretationCommentsFragment
+                        .newInstance(interpretationUId))
+                .commit();
     }
 }
