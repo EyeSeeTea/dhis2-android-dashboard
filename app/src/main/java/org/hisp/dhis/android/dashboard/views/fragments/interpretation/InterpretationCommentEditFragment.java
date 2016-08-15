@@ -151,6 +151,17 @@ public class InterpretationCommentEditFragment extends BaseDialogFragment implem
     }
 
     @Override
+    public void setInterpretationComment(InterpretationComment interpretationComment) {
+        mInterpretationComment = interpretationComment;
+    }
+
+    @Override
+    public void updateCommentCallback() {
+        // TODO
+        interpretationCommentEditFragmentPresenter.UiEventSync();
+    }
+
+    @Override
     public void showError(String message) {
         showErrorDialog(getString(R.string.title_error), message);
     }
