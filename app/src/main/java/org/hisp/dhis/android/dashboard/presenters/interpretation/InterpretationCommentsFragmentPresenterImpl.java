@@ -143,6 +143,37 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
 
     @Override
     public void getInterpretationComments(String interpretaionUId) {
+
+//        @Override
+//        public List<InterpretationComment> query(Context context) {
+//            List<InterpretationComment> comments = new Select()
+//                    .from(InterpretationComment.class)
+//                    .where(Condition.column(InterpretationComment$Table
+//                            .INTERPRETATION_INTERPRETATION).is(mInterpretationId))
+//                    .and(Condition.column(InterpretationComment$Table
+//                            .STATE).isNot(State.TO_DELETE.toString()))
+//                    .queryList();
+//            Collections.sort(comments, IdentifiableObject.CREATED_COMPARATOR);
+//            return comments;
+//        }
+
+        Observable<List<InterpretationComment>> interpretationComments = interpretationCommentInteractor.list(interpretaionUId);
+        interpretationComments.subscribeOn(Schedulers.newThread());
+        interpretationComments.observeOn(AndroidSchedulers.mainThread());
+        interpretationComments.subscribe(new Action1<List<InterpretationComment>>() {
+            @Override
+            public void call(List<InterpretationComment> interpretationComments) {
+                logger.d(TAG ,"LoadedInterpretationComments " + interpretationComments.toString());
+                Collections.sort(interpretationComments, InterpretationComment.CREATED_COMPARATOR);
+                interpretationCommentsFragmentView.setInterpretationComments(interpretationComments);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "LoadedInterpretationComments failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
