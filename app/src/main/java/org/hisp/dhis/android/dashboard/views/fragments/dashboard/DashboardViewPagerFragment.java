@@ -50,7 +50,6 @@ import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -144,12 +143,7 @@ public class DashboardViewPagerFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
-
         logger.d(TAG, "onResume()");
-        // Have to add attachView here , because Container Fragment's onResume()
-        // and ViewPagerFragment's onResume() is called after setDashboards()
-        // Syncing is checked here with isSyncing and hasSyncedBefore booleans
-        dashboardViewPagerFragmentPresenter.attachView(this);
     }
 
     @Override

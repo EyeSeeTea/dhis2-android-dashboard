@@ -253,7 +253,6 @@ public final class InterpretationFragment extends BaseFragment implements
         showErrorDialog(getString(R.string.title_error_unexpected), message);
     }
 
-
     private void setupToolbar() {
         if (getToolbarOfContainer() != null) {
             logger.d(TAG, "nonNullToolbar");

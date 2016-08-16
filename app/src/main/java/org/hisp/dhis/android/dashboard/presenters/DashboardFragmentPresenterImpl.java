@@ -31,8 +31,6 @@ package org.hisp.dhis.android.dashboard.presenters;
 
 import android.util.Log;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
-
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardFragmentView;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardElementInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardItemInteractor;
