@@ -29,6 +29,7 @@
 package org.hisp.dhis.android.dashboard.presenters;
 
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
+import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
 
@@ -43,4 +44,6 @@ public interface DashboardItemAddFragmentPresenter extends Presenter {
     void getDashboardContentAndAddItemContent(OptionAdapterValue optionAdapterValue, Dashboard dashboard);
 
     void handleError(final Throwable throwable);
+
+    void addItemContent(Dashboard dashboard, DashboardContent resource);
 }
