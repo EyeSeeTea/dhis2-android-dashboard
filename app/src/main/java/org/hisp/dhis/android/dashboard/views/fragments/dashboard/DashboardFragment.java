@@ -130,8 +130,6 @@ public class DashboardFragment extends BaseFragment
 
         ((DashboardApp) getActivity().getApplication())
                 .getDashboardComponent().inject(this);
-
-        dashboardFragmentPresenter.attachView(this);
     }
 
     @Override
@@ -149,6 +147,7 @@ public class DashboardFragment extends BaseFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         logger.d(TAG, "onActivityCreated()");
+        dashboardFragmentPresenter.attachView(this);
         if(isAdded()) {
             dashboardFragmentPresenter.loadLocalDashboardItems(getArguments().getString(DASHBOARD_UID));
         }
