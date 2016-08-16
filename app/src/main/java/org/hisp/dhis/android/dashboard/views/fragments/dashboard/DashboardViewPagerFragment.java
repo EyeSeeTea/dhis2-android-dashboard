@@ -144,6 +144,8 @@ public class DashboardViewPagerFragment extends BaseFragment
     public void onResume() {
         super.onResume();
         logger.d(TAG, "onResume()");
+
+        dashboardViewPagerFragmentPresenter.attachView(this);
     }
 
     @Override
