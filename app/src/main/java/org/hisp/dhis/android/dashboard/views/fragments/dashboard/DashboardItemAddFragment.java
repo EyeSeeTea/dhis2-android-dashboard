@@ -192,12 +192,6 @@ public class DashboardItemAddFragment extends BaseDialogFragment
         mAdapter.swapData(data);
     }
 
-    // TODO handle with DashboardInteractor or mDashboard ?
-    @Override
-    public void addItemContent(DashboardContent resource) {
-        mDashboard.addItemContent(resource);
-    }
-
     @Override
     public void setDashboard(Dashboard dashboard) {
         mDashboard = dashboard;
@@ -236,7 +230,7 @@ public class DashboardItemAddFragment extends BaseDialogFragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 OptionAdapterValue adapterValue = mAdapter.getItem(position);
-                dashboardItemAddFragmentPresenter.getDashboardContentFromId(adapterValue);
+                dashboardItemAddFragmentPresenter.getDashboardContentAndAddItemContent(adapterValue, mDashboard);
             }
         });
     }
