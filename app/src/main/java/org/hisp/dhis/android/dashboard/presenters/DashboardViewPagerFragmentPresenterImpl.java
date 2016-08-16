@@ -171,7 +171,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     public void syncDashboard() {
         logger.d(TAG, "syncDashboard");
         dashboardViewPagerFragmentView.showProgressBar();
-        // TODO Write code for syncing
         isSyncing = true;
         subscription.add(dashboardInteractor.syncDashboards()
                 .subscribeOn(Schedulers.io())
@@ -191,7 +190,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                         }else{
                             logger.d(TAG + "Dashboards", "Empty pull");
                         }
-                        //do something
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -234,10 +232,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     @Override
     public boolean isSyncing() {
         return isSyncing;
-        /**
-         boolean isLoading = isDhisServiceBound() &&
-         getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS);
-         **/
     }
 
     @Override
