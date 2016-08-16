@@ -150,21 +150,26 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
         });
     }
 
-    // TODO Get DashboardContent
     @Override
-    public void getDashboardContentFromId(OptionAdapterValue optionAdapterValue) {
-        /**
-        DashboardContent resource = new Select()
-                .from(DashboardContent.class)
-                .where(Condition.column(DashboardItemContent$Table
-                        .UID).is(adapterValue.id))
-                .querySingle();
-         **/
+    public void getDashboardContentAndAddItemContent(OptionAdapterValue optionAdapterValue, final Dashboard dashboard) {
 
-        // Replace null with DashboardContent
-        dashboardItemAddFragmentView.addItemContent(null);
-        dashboardItemAddFragmentView.uiSync();
-        dashboardItemAddFragmentView.dismissDialogFragment();
+        logger.e(TAG, "onGetDashboardContent()");
+        Observable<DashboardContent> dashboardContent = dashboardContentInteractor.get(optionAdapterValue.id);
+        dashboardContent.subscribeOn(Schedulers.newThread());
+        dashboardContent.observeOn(AndroidSchedulers.mainThread());
+        dashboardContent.subscribe(new Action1<DashboardContent>() {
+            @Override
+            public void call(DashboardContent dashboardContent) {
+                logger.d(TAG ,"onGetDashboardContent " + dashboardContent.toString());
+                addItemContent(dashboard, dashboardContent);
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onGetDashboardContent failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
@@ -194,4 +199,5 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
             logger.e(TAG, "handleError", throwable);
         }
     }
+
 }
