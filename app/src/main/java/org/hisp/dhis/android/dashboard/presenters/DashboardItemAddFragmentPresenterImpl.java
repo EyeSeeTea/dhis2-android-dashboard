@@ -151,6 +151,27 @@ public class DashboardItemAddFragmentPresenterImpl implements DashboardItemAddFr
     }
 
     @Override
+    public void addItemContent(Dashboard dashboard, DashboardContent resource) {
+        Observable<Boolean> success =  dashboardInteractor.addContent(dashboard, resource);
+        success.subscribeOn(Schedulers.newThread());
+        success.observeOn(AndroidSchedulers.mainThread());
+        success.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean success) {
+                logger.d(TAG ,"onAddItemContent" + success.toString());
+                dashboardItemAddFragmentView.uiSync();
+                dashboardItemAddFragmentView.dismissDialogFragment();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onAddItemContent failed");
+                handleError(throwable);
+            }
+        });
+    }
+
+    @Override
     public void getDashboardContentAndAddItemContent(OptionAdapterValue optionAdapterValue, final Dashboard dashboard) {
 
         logger.e(TAG, "onGetDashboardContent()");
