@@ -28,11 +28,11 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
+import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.ui.bindings.presenters.Presenter;
 import org.hisp.dhis.android.dashboard.adapters.DashboardItemSearchDialogAdapter.OptionAdapterValue;
 
 import java.util.List;
-
 
 public interface DashboardItemAddFragmentPresenter extends Presenter {
 
@@ -40,7 +40,7 @@ public interface DashboardItemAddFragmentPresenter extends Presenter {
 
     void getDashboardFromUId(String dashboardUId);
 
-    void getDashboardContentFromId(OptionAdapterValue optionAdapterValue);
+    void getDashboardContentAndAddItemContent(OptionAdapterValue optionAdapterValue, Dashboard dashboard);
 
     void handleError(final Throwable throwable);
 }
