@@ -13,8 +13,6 @@ public interface DashboardItemAddFragmentView extends View{
 
     void dismissDialogFragment();
 
-    void addItemContent(DashboardContent resource);
-
     void setDashboard(Dashboard dashboard);
 
     void showError(String message);
