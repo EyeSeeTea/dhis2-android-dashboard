@@ -245,6 +245,7 @@ public class DashboardFragment extends BaseFragment
     @Override
     public void uiSync() {
         dashboardViewPagerFragmentPresenter.syncDashboard();
+        dashboardViewPagerFragmentPresenter.loadLocalDashboards();
     }
 
     private void setupRecyclerView(View view) {
