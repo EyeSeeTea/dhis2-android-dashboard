@@ -181,6 +181,7 @@ public class InterpretationFragmentPresenterImpl implements InterpretationFragme
                         }
                         logger.d(TAG, "Synced interpretations successfully");
                         if(interpretations!=null) {
+                            loadLocalInterpretations();
                             logger.d(TAG + "Interpretations", interpretations.toString());
                         }else{
                             logger.d(TAG + "Interpretations", "Empty pull");
@@ -205,10 +206,6 @@ public class InterpretationFragmentPresenterImpl implements InterpretationFragme
     @Override
     public boolean isSyncing() {
         return isSyncing;
-        /**
-         boolean isLoading = isDhisServiceBound() &&
-         getDhisService().isJobRunning(DhisService.SYNC_INTERPRETATIONS);
-         **/
     }
 
     @Override
