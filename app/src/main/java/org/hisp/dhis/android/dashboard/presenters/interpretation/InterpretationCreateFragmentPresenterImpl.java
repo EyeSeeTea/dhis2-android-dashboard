@@ -118,12 +118,12 @@ public class InterpretationCreateFragmentPresenterImpl implements Interpretation
                         .getInterpretationElements();
 
                 // save interpretation
-                interpretationInteractor.save(interpretation);
+                interpretationInteractor.save(interpretation).toBlocking().first();;
 //        interpretation.save();
                 if (elements != null && !elements.isEmpty()) {
                     for (InterpretationElement element : elements) {
                         // save corresponding interpretation elements
-                        interpretationElementInteractor.save(element);
+                        interpretationElementInteractor.save(element).toBlocking().first();;
                         interpretationInteractor.syncInterpretations();
 //                element.save();
                     }

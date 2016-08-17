@@ -99,7 +99,7 @@ public class DashboardAddFragmentPresenterImpl implements DashboardAddFragmentPr
                 logger.d(TAG ,"onCreateDashboard " + dashboard.toString());
 
                 // save dashboard
-                dashboardInteractor.save(dashboard);
+                dashboardInteractor.save(dashboard).toBlocking().first();;
                 dashboardAddFragmentView.uiSync();
                 dashboardAddFragmentView.dismissDialogFragment();
             }

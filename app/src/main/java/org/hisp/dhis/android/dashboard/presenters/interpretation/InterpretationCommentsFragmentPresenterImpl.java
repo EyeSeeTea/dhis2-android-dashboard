@@ -104,7 +104,7 @@ public class InterpretationCommentsFragmentPresenterImpl implements Interpretati
             public void call(InterpretationComment interpretationComment) {
                 logger.d(TAG ,"onAddInterpretationComment " + interpretationComment.toString());
                 // save interpretationComment
-                interpretationCommentInteractor.save(interpretationComment);
+                interpretationCommentInteractor.save(interpretationComment).toBlocking().first();
                 interpretationCommentsFragmentView.addCommentCallback(interpretationComment);
                 interpretationCommentsFragmentView.uiSync();
             }
