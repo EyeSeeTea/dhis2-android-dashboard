@@ -28,35 +28,23 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardViewPagerFragmentView;
-
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardInteractor;
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
-import org.hisp.dhis.client.sdk.core.common.utils.CodeGenerator;
-import org.hisp.dhis.client.sdk.models.common.Access;
 import org.hisp.dhis.client.sdk.models.dashboard.Dashboard;
 import org.hisp.dhis.client.sdk.models.dashboard.DashboardContent;
-import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
-import org.hisp.dhis.client.sdk.models.dashboard.DashboardItem;
-import org.hisp.dhis.client.sdk.ui.SyncDateWrapper;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.ApiExceptionHandler;
 import org.hisp.dhis.client.sdk.ui.bindings.commons.AppError;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.SessionPreferences;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.utils.Logger;
-import org.hisp.dhis.client.sdk.utils.Preconditions;
-import org.joda.time.DateTime;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import rx.Observable;
@@ -95,15 +83,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
         isNull(view, "DashboardViewPagerFragmentView must not be null");
         dashboardViewPagerFragmentView = (DashboardViewPagerFragmentView) view;
 
-        // TODO conditions to check if Syncing has to be done
-        /**
-         if (isDhisServiceBound() &&
-         !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
-         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
-         syncDashboards();
-         }
-         **/
-
         if (isSyncing) {
             dashboardViewPagerFragmentView.showProgressBar();
         } else {
@@ -128,7 +107,6 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
     public void syncDashboardContent() {
         logger.d(TAG, "syncDashboardContent");
         dashboardViewPagerFragmentView.showProgressBar();
-        // TODO Write code for syncing
         isSyncing = true;
         subscription.add(dashboardContentInteractor.syncDashboardContent()
                 .subscribeOn(Schedulers.io())
@@ -186,6 +164,7 @@ public class DashboardViewPagerFragmentPresenterImpl implements DashboardViewPag
                         }
                         logger.d(TAG, "Synced dashboards successfully");
                         if(dashboards!=null) {
+                            loadLocalDashboards();
                             logger.d(TAG + "Dashboards", dashboards.toString());
                         }else{
                             logger.d(TAG + "Dashboards", "Empty pull");
