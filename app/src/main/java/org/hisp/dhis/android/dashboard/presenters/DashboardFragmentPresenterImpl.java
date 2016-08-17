@@ -96,7 +96,6 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
         }
     }
 
-    //TODO loadDashboardItems() Code using RxAndroid
     @Override
     public void loadLocalDashboardItems(String uId) {
         logger.d(TAG, "LoadDashboardItems()");
@@ -126,21 +125,52 @@ public class DashboardFragmentPresenterImpl implements DashboardFragmentPresente
                 handleError(throwable);
             }
         });
-        // TODO replace this by actual loading from SDK
     }
 
-    // TODO Add deleteDashboardItem() method to DashboardInteractor in SDK
+    // TODO TO USE REMOVE OR DELETE ??
     @Override
     public void deleteDashboardItem(DashboardItem dashboardItem) {
-//        dashboardItemInteractor.deleteDashboardItem();
-        // TODO syncDashboards() in parentViewPager
+
+        logger.e(TAG, "onDeleteDashboardItem()");
+        Observable<Boolean> success = dashboardItemInteractor.remove(dashboardItem);
+        success.subscribeOn(Schedulers.io());
+        success.observeOn(AndroidSchedulers.mainThread());
+        success.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                logger.d(TAG ,"onDeleteDashboardItem " + aBoolean.toString());
+                dashboardFragmentView.uiSync();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onDeleteDashboardItem failed");
+                handleError(throwable);
+            }
+        });
     }
 
-    // TODO Add deleteDashboardElement() method to DashboardInteractor in SDK
+    // TODO TO USE REMOVE OR DELETE ??
     @Override
     public void deleteDashboardElement(DashboardElement dashboardElement) {
-//        dashboardInteractor.deleteDashboardElement();
-        // TODO syncDashboards() in parentViewPager
+
+        logger.e(TAG, "onDeleteDashboardElement()");
+        Observable<Boolean> success = dashboardElementInteractor.remove(dashboardElement);
+        success.subscribeOn(Schedulers.io());
+        success.observeOn(AndroidSchedulers.mainThread());
+        success.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                logger.d(TAG ,"onDeleteDashboardElement " + aBoolean.toString());
+                dashboardFragmentView.uiSync();
+            }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                logger.d(TAG , "onDeleteDashboardElement failed");
+                handleError(throwable);
+            }
+        });
     }
 
     @Override
