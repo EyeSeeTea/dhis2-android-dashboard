@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.hisp.dhis.android.dashboard.DashboardApp;
+import org.hisp.dhis.android.dashboard.InterpretationComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationCreateFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationFragmentPresenter;
@@ -101,8 +102,20 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
         setStyle(DialogFragment.STYLE_NO_TITLE,
                 R.style.Theme_AppCompat_Light_Dialog);
 
-        ((DashboardApp) getActivity().getApplication())
-                .getInterpretationComponent().inject(this);
+        InterpretationComponent interpretationComponent = ((DashboardApp) getActivity().getApplication()).getInterpretationComponent();
+        // first time fragment is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (interpretationComponent != null) {
+                // create new instance of component
+                ((DashboardApp) getActivity().getApplication()).releaseInterpretationComponent();
+            }
+            interpretationComponent = ((DashboardApp) getActivity().getApplication()).createInterpretationComponent();
+        } else {
+            interpretationComponent = ((DashboardApp) getActivity().getApplication()).getInterpretationComponent();
+        }
+        // inject dependencies
+        interpretationComponent.inject(this);
 
         interpretationCreateFragmentPresenter.attachView(this);
     }
@@ -188,7 +201,6 @@ public final class InterpretationCreateFragment extends BaseDialogFragment imple
 //                    }
 //                }
 
-                // TODO SYNCING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //                if (isDhisServiceBound()) {
 //                    getDhisService().syncInterpretations();
 //                    EventBusProvider.post(new UiEvent(UiEvent.UiEventType.SYNC_INTERPRETATIONS));
