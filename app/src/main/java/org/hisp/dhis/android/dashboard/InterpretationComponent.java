@@ -52,16 +52,10 @@ public interface InterpretationComponent {
     //------------------------------------------------------------------------
     // Sub-modules
     //------------------------------------------------------------------------
-    // TODO add sub-modules here
-
-
 
     //------------------------------------------------------------------------
     // Injection targets
     //------------------------------------------------------------------------
-    // TODO specify injection targets
-
-        //fragments
 
         void inject(InterpretationEmptyFragment interpretationEmptyFragment);
 

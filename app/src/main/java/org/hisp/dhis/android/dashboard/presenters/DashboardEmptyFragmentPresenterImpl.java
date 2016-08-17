@@ -28,7 +28,6 @@
 
 package org.hisp.dhis.android.dashboard.presenters;
 
-import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.views.fragments.dashboard.DashboardEmptyFragmentView;
 ;
 import org.hisp.dhis.client.sdk.android.dashboard.DashboardContentInteractor;
@@ -83,15 +82,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
         isNull(view, "DashboardEmptyFragmentView must not be null");
         dashboardEmptyFragmentView = (DashboardEmptyFragmentView) view;
 
-        // TODO conditions to check if Syncing has to be done
-        /**
-         if (isDhisServiceBound() &&
-         !getDhisService().isJobRunning(DhisService.SYNC_DASHBOARDS) &&
-         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.DASHBOARDS)) {
-         syncDashboards();
-         }
-         **/
-
         if (isSyncing) {
             dashboardEmptyFragmentView.showProgressBar();
         } else {
@@ -116,7 +106,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     public void syncDashboardContent() {
         logger.d(TAG, "syncDashboardContent");
         dashboardEmptyFragmentView.showProgressBar();
-        // TODO Write code for syncing
         isSyncing = true;
         subscription.add(dashboardContentInteractor.syncDashboardContent()
                 .subscribeOn(Schedulers.io())
@@ -159,7 +148,6 @@ public class DashboardEmptyFragmentPresenterImpl implements DashboardEmptyFragme
     public void syncDashboard() {
         logger.d(TAG, "syncDashboard");
         dashboardEmptyFragmentView.showProgressBar();
-        // TODO Write code for syncing
         isSyncing = true;
         subscription.add(dashboardInteractor.syncDashboards()
                 .subscribeOn(Schedulers.io())

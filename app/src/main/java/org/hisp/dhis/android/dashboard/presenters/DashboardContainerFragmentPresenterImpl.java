@@ -52,7 +52,6 @@ public class DashboardContainerFragmentPresenterImpl implements DashboardContain
     private DashboardContainerFragmentView dashboardContainerFragmentView;
     private final Logger logger;
 
-    // TODO
     public DashboardContainerFragmentPresenterImpl(
             DashboardInteractor dashboardInteractor,Logger logger) {
         this.dashboardInteractor = dashboardInteractor;

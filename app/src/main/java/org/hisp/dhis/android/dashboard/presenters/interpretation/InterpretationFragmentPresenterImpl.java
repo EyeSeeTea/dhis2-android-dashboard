@@ -166,7 +166,6 @@ public class InterpretationFragmentPresenterImpl implements InterpretationFragme
     public void syncInterpretations() {
         logger.d(TAG, "syncInterpretations");
         interpretationFragmentView.showProgressBar();
-        // TODO Write code for syncing
         isSyncing = true;
         subscription.add(interpretationInteractor.syncInterpretations()
                 .subscribeOn(Schedulers.newThread())

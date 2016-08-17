@@ -111,7 +111,6 @@ dependencies {
     // Multidex:
     compile "com.android.support:multidex:${libs.multidex}"
 
-    // TODO Remove these later maybe
     // Image Loading
     compile "com.github.chrisbanes:PhotoView:${libs.photoView}"
     compile "com.squareup.picasso:picasso:${libs.picasso}"

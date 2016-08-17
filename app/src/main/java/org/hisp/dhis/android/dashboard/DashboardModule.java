@@ -37,7 +37,6 @@ import org.hisp.dhis.android.dashboard.presenters.ImageViewFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.ImageViewFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.WebViewFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.WebViewFragmentPresenterImpl;
-import org.hisp.dhis.android.dashboard.sync.SyncWrapper;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenter;
 import org.hisp.dhis.android.dashboard.presenters.DashboardEmptyFragmentPresenterImpl;
 import org.hisp.dhis.android.dashboard.presenters.DashboardFragmentPresenter;
@@ -113,14 +112,6 @@ public class DashboardModule {
             return D2.interpretationElements();
         }
         return null;
-    }
-
-    // TODO Add more arguements to SyncWrapper
-    @Provides
-    @PerUser
-    public SyncWrapper providesSyncWrapper(
-            @Nullable DashboardInteractor dashboardInteractor) {
-        return new SyncWrapper(dashboardInteractor);
     }
 
     @Provides

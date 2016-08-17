@@ -45,15 +45,13 @@ public interface UserComponent {
     //------------------------------------------------------------------------
     // Sub-modules
     //------------------------------------------------------------------------
-    // TODO add sub-modules here
 
         DashboardComponent plus(DashboardModule dashboardModule);
         InterpretationComponent plus(InterpretationModule interpretationModule);
 
-        //------------------------------------------------------------------------
+    //------------------------------------------------------------------------
     // Injection targets
     //------------------------------------------------------------------------
-    // TODO specify injection targets
 
         void inject(DashboardContainerFragment dashboardContainerFragment);
 

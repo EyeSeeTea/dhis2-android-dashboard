@@ -65,7 +65,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-// TODO Consult if ARG_DASHBOARD_ID implementation in newInstance is correct
 public class DashboardItemAddFragment extends BaseDialogFragment
         implements DashboardItemAddFragmentView, PopupMenu.OnMenuItemClickListener
 {

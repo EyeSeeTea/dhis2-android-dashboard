@@ -4,34 +4,24 @@ package org.hisp.dhis.android.dashboard.views.fragments.dashboard;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import org.hisp.dhis.android.dashboard.DashboardApp;
-import org.hisp.dhis.android.dashboard.DashboardComponent;
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.UserComponent;
 import org.hisp.dhis.android.dashboard.presenters.DashboardContainerFragmentPresenter;
-import org.hisp.dhis.android.dashboard.views.fragments.ImageViewFragment;
-import org.hisp.dhis.client.sdk.ui.bindings.commons.DefaultAppAccountManager;
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
-
 import javax.inject.Inject;
-
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 /**
  *         This fragment is used to make decision, whether to show fragment with
  *         dashboards or fragment with message.
  */
-
-    //TODO  Code for checking fetched data to make decision between ViewPager and EmptyFragment
-
 public class DashboardContainerFragment extends BaseFragment implements DashboardContainerFragmentView{
     private static final String TAG = DashboardContainerFragment.class.getSimpleName();
 

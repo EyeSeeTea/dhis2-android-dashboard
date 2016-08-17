@@ -111,7 +111,6 @@ public class DashboardElementDetailActivityPresenterImpl implements DashboardEle
 
     }
 
-    // TODO
     @Override
     public void loadInterpretation(long interpretationElementId) {
         logger.d(TAG, "loadInterpretation");

@@ -5,8 +5,6 @@ import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 
 import java.util.List;
 
-//TODO  Write Code for DashboardViewPagerFragmentView
-
 public interface DashboardViewPagerFragmentView extends View{
 
     void showProgressBar();

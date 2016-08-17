@@ -153,15 +153,6 @@ public final class InterpretationFragment extends BaseFragment implements
         super.onSaveInstanceState(outState);
     }
 
-    /** TODO Handle this if required
-    @Override
-    public void onLoaderReset(Loader<List<Interpretation>> loader) {
-        if (loader != null && loader.getId() == LOADER_ID) {
-            mAdapter.swapData(null);
-        }
-    }
-     **/
-
     @Override
     public void onInterpretationContentClick(Interpretation interpretation) {
         InterpretationElement element = null;

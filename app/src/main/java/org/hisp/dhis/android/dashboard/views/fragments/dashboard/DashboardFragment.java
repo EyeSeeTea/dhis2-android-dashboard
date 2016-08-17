@@ -219,7 +219,6 @@ public class DashboardFragment extends BaseFragment
         }
     }
 
-    // TODO
     @Override
     public void onItemShareClick(DashboardItem item) {
         InterpretationCreateFragment

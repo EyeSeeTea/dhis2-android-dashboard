@@ -4,8 +4,6 @@ import org.hisp.dhis.client.sdk.models.dashboard.DashboardElement;
 import org.hisp.dhis.client.sdk.models.interpretation.InterpretationElement;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 
-    //TODO  Write Code for DashboardEmptyFragmentView
-
 public interface DashboardElementDetailActivityView extends View{
 
     void handleDashboardElement(DashboardElement dashboardElement);

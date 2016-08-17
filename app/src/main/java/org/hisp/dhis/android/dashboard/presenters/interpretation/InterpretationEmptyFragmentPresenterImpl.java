@@ -74,15 +74,6 @@ public class InterpretationEmptyFragmentPresenterImpl implements InterpretationE
         isNull(view, "InterpretationEmptyFragmentView must not be null");
         interpretationEmptyFragmentView = (InterpretationEmptyFragmentView) view;
 
-        // TODO conditions to check if Syncing has to be done
-        /**
-         if (isDhisServiceBound() &&
-         !getDhisService().isJobRunning(DhisService.SYNC_INTERPRETATIONS) &&
-         !SessionManager.getInstance().isResourceTypeSynced(ResourceType.INTERPRETATIONS)) {
-         syncInterpretations();
-         }
-         **/
-
         if (isSyncing) {
             interpretationEmptyFragmentView.showProgressBar();
         } else {
@@ -108,7 +99,6 @@ public class InterpretationEmptyFragmentPresenterImpl implements InterpretationE
     public void syncInterpretations() {
         logger.d(TAG, "syncInterpretations");
         interpretationEmptyFragmentView.showProgressBar();
-        // TODO Write code for syncing
         isSyncing = true;
         subscription.add(interpretationInteractor.syncInterpretations()
                 .subscribeOn(Schedulers.io())

@@ -56,7 +56,6 @@ import java.util.List;
 
 import okhttp3.HttpUrl;
 
-// TODO Replacing ButterKnife(if need be) and buildImage URL
 public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardItemAdapter.ItemViewHolder> {
     private static final String DATE_FORMAT = "MMMM dd, YYYY";
     private static final String EMPTY_FIELD = "";
@@ -389,13 +388,6 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
             }
         }
 
-        // TODO Remove below butterknife commented out code if above implementation is correct
-        /**
-        ButterKnife.apply(holder.elementItems,
-                holder.ELEMENT_ITEMS_SETTER, elementList);
-        ButterKnife.apply(holder.elementItemDeleteButtons,
-                holder.ELEMENT_ITEM_BUTTONS_SETTER, elementList);
-         **/
     }
 
     /* convenience method for removing dashboard items with animations */

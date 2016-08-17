@@ -59,9 +59,6 @@ import static org.hisp.dhis.client.sdk.utils.StringUtils.isEmpty;
  * Handles editing (changing name) and removal of given dashboard.
  */
 
-// TODO Consult if ARG_DASHBOARD_ID implementation in newInstance is correct
-// TODO Make changes according to real data
-
 public final class DashboardManageFragment extends BaseDialogFragment implements DashboardManageFragmentView{
     private static final String TAG = DashboardManageFragment.class.getSimpleName();
     private static final String ARG_DASHBOARD_UID = "arg:dashboardUId";

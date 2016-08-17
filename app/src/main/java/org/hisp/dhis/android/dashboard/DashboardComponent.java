@@ -28,7 +28,6 @@
 
 package org.hisp.dhis.android.dashboard;
 
-import org.hisp.dhis.android.dashboard.sync.SyncAdapter;
 import org.hisp.dhis.android.dashboard.views.activities.DashboardElementDetailActivity;
 import org.hisp.dhis.android.dashboard.views.fragments.ImageViewFragment;
 import org.hisp.dhis.android.dashboard.views.fragments.WebViewFragment;
@@ -52,14 +51,10 @@ public interface DashboardComponent {
     //------------------------------------------------------------------------
     // Sub-modules
     //------------------------------------------------------------------------
-    // TODO add sub-modules here
-
-
 
     //------------------------------------------------------------------------
     // Injection targets
     //------------------------------------------------------------------------
-    // TODO specify injection targets
 
         //fragments
 
@@ -80,8 +75,6 @@ public interface DashboardComponent {
         void inject(ImageViewFragment imageViewFragment);
 
         void inject(WebViewFragment webViewFragment);
-
-        void inject(SyncAdapter syncAdapter);
 
 }
 

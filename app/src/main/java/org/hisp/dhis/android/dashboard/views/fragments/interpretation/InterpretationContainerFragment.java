@@ -44,7 +44,6 @@ import org.hisp.dhis.android.dashboard.presenters.interpretation.InterpretationC
 import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 import org.hisp.dhis.client.sdk.utils.Logger;
 
-
 import javax.inject.Inject;
 
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -53,8 +52,6 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
  *         This fragment is used to make decision, whether to show fragment with
  *         interpretations or fragment with message.
  */
-
-//TODO  Code for checking fetched data to make decision between ViewPager and EmptyFragment
 
 public class InterpretationContainerFragment extends BaseFragment implements InterpretationContainerFragmentView{
     private static final String TAG = InterpretationContainerFragment.class.getSimpleName();
