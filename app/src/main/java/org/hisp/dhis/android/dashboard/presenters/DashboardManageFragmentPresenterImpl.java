@@ -51,7 +51,6 @@ import rx.subscriptions.CompositeSubscription;
 
 import static org.hisp.dhis.client.sdk.utils.Preconditions.isNull;
 
-// TODO Consult if UiEventSync method is required
 public class DashboardManageFragmentPresenterImpl implements DashboardManageFragmentPresenter {
     private static final String TAG = DashboardManageFragmentPresenterImpl.class.getSimpleName();
     private final DashboardInteractor dashboardInteractor;
@@ -131,8 +130,6 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
             @Override
             public void call(Boolean aBoolean) {
                 logger.d(TAG ,"onUpdateDashboards " + aBoolean.toString());
-                // TODO trigger syncing of dashboards
-
                 dashboardManageFragmentView.dismissDialogFragment();
                 dashboardManageFragmentView.dashboardNameClearFocus();
                 dashboardManageFragmentView.uiSync();
@@ -153,10 +150,10 @@ public class DashboardManageFragmentPresenterImpl implements DashboardManageFrag
 
         logger.e(TAG, "onDeleteDashboards()");
 
-        Observable<Boolean> dashboards = dashboardInteractor.remove(dashboard);
-        dashboards.subscribeOn(Schedulers.io());
-        dashboards.observeOn(AndroidSchedulers.mainThread());
-        dashboards.subscribe(new Action1<Boolean>() {
+        Observable<Boolean> success = dashboardInteractor.remove(dashboard);
+        success.subscribeOn(Schedulers.io());
+        success.observeOn(AndroidSchedulers.mainThread());
+        success.subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
                 logger.d(TAG ,"onDeleteDashboards " + aBoolean.toString());
