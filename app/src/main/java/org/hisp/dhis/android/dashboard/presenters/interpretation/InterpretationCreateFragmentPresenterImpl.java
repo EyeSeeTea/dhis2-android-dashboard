@@ -124,6 +124,7 @@ public class InterpretationCreateFragmentPresenterImpl implements Interpretation
                     for (InterpretationElement element : elements) {
                         // save corresponding interpretation elements
                         interpretationElementInteractor.save(element);
+                        interpretationInteractor.syncInterpretations();
 //                element.save();
                     }
                 }
