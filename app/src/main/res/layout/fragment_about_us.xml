@@ -125,6 +125,7 @@
                 android:textSize="15sp"
                 android:autoLink="web"
                 android:textColor="@color/dark_grey_text"
+                android:paddingBottom="@dimen/about_us_text_view_bottom_padding"
                 app:font="@string/medium_font_name" />
         </LinearLayout>
         </ScrollView>
