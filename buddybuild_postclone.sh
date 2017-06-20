@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Definitions
 gitPath=$(git rev-parse --show-toplevel)
