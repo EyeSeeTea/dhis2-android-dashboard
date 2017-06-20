@@ -18,8 +18,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
     lintOptions {
-        disable 'RtlSymmetry', 'RtlHardcoded'
+        disable 'RtlSymmetry', 'RtlHardcoded', 'RestrictedApi'
     }
 }
 
