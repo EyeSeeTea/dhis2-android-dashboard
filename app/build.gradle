@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco-android'
 
 android {
     compileSdkVersion 25
@@ -24,6 +25,12 @@ android {
 
     lintOptions {
         disable 'RtlSymmetry', 'RtlHardcoded', 'ContentDescription'
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
     }
 }
 
