@@ -27,12 +27,6 @@ android {
         disable 'RtlSymmetry', 'RtlHardcoded', 'RestrictedApi'
         abortOnError true
     }
-
-    buildTypes {
-        debug {
-            testCoverageEnabled true
-        }
-    }
 }
 
 dependencies {
