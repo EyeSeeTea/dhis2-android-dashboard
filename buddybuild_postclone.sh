@@ -7,4 +7,4 @@ gitPath=$(git rev-parse --show-toplevel)
 sh ${gitPath}/generate_last_commit.sh
 
 echo "Generate Test Coverage Report:"
-./gradlew build jacocoTestReport assembleAndroidTest
+./gradlew build jacocoTestReport assembleAndroidTest --stacktrace
