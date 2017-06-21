@@ -25,7 +25,13 @@ android {
 
     lintOptions {
         disable 'RtlSymmetry', 'RtlHardcoded', 'RestrictedApi'
-        abortOnError true
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
     }
 }
 
