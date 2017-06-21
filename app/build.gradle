@@ -25,7 +25,6 @@ android {
 
     lintOptions {
         disable 'RtlSymmetry', 'RtlHardcoded', 'ContentDescription', 'RestrictedApi'
-        abortOnError true
     }
 
     buildTypes {
