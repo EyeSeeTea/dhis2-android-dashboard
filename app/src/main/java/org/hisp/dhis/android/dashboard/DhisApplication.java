@@ -26,15 +26,16 @@
 
 package org.hisp.dhis.android.dashboard;
 
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+
 import android.app.Application;
 import android.content.Intent;
 import android.widget.Toast;
 
 import org.hisp.dhis.android.dashboard.api.controllers.DhisController;
 import org.hisp.dhis.android.dashboard.api.network.APIException;
-
-import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
-import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import org.hisp.dhis.android.dashboard.api.utils.PicassoProvider;
 
 /**
  * @author Araz Abishov <araz.abishov.gsoc@gmail.com>.
@@ -46,6 +47,7 @@ public final class DhisApplication extends Application {
         super.onCreate();
 
         DhisController.init(getApplicationContext());
+        PicassoProvider.init(getApplicationContext());
         startService(new Intent(this, DhisService.class));
     }
 

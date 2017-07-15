@@ -44,7 +44,6 @@ import org.hisp.dhis.android.dashboard.api.controllers.DhisController;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
 import org.hisp.dhis.android.dashboard.api.models.Interpretation;
 import org.hisp.dhis.android.dashboard.api.models.InterpretationElement;
-import org.hisp.dhis.android.dashboard.api.utils.PicassoProvider;
 import org.hisp.dhis.android.dashboard.ui.adapters.InterpretationAdapter.InterpretationHolder;
 
 /**
@@ -62,17 +61,11 @@ public final class InterpretationAdapter extends AbsAdapter<Interpretation, Inte
      */
     private final OnItemClickListener mClickListener;
 
-    /**
-     * Image loading utility.
-     */
-    private final Picasso mImageLoader;
-
     public InterpretationAdapter(Context context, LayoutInflater inflater,
                                  OnItemClickListener clickListener) {
         super(context, inflater);
 
         mClickListener = clickListener;
-        mImageLoader = PicassoProvider.getInstance(context);
     }
 
     /* returns type of row depending on item content type. */
@@ -237,7 +230,8 @@ public final class InterpretationAdapter extends AbsAdapter<Interpretation, Inte
         holder.listener.setInterpretation(item);
 
         if (request != null) {
-            mImageLoader.load(request)
+            Picasso.with(getContext())
+                    .load(request)
                     .placeholder(R.mipmap.ic_stub_dashboard_item)
                     .into(holder.imageView);
         }

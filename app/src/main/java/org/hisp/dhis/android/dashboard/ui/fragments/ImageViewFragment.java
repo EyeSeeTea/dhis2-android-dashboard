@@ -28,6 +28,8 @@
 
 package org.hisp.dhis.android.dashboard.ui.fragments;
 
+import static org.hisp.dhis.android.dashboard.api.utils.Preconditions.isNull;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -35,13 +37,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import org.hisp.dhis.android.dashboard.R;
-import org.hisp.dhis.android.dashboard.api.persistence.preferences.SettingsManager;
-import org.hisp.dhis.android.dashboard.api.utils.PicassoProvider;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
-
-import static org.hisp.dhis.android.dashboard.api.utils.Preconditions.isNull;
 
 public class ImageViewFragment extends BaseFragment {
     private static final String IMAGE_URL = "arg:imageUrl";
@@ -77,7 +77,7 @@ public class ImageViewFragment extends BaseFragment {
         mAttacher = new PhotoViewAttacher(mImageView);
         mAttacher.update();
 
-        PicassoProvider.getInstance(getActivity().getApplicationContext())
+        Picasso.with(getContext())
                 .load(getImageUrl())
                 .placeholder(R.mipmap.ic_stub_dashboard_item)
                 .into(mImageView);

@@ -47,7 +47,6 @@ import org.hisp.dhis.android.dashboard.api.models.Access;
 import org.hisp.dhis.android.dashboard.api.models.DashboardElement;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItem;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
-import org.hisp.dhis.android.dashboard.api.utils.PicassoProvider;
 
 import java.util.List;
 
@@ -92,11 +91,6 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
     private final String mResourcesName;
     private final String mMessaName;
 
-    /**
-     * Image loading utility.
-     */
-    private final Picasso mImageLoader;
-
     public DashboardItemAdapter(Context context, Access dashboardAccess,
                                 int maxSpanCount, OnItemClickListener clickListener) {
         super(context, LayoutInflater.from(context));
@@ -109,8 +103,6 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         mReportsName = context.getString(R.string.reports);
         mResourcesName = context.getString(R.string.resources);
         mMessaName = context.getString(R.string.messages);
-
-        mImageLoader = PicassoProvider.getInstance(context);
     }
 
     /* returns type of row depending on item content type. */
@@ -333,7 +325,8 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
         holder.listener.setDashboardElement(element);
         if (request != null) {
             holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            mImageLoader.load(request)
+            Picasso.with(context)
+                    .load(request)
                     .placeholder(R.mipmap.ic_stub_dashboard_item)
                     .into(holder.imageView);
         }

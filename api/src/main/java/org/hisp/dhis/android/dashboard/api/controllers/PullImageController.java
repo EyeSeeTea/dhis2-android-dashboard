@@ -2,14 +2,15 @@ package org.hisp.dhis.android.dashboard.api.controllers;
 
 import android.content.Context;
 
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.hisp.dhis.android.dashboard.api.models.DashboardElement;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
 import org.hisp.dhis.android.dashboard.api.models.Interpretation;
 import org.hisp.dhis.android.dashboard.api.models.InterpretationElement;
 import org.hisp.dhis.android.dashboard.api.network.APIException;
-import org.hisp.dhis.android.dashboard.api.utils.PicassoProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,11 +88,14 @@ final class PullImageController {
             final String request = requestUrlList.get(i);
 
             if (imageNetworkPolicy == DhisController.ImageNetworkPolicy.NO_CACHE) {
-                PicassoProvider.getInstance(context)
-                        .load(request).networkPolicy(NetworkPolicy.NO_CACHE).fetch();
+                Picasso.with(context)
+                        .load(request)
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .memoryPolicy(MemoryPolicy.NO_CACHE).fetch();
             } else {
-                PicassoProvider.getInstance(context)
-                        .load(request).fetch();
+                Picasso.with(context)
+                        .load(request)
+                        .fetch();
             }
         }
     }
