@@ -67,7 +67,7 @@
                 android:text="@string/chart_preferences_title"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/medium_text_size"
-                app:font="@string/light_font_name" />
+                app:font="@string/bold_font_name" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,20 +75,77 @@
                 <org.hisp.dhis.android.dashboard.ui.views.FontTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.6"
                     android:text="@string/width_title"
                     android:textColor="@color/dark_grey_text"
-                    android:textSize="@dimen/medium_text_size"
+                    android:textSize="@dimen/small_text_size"
                     app:font="@string/light_font_name" />
 
                 <org.hisp.dhis.android.dashboard.ui.views.FontEditText
                     android:id="@+id/update_width_edit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.4"
                     android:inputType="number"
                     android:textColor="@color/grey"
-                    android:textSize="@dimen/medium_text_size"
+                    android:textSize="@dimen/small_text_size"
+                    app:font="@string/light_font_name" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <org.hisp.dhis.android.dashboard.ui.views.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:text="@string/height_title"
+                    android:textColor="@color/dark_grey_text"
+                    android:textSize="@dimen/small_text_size"
+                    app:font="@string/light_font_name" />
+
+                <org.hisp.dhis.android.dashboard.ui.views.FontEditText
+                    android:id="@+id/update_height_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:inputType="number"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/small_text_size"
+                    app:font="@string/light_font_name" />
+            </LinearLayout>
+
+            <org.hisp.dhis.android.dashboard.ui.views.FontTextView
+                android:id="@+id/cache_preference_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/cache_preferences_title"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/medium_text_size"
+                android:paddingTop="@dimen/cache_preference_padding"
+                app:font="@string/bold_font_name" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <org.hisp.dhis.android.dashboard.ui.views.FontTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:text="@string/network_timeout_title"
+                    android:textColor="@color/dark_grey_text"
+                    android:textSize="@dimen/small_text_size"
+                    app:font="@string/light_font_name" />
+
+                <org.hisp.dhis.android.dashboard.ui.views.FontEditText
+                    android:id="@+id/update_network_timeout_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:inputType="number"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/small_text_size"
                     app:font="@string/light_font_name" />
             </LinearLayout>
 
@@ -100,19 +157,44 @@
                 <org.hisp.dhis.android.dashboard.ui.views.FontTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:text="@string/height_title"
+                    android:layout_weight="0.6"
+                    android:text="@string/disk_timeout_title"
                     android:textColor="@color/dark_grey_text"
-                    android:textSize="@dimen/medium_text_size"
+                    android:textSize="@dimen/small_text_size"
                     app:font="@string/light_font_name" />
 
                 <org.hisp.dhis.android.dashboard.ui.views.FontEditText
-                    android:id="@+id/update_height_edit"
+                    android:id="@+id/update_disk_timeout_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/small_text_size"
+                    android:inputType="number"
+                    app:font="@string/light_font_name" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <org.hisp.dhis.android.dashboard.ui.views.FontTextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6"
+                    android:text="@string/image_timeout_title"
+                    android:textColor="@color/dark_grey_text"
+                    android:textSize="@dimen/small_text_size"
+                    app:font="@string/light_font_name" />
+
+                <org.hisp.dhis.android.dashboard.ui.views.FontEditText
+                    android:id="@+id/update_image_timeout_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
                     android:textColor="@color/grey"
-                    android:textSize="@dimen/medium_text_size"
+                    android:textSize="@dimen/small_text_size"
                     android:inputType="number"
                     app:font="@string/light_font_name" />
             </LinearLayout>

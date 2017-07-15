@@ -15,6 +15,7 @@ import com.squareup.otto.Subscribe;
 
 import org.hisp.dhis.android.dashboard.R;
 import org.hisp.dhis.android.dashboard.api.persistence.preferences.SettingsManager;
+import org.hisp.dhis.android.dashboard.api.utils.PicassoProvider;
 import org.hisp.dhis.android.dashboard.ui.activities.LauncherActivity;
 import org.hisp.dhis.android.dashboard.ui.events.UiEvent;
 import org.hisp.dhis.android.dashboard.ui.views.FontEditText;
@@ -31,17 +32,24 @@ public final class SettingsFragment extends BaseFragment {
     Toolbar mToolbar;
     FontEditText widthEditText;
     FontEditText heightEditText;
-    public static final String MINIMUM_WIDTH = "480";
-    public static final String MINIMUM_HEIGHT = "320";
+    FontEditText networkEditText;
+    FontEditText diskEditText;
+    FontEditText imageEditText;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         widthEditText = (FontEditText) view.findViewById(R.id.update_width_edit);
-        heightEditText =(FontEditText) view.findViewById(R.id.update_height_edit);
+        heightEditText = (FontEditText) view.findViewById(R.id.update_height_edit);
+        networkEditText = (FontEditText) view.findViewById(R.id.update_network_timeout_edit);
+        diskEditText = (FontEditText) view.findViewById(R.id.update_disk_timeout_edit);
+        imageEditText = (FontEditText) view.findViewById(R.id.update_image_timeout_edit);
         widthEditText.addTextChangedListener(new CustomTextWatcher(SettingsManager.CHART_WIDTH, SettingsManager.MINIMUM_WIDTH, SettingsManager.MAXIMUM_WIDTH, widthEditText));
         heightEditText.addTextChangedListener(new CustomTextWatcher(SettingsManager.CHART_HEIGHT, SettingsManager.MINIMUM_HEIGHT, SettingsManager.MAXIMUM_HEIGHT, heightEditText));
+        networkEditText.addTextChangedListener(new CustomTextWatcher(SettingsManager.NETWORK_TIMEOUT, SettingsManager.MINIMUM_NETWORK_TIMEOUT, SettingsManager.MAXIMUM_NETWORK_TIMEOUT, networkEditText));
+        diskEditText.addTextChangedListener(new CustomTextWatcher(SettingsManager.DISK_TIMEOUT, SettingsManager.MINIMUM_DISK_TIMEOUT, SettingsManager.MAXIMUM_DISK_TIMEOUT, diskEditText));
+        imageEditText.addTextChangedListener(new CustomTextWatcher(SettingsManager.IMAGE_TIMEOUT, SettingsManager.MINIMUM_IMAGE_TIMEOUT, SettingsManager.MAXIMUM_IMAGE_TIMEOUT, imageEditText));
         return view;
     }
 
@@ -59,9 +67,14 @@ public final class SettingsFragment extends BaseFragment {
         });
         String width = SettingsManager.getInstance(getContext()).getPreference((SettingsManager.CHART_WIDTH), SettingsManager.MINIMUM_WIDTH);
         String height = SettingsManager.getInstance(getContext()).getPreference((SettingsManager.CHART_HEIGHT), SettingsManager.MINIMUM_HEIGHT);
+        String networkTimeout = SettingsManager.getInstance(getContext()).getPreference((SettingsManager.NETWORK_TIMEOUT), SettingsManager.MAXIMUM_NETWORK_TIMEOUT);
+        String diskTimeout = SettingsManager.getInstance(getContext()).getPreference((SettingsManager.DISK_TIMEOUT), SettingsManager.MAXIMUM_DISK_TIMEOUT);
+        String imageTimeout = SettingsManager.getInstance(getContext()).getPreference((SettingsManager.IMAGE_TIMEOUT), SettingsManager.MAXIMUM_IMAGE_TIMEOUT);
         widthEditText.setText(width);
         heightEditText.setText(height);
-
+        networkEditText.setText(networkTimeout);
+        diskEditText.setText(diskTimeout);
+        imageEditText.setText(imageTimeout);
     }
 
     @OnClick(R.id.delete_and_log_out_button)
@@ -112,6 +125,12 @@ public final class SettingsFragment extends BaseFragment {
                 }else{
                     mEditText.setError(String.format(getContext().getString(R.string.invalid_value), minimumValue, maximumValue));
                 }
+            }
+
+            if (preference.equalsIgnoreCase(SettingsManager.NETWORK_TIMEOUT) ||
+                    preference.equalsIgnoreCase(SettingsManager.DISK_TIMEOUT) ||
+                    preference.equalsIgnoreCase(SettingsManager.IMAGE_TIMEOUT)) {
+                PicassoProvider.updateClientParameters(getContext());
             }
         }
     }

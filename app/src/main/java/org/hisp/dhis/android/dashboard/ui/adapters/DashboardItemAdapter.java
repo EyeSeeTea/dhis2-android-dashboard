@@ -39,6 +39,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.hisp.dhis.android.dashboard.R;
@@ -327,6 +329,8 @@ public class DashboardItemAdapter extends AbsAdapter<DashboardItem, DashboardIte
             holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             Picasso.with(context)
                     .load(request)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .placeholder(R.mipmap.ic_stub_dashboard_item)
                     .into(holder.imageView);
         }

@@ -37,6 +37,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.hisp.dhis.android.dashboard.R;
@@ -232,6 +234,8 @@ public final class InterpretationAdapter extends AbsAdapter<Interpretation, Inte
         if (request != null) {
             Picasso.with(getContext())
                     .load(request)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .placeholder(R.mipmap.ic_stub_dashboard_item)
                     .into(holder.imageView);
         }

@@ -31,38 +31,90 @@ package org.hisp.dhis.android.dashboard.api.utils;
 import android.content.Context;
 
 import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import org.hisp.dhis.android.dashboard.api.controllers.DhisController;
 import org.hisp.dhis.android.dashboard.api.network.RepoManager;
+import org.hisp.dhis.android.dashboard.api.persistence.preferences.SettingsManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public final class PicassoProvider {
+
+    private static Picasso mPicasso;
+    private static OkHttpClient mClient;
 
     private PicassoProvider() {
     }
 
-    public static void init(Context context) {
+    public static Picasso init(Context context) {
+
+        if (mPicasso == null) {
+
+            mClient = buildClient(context);
+
+            Picasso.Builder builder = new Picasso.Builder(context)
+                    .downloader(new OkHttpDownloader(mClient));
+
+            mPicasso = builder.build();
+            mPicasso.setIndicatorsEnabled(false);
+            mPicasso.setLoggingEnabled(false);
+            Picasso.setSingletonInstance(mPicasso);
+        }
+
+        return mPicasso;
+    }
+
+    private static OkHttpClient buildClient(Context context){
+        int networkTimeOut = Integer.parseInt(
+                SettingsManager.getInstance(context).getPreference(
+                        SettingsManager.NETWORK_TIMEOUT,
+                        SettingsManager.MAXIMUM_NETWORK_TIMEOUT));
+        int diskTimeOut = Integer.parseInt(
+                SettingsManager.getInstance(context).getPreference(SettingsManager.DISK_TIMEOUT,
+                        SettingsManager.MAXIMUM_DISK_TIMEOUT));
+        final int imageTimeOut = Integer.parseInt(
+                SettingsManager.getInstance(context).getPreference(
+                        SettingsManager.IMAGE_TIMEOUT, SettingsManager.MAXIMUM_IMAGE_TIMEOUT));
+
         OkHttpClient client = RepoManager.provideOkHttpClient(
                 DhisController.getInstance().getUserCredentials(), context);
 
-        /*client.networkInterceptors().add(new Interceptor() {
+        client.networkInterceptors().add(new Interceptor() {
             @Override
-            public Response intercept(Chain chain) throws IOException {
+            public Response intercept(Interceptor.Chain chain) throws IOException {
                 Response originalResponse = chain.proceed(chain.request());
-                return originalResponse.newBuilder().header("Cache-Control", "max-age=" + (60)).build();
+                return originalResponse.newBuilder().header("Cache-Control",
+                        "max-age=" + (imageTimeOut)).build();
             }
-        });*/
+        });
 
-        client.setCache(new Cache(context.getCacheDir(), Integer.MAX_VALUE));
+        client.setConnectTimeout(networkTimeOut, TimeUnit.SECONDS);
+        client.setReadTimeout(diskTimeOut, TimeUnit.SECONDS);
+        File cachePath = context.getCacheDir();
+        client.setCache(new Cache(cachePath, Integer.MAX_VALUE));
+        return client;
+    }
 
+    public static void updateClientParameters(Context context){
+        OkHttpClient client = buildClient(context);
+        mClient = client;
         Picasso.Builder builder = new Picasso.Builder(context)
-               .downloader(new OkHttpDownloader(client));
+                .downloader(new OkHttpDownloader(mClient));
+        mPicasso = builder.build();
+    }
 
-        Picasso built = builder.build();
-        built.setIndicatorsEnabled(true);
-        built.setLoggingEnabled(true);
-        Picasso.setSingletonInstance(built);
+    public static Picasso getPicasso(){
+        return mPicasso;
+    }
+
+    public static OkHttpClient getClient(){
+        return mClient;
     }
 }
