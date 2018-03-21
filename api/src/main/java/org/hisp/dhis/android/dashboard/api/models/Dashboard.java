@@ -30,6 +30,7 @@ package org.hisp.dhis.android.dashboard.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.NotNull;
@@ -60,6 +61,11 @@ public final class Dashboard extends BaseIdentifiableObject {
     @NotNull
     State state;
 
+    @JsonProperty("publicAccess")
+    @Column(name = "publicAccess")
+    String publicAccess;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("dashboardItems")
     List<DashboardItem> dashboardItems;
 
@@ -284,5 +290,31 @@ public final class Dashboard extends BaseIdentifiableObject {
     @Override
     public void setLastUpdated(String lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public String getPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(String publicAccess) {
+        this.publicAccess = publicAccess;
+    }
+
+    //creates a new dashboard with the new api required fields
+    public static Dashboard createNewApiDashboard(Dashboard oldDashboard){
+        Dashboard dashboard = new Dashboard();
+        dashboard.setCreated(oldDashboard.getCreated());
+        dashboard.setLastUpdated(oldDashboard.getLastUpdated());
+        dashboard.setName(oldDashboard.getName());
+        if(oldDashboard.getPublicAccess()==null || oldDashboard.getPublicAccess().isEmpty()){
+            dashboard.setPublicAccess("--------");
+        }else {
+            dashboard.setPublicAccess(oldDashboard.getPublicAccess());
+        }
+        List<DashboardItem> dashboardItems = oldDashboard.getDashboardItems();
+        if(dashboardItems!=null && dashboardItems.size()>0) {
+            dashboard.setDashboardItems(dashboardItems);
+        }
+        return dashboard;
     }
 }

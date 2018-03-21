@@ -36,6 +36,7 @@ import static org.hisp.dhis.android.dashboard.api.utils.NetworkUtils.handleApiEx
 import static org.hisp.dhis.android.dashboard.api.utils.NetworkUtils.unwrapResponse;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.raizlabs.android.dbflow.sql.builder.Condition;
 import com.raizlabs.android.dbflow.sql.language.Select;
@@ -49,6 +50,7 @@ import org.hisp.dhis.android.dashboard.api.models.DashboardItem;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItem$Table;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent;
 import org.hisp.dhis.android.dashboard.api.models.DashboardItemContent$Table;
+import org.hisp.dhis.android.dashboard.api.models.SystemInfo;
 import org.hisp.dhis.android.dashboard.api.models.meta.DbOperation;
 import org.hisp.dhis.android.dashboard.api.models.meta.State;
 import org.hisp.dhis.android.dashboard.api.network.APIException;
@@ -135,7 +137,9 @@ final class DashboardController {
     private void getDashboardDataFromServer(SyncStrategy syncStrategy) throws APIException {
         DateTime lastUpdated = DateTimeManager.getInstance()
                 .getLastUpdated(ResourceType.DASHBOARDS);
-        DateTime serverDateTime = mDhisApi.getSystemInfo()
+        SystemInfo systemInfo = mDhisApi.getSystemInfo();
+        systemInfo.save();
+        DateTime serverDateTime = systemInfo
                 .getServerDate();
 
         List<Dashboard> dashboards;
@@ -159,11 +163,12 @@ final class DashboardController {
     private List<Dashboard> updateDashboards(DateTime lastUpdated) throws APIException {
         final Map<String, String> QUERY_MAP_BASIC = new HashMap<>();
         final Map<String, String> QUERY_MAP_FULL = new HashMap<>();
-        final String BASE = "id,created,lastUpdated,name,displayName,access";
+        final String BASE = "id,created,lastUpdated,name,displayName,access,publicAccess";
 
         QUERY_MAP_BASIC.put("fields", "id");
         QUERY_MAP_FULL.put("fields", BASE + ",dashboardItems" +
                 "[" + BASE + ",type,shape,messages," +
+                "x,y,w,h,originalHeight,width,height,favorite," +
                 "chart" + "[" + BASE + "]," +
                 "eventChart" + "[" + BASE + "]" +
                 "map" + "[" + BASE + "]," +
@@ -225,7 +230,8 @@ final class DashboardController {
 
     private List<DashboardItem> updateDashboardItems(List<Dashboard> dashboards, DateTime lastUpdated) throws APIException {
         final Map<String, String> QUERY_MAP_BASIC = new HashMap<>();
-        QUERY_MAP_BASIC.put("fields", "id,created,lastUpdated,shape");
+        QUERY_MAP_BASIC.put("fields", "id,created,lastUpdated,shape" +
+                "x,y,w,h,originalHeight,width,height,favorite,");
 
         if (lastUpdated != null) {
             QUERY_MAP_BASIC.put("filter", "lastUpdated:gt:" + lastUpdated.toLocalDateTime().toString());
@@ -242,8 +248,13 @@ final class DashboardController {
         }
 
         // List of persisted dashboard items
-        Map<String, DashboardItem> persistedDashboardItems
-                = toMap(queryDashboardItems(null));
+        Map<String, DashboardItem> persistedDashboardItems;
+        if(SystemInfo.isLoggedInServerWithLatestApiVersion()){
+            // TODO: 22/03/2018  Review 2.29 dashboard item push
+            persistedDashboardItems = new HashMap<>();
+        }else{
+            persistedDashboardItems = toMap(queryDashboardItems(null));
+        }
 
         // List of updated dashboard items. We need this only to get
         // information about updates of item shape.
@@ -327,8 +338,11 @@ final class DashboardController {
 
     private void sendLocalChanges() throws APIException {
         sendDashboardChanges();
-        sendDashboardItemChanges();
-        sendDashboardElements();
+        if(!SystemInfo.isLoggedInServerWithLatestApiVersion()) {
+            // TODO: 22/03/2018  Fix dashboard item and  dashboard elements push
+            sendDashboardItemChanges();
+            sendDashboardElements();
+        }
     }
 
     private void sendDashboardChanges() throws APIException {
@@ -365,7 +379,12 @@ final class DashboardController {
 
     private void postDashboard(Dashboard dashboard) throws APIException {
         try {
-            Response response = mDhisApi.postDashboard(dashboard);
+            Response response;
+            if (SystemInfo.isLoggedInServerWithLatestApiVersion()) {
+                response = mDhisApi.postDashboard(Dashboard.createNewApiDashboard(dashboard));
+            }else{
+                response = mDhisApi.postDashboard(dashboard);
+            }
             // also, we will need to find UUID of newly created dashboard,
             // which is contained inside of HTTP Location header
             Header header = findLocationHeader(response.getHeaders());
@@ -384,7 +403,13 @@ final class DashboardController {
 
     private void putDashboard(Dashboard dashboard) throws APIException {
         try {
-            mDhisApi.putDashboard(dashboard.getUId(), dashboard);
+            if (SystemInfo.isLoggedInServerWithLatestApiVersion()) {
+                //// TODO: 22/03/2018  Fix dashboard 2.29 update
+                //dashboard = Dashboard.createNewApiDashboard(dashboard);
+                //mDhisApi.putNewDashboard(dashboard.getUId(), dashboard);
+            }else{
+                mDhisApi.putDashboard(dashboard.getUId(), dashboard);
+            }
 
             dashboard.setState(State.SYNCED);
             dashboard.save();
@@ -594,7 +619,7 @@ final class DashboardController {
     private void updateDashboardTimeStamp(Dashboard dashboard) throws APIException {
         try {
             final Map<String, String> QUERY_PARAMS = new HashMap<>();
-            QUERY_PARAMS.put("fields", "created,lastUpdated");
+            QUERY_PARAMS.put("fields", "created,lastUpdated,publicAccess");
             Dashboard updatedDashboard = mDhisApi
                     .getDashboard(dashboard.getUId(), QUERY_PARAMS);
 
